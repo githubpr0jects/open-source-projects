@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import TwitterMetrics from '../../components/TwitterMetrics';
 
 const fallbackImage = '/images/open-source-logo-830x460.jpg';
 
@@ -24,6 +25,12 @@ const extractTags = (content) => {
   const hashtagRegex = /#(\w+)/g;
   const hashtags = content.match(hashtagRegex) || [];
   return hashtags.map(tag => tag.substring(1)); // Remove the # symbol
+};
+
+const getTwitterUrl = (postId, username = 'GithubProjects') => {
+  // Construct Twitter URL from post ID
+  // Since the post data comes from @githubprojects tweets, we can construct the URL
+  return `https://x.com/${username}/status/${postId}`;
 };
 
   const formatDate = (dateString) => {
@@ -732,6 +739,12 @@ export default function PostPage() {
                     <div className="stat-label">Created</div>
                   </div>
                 </div>
+
+                {/* Twitter Engagement Metrics */}
+                <TwitterMetrics 
+                  postId={params.id}
+                  tweetUrl={getTwitterUrl(params.id, mainPost.username)}
+                />
               </div>
             </article>
           </div>
