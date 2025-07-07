@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 
 const fallbackImage = '/images/open-source-logo-830x460.jpg';
 
@@ -17,14 +18,28 @@ const getSourceLabel = (post) => {
 const getProjectTitle = (content) => {
   const firstLine = content.split('\n')[0];
   return firstLine.length > 80 ? firstLine.substring(0, 80) + '...' : firstLine || 'Open Source Project';
-};
+};  const extractTags = (content) => {
+    // Extract hashtags from content
+    const hashtagRegex = /#(\w+)/g;
+    const hashtags = content.match(hashtagRegex) || [];
+    return hashtags.map(tag => tag.substring(1)); // Remove the # symbol
+  };
 
-const extractTags = (content) => {
-  // Extract hashtags from content
-  const hashtagRegex = /#(\w+)/g;
-  const hashtags = content.match(hashtagRegex) || [];
-  return hashtags.map(tag => tag.substring(1)); // Remove the # symbol
-};
+  // Function to process markdown content and handle JSON escape characters
+  const processMarkdownContent = (markdownContent) => {
+    if (!markdownContent) return null;
+    
+    // Process JSON escape characters
+    let processedContent = markdownContent
+      .replace(/\\n/g, '\n')           // Replace \n with actual newlines
+      .replace(/\\"/g, '"')            // Replace \" with actual quotes
+      .replace(/\\'/g, "'")            // Replace \' with actual apostrophes
+      .replace(/\\t/g, '\t')           // Replace \t with actual tabs
+      .replace(/\\r/g, '\r')           // Replace \r with carriage returns
+      .replace(/\\\\/g, '\\');         // Replace \\ with single backslash
+    
+    return processedContent;
+  };
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -363,6 +378,72 @@ export default function PostPage() {
     }));
   };
 
+  // Enhanced formatContent function to handle markdown
+  const renderPostContent = (post) => {
+    // Check if markdown_content exists and is not null
+    if (post.markdown_content && post.markdown_content.trim() !== '') {
+      const processedMarkdown = processMarkdownContent(post.markdown_content);
+      
+      return (
+        <div className="markdown-content">
+          <ReactMarkdown
+            components={{
+              // Custom components for better styling
+              h1: ({ children }) => <h1 className="markdown-h1">{children}</h1>,
+              h2: ({ children }) => <h2 className="markdown-h2">{children}</h2>,
+              h3: ({ children }) => <h3 className="markdown-h3">{children}</h3>,
+              h4: ({ children }) => <h4 className="markdown-h4">{children}</h4>,
+              h5: ({ children }) => <h5 className="markdown-h5">{children}</h5>,
+              h6: ({ children }) => <h6 className="markdown-h6">{children}</h6>,
+              p: ({ children }) => <p className="markdown-paragraph">{children}</p>,
+              ul: ({ children }) => <ul className="markdown-list">{children}</ul>,
+              ol: ({ children }) => <ol className="markdown-ordered-list">{children}</ol>,
+              li: ({ children }) => <li className="markdown-list-item">{children}</li>,
+              blockquote: ({ children }) => <blockquote className="markdown-blockquote">{children}</blockquote>,
+              code: ({ inline, children }) => 
+                inline ? 
+                  <code className="markdown-inline-code">{children}</code> : 
+                  <code className="markdown-code-block">{children}</code>,
+              pre: ({ children }) => <pre className="markdown-pre">{children}</pre>,
+              a: ({ href, children }) => (
+                <a 
+                  href={href} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="markdown-link"
+                >
+                  {children}
+                </a>
+              ),
+              img: ({ src, alt }) => (
+                <img 
+                  src={src} 
+                  alt={alt} 
+                  className="markdown-image"
+                  loading="lazy"
+                />
+              ),
+              table: ({ children }) => <table className="markdown-table">{children}</table>,
+              thead: ({ children }) => <thead className="markdown-thead">{children}</thead>,
+              tbody: ({ children }) => <tbody className="markdown-tbody">{children}</tbody>,
+              tr: ({ children }) => <tr className="markdown-tr">{children}</tr>,
+              th: ({ children }) => <th className="markdown-th">{children}</th>,
+              td: ({ children }) => <td className="markdown-td">{children}</td>,
+              hr: () => <hr className="markdown-hr" />,
+              strong: ({ children }) => <strong className="markdown-strong">{children}</strong>,
+              em: ({ children }) => <em className="markdown-em">{children}</em>,
+            }}
+          >
+            {processedMarkdown}
+          </ReactMarkdown>
+        </div>
+      );
+    } else {
+      // Fallback to original content formatting if no markdown_content
+      return formatContent(post.content);
+    }
+  };
+
   if (loading) {
     return (
       <>
@@ -694,7 +775,7 @@ export default function PostPage() {
                   <div key={post.id} className="content-section">
                     {index > 0 && <div className="section-divider"></div>}
                     <div className="section-content">
-                      {formatContent(post.content)}
+                      {renderPostContent(post)}
                     </div>
                   </div>
                 ))}
@@ -784,6 +865,440 @@ export default function PostPage() {
       </footer>
 
       <style jsx global>{`
+        /* Markdown Content Styles */
+        .markdown-content {
+          max-width: none;
+          color: #333;
+          line-height: 1.7;
+          font-size: 16px;
+          margin: 24px 0;
+        }
+
+        .markdown-h1 {
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: #1a1a1a;
+          margin: 2rem 0 1rem 0;
+          padding-bottom: 0.5rem;
+          border-bottom: 2px solid #e1e5e9;
+          line-height: 1.2;
+        }
+
+        .markdown-h2 {
+          font-size: 2rem;
+          font-weight: 600;
+          color: #1a1a1a;
+          margin: 1.5rem 0 1rem 0;
+          padding-bottom: 0.3rem;
+          border-bottom: 1px solid #e1e5e9;
+          line-height: 1.3;
+        }
+
+        .markdown-h3 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #1a1a1a;
+          margin: 1.25rem 0 0.75rem 0;
+          line-height: 1.4;
+        }
+
+        .markdown-h4 {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #1a1a1a;
+          margin: 1rem 0 0.5rem 0;
+          line-height: 1.4;
+        }
+
+        .markdown-h5 {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #1a1a1a;
+          margin: 0.875rem 0 0.5rem 0;
+          line-height: 1.4;
+        }
+
+        .markdown-h6 {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #666;
+          margin: 0.75rem 0 0.5rem 0;
+          line-height: 1.4;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .markdown-paragraph {
+          margin: 1rem 0;
+          line-height: 1.7;
+          color: #333;
+        }
+
+        .markdown-list,
+        .markdown-ordered-list {
+          margin: 1rem 0;
+          padding-left: 2rem;
+        }
+
+        .markdown-list {
+          list-style-type: disc;
+        }
+
+        .markdown-ordered-list {
+          list-style-type: decimal;
+        }
+
+        .markdown-list-item {
+          margin: 0.5rem 0;
+          line-height: 1.6;
+          color: #333;
+        }
+
+        .markdown-list-item::marker {
+          color: #0066cc;
+          font-weight: bold;
+        }
+
+        .markdown-blockquote {
+          margin: 1.5rem 0;
+          padding: 1rem 1.5rem;
+          border-left: 4px solid #0066cc;
+          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          border-radius: 0 8px 8px 0;
+          font-style: italic;
+          color: #555;
+          position: relative;
+        }
+
+        .markdown-blockquote::before {
+          content: '"';
+          font-size: 3rem;
+          color: #0066cc;
+          position: absolute;
+          left: 1rem;
+          top: -0.5rem;
+          font-family: Georgia, serif;
+          opacity: 0.3;
+        }
+
+        .markdown-blockquote p {
+          margin: 0;
+          padding-left: 2rem;
+        }
+
+        .markdown-inline-code {
+          background: #f1f3f4;
+          padding: 0.2rem 0.4rem;
+          border-radius: 4px;
+          font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+          font-size: 0.9em;
+          color: #d73a49;
+          border: 1px solid #e1e4e8;
+        }
+
+        .markdown-pre {
+          background: #f6f8fa;
+          border: 1px solid #e1e4e8;
+          border-radius: 8px;
+          padding: 1.25rem;
+          margin: 1.5rem 0;
+          overflow-x: auto;
+          font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+          font-size: 0.9rem;
+          line-height: 1.6;
+          position: relative;
+        }
+
+        .markdown-pre::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #0066cc, #4CAF50, #FF9800);
+          border-radius: 8px 8px 0 0;
+        }
+
+        .markdown-code-block {
+          color: #333;
+          background: transparent;
+          padding: 0;
+          border: none;
+          display: block;
+          width: 100%;
+        }
+
+        .markdown-link {
+          color: #0066cc;
+          text-decoration: none;
+          border-bottom: 1px solid transparent;
+          transition: all 0.2s ease;
+          font-weight: 500;
+        }
+
+        .markdown-link:hover {
+          border-bottom-color: #0066cc;
+          background-color: rgba(0, 102, 204, 0.08);
+          padding: 2px 4px;
+          margin: -2px -4px;
+          border-radius: 4px;
+        }
+
+        .markdown-image {
+          max-width: 100%;
+          height: auto;
+          border-radius: 8px;
+          margin: 1.5rem 0;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .markdown-image:hover {
+          transform: scale(1.02);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .markdown-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 1.5rem 0;
+          background: #fff;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .markdown-thead {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .markdown-th {
+          padding: 1rem;
+          text-align: left;
+          font-weight: 600;
+          color: white;
+          border-bottom: 2px solid #ddd;
+        }
+
+        .markdown-td {
+          padding: 0.75rem 1rem;
+          border-bottom: 1px solid #eee;
+          color: #333;
+        }
+
+        .markdown-tr:nth-child(even) {
+          background: #f8f9fa;
+        }
+
+        .markdown-tr:hover {
+          background: #e3f2fd;
+        }
+
+        .markdown-hr {
+          border: none;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #ddd, transparent);
+          margin: 2rem 0;
+        }
+
+        .markdown-strong {
+          font-weight: 700;
+          color: #1a1a1a;
+        }
+
+        .markdown-em {
+          font-style: italic;
+          color: #555;
+        }
+
+        /* Responsive Markdown Styles */
+        @media screen and (max-width: 768px) {
+          .markdown-content {
+            font-size: 15px;
+          }
+
+          .markdown-h1 {
+            font-size: 2rem;
+          }
+
+          .markdown-h2 {
+            font-size: 1.75rem;
+          }
+
+          .markdown-h3 {
+            font-size: 1.5rem;
+          }
+
+          .markdown-h4 {
+            font-size: 1.25rem;
+          }
+
+          .markdown-pre {
+            padding: 1rem;
+            font-size: 0.85rem;
+          }
+
+          .markdown-blockquote {
+            padding: 0.75rem 1rem;
+            margin: 1rem 0;
+          }
+
+          .markdown-blockquote::before {
+            font-size: 2.5rem;
+            left: 0.5rem;
+            top: -0.25rem;
+          }
+
+          .markdown-blockquote p {
+            padding-left: 1.5rem;
+          }
+
+          .markdown-table {
+            font-size: 0.9rem;
+          }
+
+          .markdown-th,
+          .markdown-td {
+            padding: 0.6rem 0.8rem;
+          }
+        }
+
+        @media screen and (max-width: 480px) {
+          .markdown-content {
+            font-size: 14px;
+          }
+
+          .markdown-h1 {
+            font-size: 1.75rem;
+          }
+
+          .markdown-h2 {
+            font-size: 1.5rem;
+          }
+
+          .markdown-h3 {
+            font-size: 1.25rem;
+          }
+
+          .markdown-list,
+          .markdown-ordered-list {
+            padding-left: 1.5rem;
+          }
+
+          .markdown-pre {
+            padding: 0.75rem;
+            font-size: 0.8rem;
+          }
+
+          .markdown-blockquote {
+            padding: 0.5rem 0.75rem;
+          }
+
+          .markdown-blockquote::before {
+            font-size: 2rem;
+            left: 0.25rem;
+            top: -0.1rem;
+          }
+
+          .markdown-blockquote p {
+            padding-left: 1rem;
+          }
+
+          .markdown-table {
+            font-size: 0.8rem;
+          }
+
+          .markdown-th,
+          .markdown-td {
+            padding: 0.5rem 0.6rem;
+          }
+        }
+
+        /* Dark mode support for markdown */
+        @media (prefers-color-scheme: dark) {
+          .markdown-content {
+            color: #e1e4e8;
+          }
+
+          .markdown-h1,
+          .markdown-h2,
+          .markdown-h3,
+          .markdown-h4,
+          .markdown-h5 {
+            color: #f0f6fc;
+          }
+
+          .markdown-h6 {
+            color: #8b949e;
+          }
+
+          .markdown-h1 {
+            border-bottom-color: #30363d;
+          }
+
+          .markdown-h2 {
+            border-bottom-color: #30363d;
+          }
+
+          .markdown-paragraph,
+          .markdown-list-item {
+            color: #e1e4e8;
+          }
+
+          .markdown-blockquote {
+            background: linear-gradient(135deg, #30363d 0%, #21262d 100%);
+            color: #8b949e;
+            border-left-color: #0066cc;
+          }
+
+          .markdown-inline-code {
+            background: #30363d;
+            color: #f97583;
+            border-color: #30363d;
+          }
+
+          .markdown-pre {
+            background: #161b22;
+            border-color: #30363d;
+          }
+
+          .markdown-code-block {
+            color: #e1e4e8;
+          }
+
+          .markdown-table {
+            background: #21262d;
+          }
+
+          .markdown-th {
+            background: linear-gradient(135deg, #30363d 0%, #21262d 100%);
+            color: #f0f6fc;
+            border-bottom-color: #30363d;
+          }
+
+          .markdown-td {
+            color: #e1e4e8;
+            border-bottom-color: #30363d;
+          }
+
+          .markdown-tr:nth-child(even) {
+            background: #161b22;
+          }
+
+          .markdown-tr:hover {
+            background: #30363d;
+          }
+
+          .markdown-strong {
+            color: #f0f6fc;
+          }
+
+          .markdown-em {
+            color: #8b949e;
+          }
+        }
+
         /* Hero Image Styles */
         .hero-image-container {
           position: relative;
