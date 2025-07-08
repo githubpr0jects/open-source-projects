@@ -690,22 +690,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
             
             <h1 className="project-title">{getProjectTitle(mainPost.content)}</h1>
             
-            {/* GitHub Repository Link */}
-            {mainPost.github_repo && (
-              <div className="github-repo-section">
-                <a 
-                  href={mainPost.github_repo} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="github-repo-link"
-                >
-                  <i className="fab fa-github"></i>
-                  <span>View on GitHub</span>
-                  <i className="fas fa-external-link-alt"></i>
-                </a>
-              </div>
-            )}
-
             {/* Tags */}
             {extractTags(mainPost.content).length > 0 && (
               <div className="project-tags">
@@ -756,7 +740,50 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                     ID: {params.id}
                   </span>
                 </div>
+                
+                {/* GitHub Repository Link in Article Header */}
+                {mainPost.github_repo && (
+                  <div className="article-github-section">
+                    <a 
+                      href={mainPost.github_repo} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="github-repo-link"
+                    >
+                      <i className="fab fa-github"></i>
+                      <span>View on GitHub</span>
+                      <i className="fas fa-external-link-alt"></i>
+                    </a>
+                  </div>
+                )}
               </div>
+
+              {/* Repository Preview Card */}
+              {mainPost.github_repo && (
+                <div className="repository-preview-section">
+                  <div className="repository-preview-card">
+                    <div className="repository-preview-header">
+                      <i className="fab fa-github"></i>
+                      <span>Repository</span>
+                    </div>
+                    <div className="repository-preview-content">
+                      <div className="repository-url">
+                        <a 
+                          href={mainPost.github_repo} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="repository-link"
+                        >
+                          {mainPost.github_repo.replace('https://github.com/', '')}
+                        </a>
+                      </div>
+                      <div className="repository-description">
+                        Official repository for this project
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="article-content">
                 {allPosts.map((post, index) => (
@@ -2222,6 +2249,456 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
           .list-item-with-preview {
             margin-bottom: 18px;
+          }
+        }
+        
+        /* Markdown Content Styles - Dark Mode Only */
+        .markdown-content {
+          max-width: none;
+          color: #e1e4e8;
+          line-height: 1.7;
+          font-size: 16px;
+          margin: 24px 0;
+        }
+
+        .markdown-h1 {
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: #f0f6fc;
+          margin: 2rem 0 1rem 0;
+          padding-bottom: 0.5rem;
+          border-bottom: 2px solid #30363d;
+          line-height: 1.2;
+        }
+
+        .markdown-h2 {
+          font-size: 2rem;
+          font-weight: 600;
+          color: #f0f6fc;
+          margin: 1.5rem 0 1rem 0;
+          padding-bottom: 0.3rem;
+          border-bottom: 1px solid #30363d;
+          line-height: 1.3;
+        }
+
+        .markdown-h3 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #f0f6fc;
+          margin: 1.25rem 0 0.75rem 0;
+          line-height: 1.4;
+        }
+
+        .markdown-h4 {
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: #f0f6fc;
+          margin: 1rem 0 0.5rem 0;
+          line-height: 1.4;
+        }
+
+        .markdown-h5 {
+          font-size: 1.1rem;
+          font-weight: 600;
+          color: #f0f6fc;
+          margin: 0.875rem 0 0.5rem 0;
+          line-height: 1.4;
+        }
+
+        .markdown-h6 {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #8b949e;
+          margin: 0.75rem 0 0.5rem 0;
+          line-height: 1.4;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .markdown-paragraph {
+          margin: 1rem 0;
+          line-height: 1.7;
+          color: #e1e4e8;
+        }
+
+        .markdown-list,
+        .markdown-ordered-list {
+          margin: 1rem 0;
+          padding-left: 2rem;
+        }
+
+        .markdown-list {
+          list-style-type: disc;
+        }
+
+        .markdown-ordered-list {
+          list-style-type: decimal;
+        }
+
+        .markdown-list-item {
+          margin: 0.5rem 0;
+          line-height: 1.6;
+          color: #e1e4e8;
+        }
+
+        .markdown-list-item::marker {
+          color: #58a6ff;
+          font-weight: bold;
+        }
+
+        .markdown-blockquote {
+          margin: 1.5rem 0;
+          padding: 1rem 1.5rem;
+          border-left: 4px solid #58a6ff;
+          background: linear-gradient(135deg, #30363d 0%, #21262d 100%);
+          border-radius: 0 8px 8px 0;
+          font-style: italic;
+          color: #8b949e;
+          position: relative;
+        }
+
+        .markdown-blockquote::before {
+          content: '"';
+          font-size: 3rem;
+          color: #58a6ff;
+          position: absolute;
+          left: 1rem;
+          top: -0.5rem;
+          font-family: Georgia, serif;
+          opacity: 0.3;
+        }
+
+        .markdown-blockquote p {
+          margin: 0;
+          padding-left: 2rem;
+          color: #8b949e;
+        }
+
+        .markdown-inline-code {
+          background: #30363d;
+          color: #f97583;
+          padding: 0.2rem 0.4rem;
+          border-radius: 4px;
+          font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+          font-size: 0.9em;
+          border: 1px solid #30363d;
+        }
+
+        .markdown-pre {
+          background: #161b22;
+          border: 1px solid #30363d;
+          border-radius: 8px;
+          padding: 1.25rem;
+          margin: 1.5rem 0;
+          overflow-x: auto;
+          font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+          font-size: 0.9rem;
+          line-height: 1.6;
+          position: relative;
+        }
+
+        .markdown-pre::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #58a6ff, #39d353, #ffab40);
+          border-radius: 8px 8px 0 0;
+        }
+
+        .markdown-code-block {
+          color: #e1e4e8;
+          background: transparent;
+          padding: 0;
+          border: none;
+          display: block;
+          width: 100%;
+        }
+
+        .markdown-link {
+          color: #58a6ff;
+          text-decoration: none;
+          border-bottom: 1px solid transparent;
+          transition: all 0.2s ease;
+          font-weight: 500;
+        }
+
+        .markdown-link:hover {
+          border-bottom-color: #58a6ff;
+          background-color: rgba(88, 166, 255, 0.1);
+          padding: 2px 4px;
+          margin: -2px -4px;
+          border-radius: 4px;
+        }
+
+        .markdown-image {
+          max-width: 100%;
+          height: auto;
+          border-radius: 8px;
+          margin: 1.5rem 0;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          border: 1px solid #30363d;
+        }
+
+        .markdown-image:hover {
+          transform: scale(1.02);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .markdown-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 1.5rem 0;
+          background: #21262d;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+          border: 1px solid #30363d;
+        }
+
+        .markdown-thead {
+          background: linear-gradient(135deg, #30363d 0%, #21262d 100%);
+        }
+
+        .markdown-th {
+          padding: 1rem;
+          text-align: left;
+          font-weight: 600;
+          color: #f0f6fc;
+          border-bottom: 2px solid #30363d;
+        }
+
+        .markdown-td {
+          padding: 0.75rem 1rem;
+          border-bottom: 1px solid #30363d;
+          color: #e1e4e8;
+        }
+
+        .markdown-tr:nth-child(even) {
+          background: #161b22;
+        }
+
+        .markdown-tr:hover {
+          background: #30363d;
+        }
+
+        .markdown-hr {
+          border: none;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #30363d, transparent);
+          margin: 2rem 0;
+        }
+
+        .markdown-strong {
+          font-weight: 700;
+          color: #f0f6fc;
+        }
+
+        .markdown-em {
+          font-style: italic;
+          color: #8b949e;
+        }
+
+        /* Article GitHub Section Styles */
+        .article-github-section {
+          margin: 16px 0 0 0;
+          padding-top: 16px;
+          border-top: 1px solid #30363d;
+        }
+
+        .github-repo-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 20px;
+          background: linear-gradient(135deg, #333 0%, #1a1a1a 100%);
+          color: white;
+          text-decoration: none;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 16px;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .github-repo-link:hover {
+          background: linear-gradient(135deg, #24292e 0%, #0d1117 100%);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+          color: white;
+        }
+
+        .github-repo-link i:first-child {
+          font-size: 20px;
+        }
+
+        .github-repo-link i:last-child {
+          font-size: 14px;
+        }
+
+        /* Repository Preview Card Styles */
+        .repository-preview-section {
+          margin: 24px 0;
+        }
+
+        .repository-preview-card {
+          background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
+          border: 1px solid #30363d;
+          border-radius: 12px;
+          padding: 20px;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .repository-preview-card:hover {
+          border-color: #58a6ff;
+          box-shadow: 0 8px 25px rgba(88, 166, 255, 0.1);
+          transform: translateY(-2px);
+        }
+
+        .repository-preview-header {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 16px;
+          color: #58a6ff;
+          font-weight: 600;
+          font-size: 16px;
+        }
+
+        .repository-preview-header i {
+          font-size: 20px;
+        }
+
+        .repository-preview-content {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .repository-url {
+          font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+          font-size: 15px;
+        }
+
+        .repository-link {
+          color: #58a6ff;
+          text-decoration: none;
+          font-weight: 500;
+          transition: all 0.2s ease;
+          border-bottom: 1px solid transparent;
+        }
+
+        .repository-link:hover {
+          border-bottom-color: #58a6ff;
+          background-color: rgba(88, 166, 255, 0.1);
+          padding: 4px 8px;
+          margin: -4px -8px;
+          border-radius: 4px;
+        }
+
+        .repository-description {
+          color: #8b949e;
+          font-size: 14px;
+          font-style: italic;
+        }
+
+        /* Responsive Markdown Styles with 30% reduction on mobile */
+        @media screen and (max-width: 768px) {
+          .markdown-content {
+            font-size: 15px;
+          }
+
+          /* 30% reduction from original sizes */
+          .markdown-h1 {
+            font-size: 1.75rem; /* was 2.5rem -> 70% = 1.75rem */
+          }
+
+          .markdown-h2 {
+            font-size: 1.4rem; /* was 2rem -> 70% = 1.4rem */
+          }
+
+          .markdown-h3 {
+            font-size: 1.05rem; /* was 1.5rem -> 70% = 1.05rem */
+          }
+
+          .markdown-h4 {
+            font-size: 0.875rem; /* was 1.25rem -> 70% = 0.875rem */
+          }
+
+          .github-repo-link {
+            padding: 10px 16px;
+            font-size: 15px;
+          }
+
+          .repository-preview-card {
+            padding: 16px;
+          }
+
+          .repository-preview-header {
+            font-size: 15px;
+            margin-bottom: 12px;
+          }
+
+          .repository-preview-header i {
+            font-size: 18px;
+          }
+        }
+
+        @media screen and (max-width: 480px) {
+          .markdown-content {
+            font-size: 14px;
+          }
+
+          /* Further reduction for smaller screens */
+          .markdown-h1 {
+            font-size: 1.5rem; /* Additional reduction for mobile */
+          }
+
+          .markdown-h2 {
+            font-size: 1.25rem;
+          }
+
+          .markdown-h3 {
+            font-size: 1rem;
+          }
+
+          .markdown-h4 {
+            font-size: 0.875rem;
+          }
+
+          .github-repo-link {
+            padding: 8px 14px;
+            font-size: 14px;
+            gap: 8px;
+          }
+
+          .github-repo-link i:first-child {
+            font-size: 18px;
+          }
+
+          .repository-preview-card {
+            padding: 14px;
+          }
+
+          .repository-preview-header {
+            font-size: 14px;
+            margin-bottom: 10px;
+          }
+
+          .repository-preview-header i {
+            font-size: 16px;
+          }
+
+          .repository-url {
+            font-size: 13px;
+          }
+
+          .repository-description {
+            font-size: 13px;
           }
         }
       `}</style>
