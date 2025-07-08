@@ -19,8 +19,8 @@ function HomePageContent() {
       setLoading(true);
       try {
         const url = currentPage === 1 
-          ? 'https://twitter-api.opensourceprojects.dev/threads'
-          : `https://twitter-api.opensourceprojects.dev/threads?page=${currentPage}`;
+          ? 'https://twitter-api.opensourceprojects.dev/threads?type=github'
+          : `https://twitter-api.opensourceprojects.dev/threads?type=github&page=${currentPage}`;
         
         const response = await fetch(url);
         if (!response.ok) {
