@@ -743,7 +743,7 @@ export default function PostPage() {
                 <div className="author-details">
                   <span className="author-name">@{mainPost.username}</span>
                   <span className="author-label">
-                    {mainPost.github_repo ? 'Repository Maintainer' : 'Content Creator'}
+                    {mainPost.github_repo ? 'Post Author' : 'Opinion Author'}
                   </span>
                 </div>
               </div>
