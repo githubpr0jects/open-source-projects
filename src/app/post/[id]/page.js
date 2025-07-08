@@ -865,10 +865,10 @@ export default function PostPage() {
       </footer>
 
       <style jsx global>{`
-        /* Markdown Content Styles */
+        /* Markdown Content Styles - Dark Mode Only */
         .markdown-content {
           max-width: none;
-          color: #333;
+          color: #e1e4e8;
           line-height: 1.7;
           font-size: 16px;
           margin: 24px 0;
@@ -877,27 +877,27 @@ export default function PostPage() {
         .markdown-h1 {
           font-size: 2.5rem;
           font-weight: 700;
-          color: #1a1a1a;
+          color: #f0f6fc;
           margin: 2rem 0 1rem 0;
           padding-bottom: 0.5rem;
-          border-bottom: 2px solid #e1e5e9;
+          border-bottom: 2px solid #30363d;
           line-height: 1.2;
         }
 
         .markdown-h2 {
           font-size: 2rem;
           font-weight: 600;
-          color: #1a1a1a;
+          color: #f0f6fc;
           margin: 1.5rem 0 1rem 0;
           padding-bottom: 0.3rem;
-          border-bottom: 1px solid #e1e5e9;
+          border-bottom: 1px solid #30363d;
           line-height: 1.3;
         }
 
         .markdown-h3 {
           font-size: 1.5rem;
           font-weight: 600;
-          color: #1a1a1a;
+          color: #f0f6fc;
           margin: 1.25rem 0 0.75rem 0;
           line-height: 1.4;
         }
@@ -905,7 +905,7 @@ export default function PostPage() {
         .markdown-h4 {
           font-size: 1.25rem;
           font-weight: 600;
-          color: #1a1a1a;
+          color: #f0f6fc;
           margin: 1rem 0 0.5rem 0;
           line-height: 1.4;
         }
@@ -913,7 +913,7 @@ export default function PostPage() {
         .markdown-h5 {
           font-size: 1.1rem;
           font-weight: 600;
-          color: #1a1a1a;
+          color: #f0f6fc;
           margin: 0.875rem 0 0.5rem 0;
           line-height: 1.4;
         }
@@ -921,7 +921,7 @@ export default function PostPage() {
         .markdown-h6 {
           font-size: 1rem;
           font-weight: 600;
-          color: #666;
+          color: #8b949e;
           margin: 0.75rem 0 0.5rem 0;
           line-height: 1.4;
           text-transform: uppercase;
@@ -931,7 +931,7 @@ export default function PostPage() {
         .markdown-paragraph {
           margin: 1rem 0;
           line-height: 1.7;
-          color: #333;
+          color: #e1e4e8;
         }
 
         .markdown-list,
@@ -951,29 +951,29 @@ export default function PostPage() {
         .markdown-list-item {
           margin: 0.5rem 0;
           line-height: 1.6;
-          color: #333;
+          color: #e1e4e8;
         }
 
         .markdown-list-item::marker {
-          color: #0066cc;
+          color: #58a6ff;
           font-weight: bold;
         }
 
         .markdown-blockquote {
           margin: 1.5rem 0;
           padding: 1rem 1.5rem;
-          border-left: 4px solid #0066cc;
-          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+          border-left: 4px solid #58a6ff;
+          background: linear-gradient(135deg, #30363d 0%, #21262d 100%);
           border-radius: 0 8px 8px 0;
           font-style: italic;
-          color: #555;
+          color: #8b949e;
           position: relative;
         }
 
         .markdown-blockquote::before {
           content: '"';
           font-size: 3rem;
-          color: #0066cc;
+          color: #58a6ff;
           position: absolute;
           left: 1rem;
           top: -0.5rem;
@@ -984,21 +984,22 @@ export default function PostPage() {
         .markdown-blockquote p {
           margin: 0;
           padding-left: 2rem;
+          color: #8b949e;
         }
 
         .markdown-inline-code {
-          background: #f1f3f4;
+          background: #30363d;
+          color: #f97583;
           padding: 0.2rem 0.4rem;
           border-radius: 4px;
           font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
           font-size: 0.9em;
-          color: #d73a49;
-          border: 1px solid #e1e4e8;
+          border: 1px solid #30363d;
         }
 
         .markdown-pre {
-          background: #f6f8fa;
-          border: 1px solid #e1e4e8;
+          background: #161b22;
+          border: 1px solid #30363d;
           border-radius: 8px;
           padding: 1.25rem;
           margin: 1.5rem 0;
@@ -1016,12 +1017,12 @@ export default function PostPage() {
           left: 0;
           right: 0;
           height: 3px;
-          background: linear-gradient(90deg, #0066cc, #4CAF50, #FF9800);
+          background: linear-gradient(90deg, #58a6ff, #39d353, #ffab40);
           border-radius: 8px 8px 0 0;
         }
 
         .markdown-code-block {
-          color: #333;
+          color: #e1e4e8;
           background: transparent;
           padding: 0;
           border: none;
@@ -1030,7 +1031,7 @@ export default function PostPage() {
         }
 
         .markdown-link {
-          color: #0066cc;
+          color: #58a6ff;
           text-decoration: none;
           border-bottom: 1px solid transparent;
           transition: all 0.2s ease;
@@ -1038,8 +1039,8 @@ export default function PostPage() {
         }
 
         .markdown-link:hover {
-          border-bottom-color: #0066cc;
-          background-color: rgba(0, 102, 204, 0.08);
+          border-bottom-color: #58a6ff;
+          background-color: rgba(88, 166, 255, 0.1);
           padding: 2px 4px;
           margin: -2px -4px;
           border-radius: 4px;
@@ -1050,66 +1051,68 @@ export default function PostPage() {
           height: auto;
           border-radius: 8px;
           margin: 1.5rem 0;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
           transition: transform 0.3s ease, box-shadow 0.3s ease;
+          border: 1px solid #30363d;
         }
 
         .markdown-image:hover {
           transform: scale(1.02);
-          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
 
         .markdown-table {
           width: 100%;
           border-collapse: collapse;
           margin: 1.5rem 0;
-          background: #fff;
+          background: #21262d;
           border-radius: 8px;
           overflow: hidden;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+          border: 1px solid #30363d;
         }
 
         .markdown-thead {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #30363d 0%, #21262d 100%);
         }
 
         .markdown-th {
           padding: 1rem;
           text-align: left;
           font-weight: 600;
-          color: white;
-          border-bottom: 2px solid #ddd;
+          color: #f0f6fc;
+          border-bottom: 2px solid #30363d;
         }
 
         .markdown-td {
           padding: 0.75rem 1rem;
-          border-bottom: 1px solid #eee;
-          color: #333;
+          border-bottom: 1px solid #30363d;
+          color: #e1e4e8;
         }
 
         .markdown-tr:nth-child(even) {
-          background: #f8f9fa;
+          background: #161b22;
         }
 
         .markdown-tr:hover {
-          background: #e3f2fd;
+          background: #30363d;
         }
 
         .markdown-hr {
           border: none;
           height: 2px;
-          background: linear-gradient(90deg, transparent, #ddd, transparent);
+          background: linear-gradient(90deg, transparent, #30363d, transparent);
           margin: 2rem 0;
         }
 
         .markdown-strong {
           font-weight: 700;
-          color: #1a1a1a;
+          color: #f0f6fc;
         }
 
         .markdown-em {
           font-style: italic;
-          color: #555;
+          color: #8b949e;
         }
 
         /* Responsive Markdown Styles */
@@ -1212,90 +1215,6 @@ export default function PostPage() {
           .markdown-th,
           .markdown-td {
             padding: 0.5rem 0.6rem;
-          }
-        }
-
-        /* Dark mode support for markdown */
-        @media (prefers-color-scheme: dark) {
-          .markdown-content {
-            color: #e1e4e8;
-          }
-
-          .markdown-h1,
-          .markdown-h2,
-          .markdown-h3,
-          .markdown-h4,
-          .markdown-h5 {
-            color: #f0f6fc;
-          }
-
-          .markdown-h6 {
-            color: #8b949e;
-          }
-
-          .markdown-h1 {
-            border-bottom-color: #30363d;
-          }
-
-          .markdown-h2 {
-            border-bottom-color: #30363d;
-          }
-
-          .markdown-paragraph,
-          .markdown-list-item {
-            color: #e1e4e8;
-          }
-
-          .markdown-blockquote {
-            background: linear-gradient(135deg, #30363d 0%, #21262d 100%);
-            color: #8b949e;
-            border-left-color: #0066cc;
-          }
-
-          .markdown-inline-code {
-            background: #30363d;
-            color: #f97583;
-            border-color: #30363d;
-          }
-
-          .markdown-pre {
-            background: #161b22;
-            border-color: #30363d;
-          }
-
-          .markdown-code-block {
-            color: #e1e4e8;
-          }
-
-          .markdown-table {
-            background: #21262d;
-          }
-
-          .markdown-th {
-            background: linear-gradient(135deg, #30363d 0%, #21262d 100%);
-            color: #f0f6fc;
-            border-bottom-color: #30363d;
-          }
-
-          .markdown-td {
-            color: #e1e4e8;
-            border-bottom-color: #30363d;
-          }
-
-          .markdown-tr:nth-child(even) {
-            background: #161b22;
-          }
-
-          .markdown-tr:hover {
-            background: #30363d;
-          }
-
-          .markdown-strong {
-            color: #f0f6fc;
-          }
-
-          .markdown-em {
-            color: #8b949e;
           }
         }
 
@@ -1496,20 +1415,20 @@ export default function PostPage() {
 
         .link-preview-card {
           margin: 16px auto; /* Changed from '16px 0' to '16px auto' for centering */
-          border: 1px solid #e1e5e9;
+          border: 1px solid #4a5568;
           border-radius: 12px;
           overflow: hidden;
-          background: #fff;
+          background: #2d3748;
           transition: all 0.3s ease;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
           width: 100%;
           max-width: 100%;
           display: block;
         }
 
         .link-preview-card:hover {
-          border-color: #0066cc;
-          box-shadow: 0 8px 25px rgba(0, 102, 204, 0.15);
+          border-color: #58a6ff;
+          box-shadow: 0 8px 25px rgba(88, 166, 255, 0.15);
           transform: translateY(-2px);
         }
 
@@ -1611,7 +1530,7 @@ export default function PostPage() {
           font-size: 18px !important;
           font-weight: 600 !important;
           margin: 0 !important;
-          color: #1a1a1a !important;
+          color: #f7fafc !important;
           line-height: 1.4 !important;
           display: -webkit-box !important;
           -webkit-line-clamp: 2 !important;
@@ -1622,7 +1541,7 @@ export default function PostPage() {
 
         .link-preview-description {
           font-size: 15px !important;
-          color: #666 !important;
+          color: #cbd5e0 !important;
           margin: 0 !important;
           line-height: 1.5 !important;
           display: -webkit-box !important;
@@ -1646,7 +1565,7 @@ export default function PostPage() {
           font-size: 13px !important;
           margin: 0 0 12px 0 !important;
           -webkit-line-clamp: 2 !important;
-          color: #666 !important;
+          color: #cbd5e0 !important;
           line-height: 1.4 !important;
         }
 
@@ -1661,7 +1580,7 @@ export default function PostPage() {
 
         .link-preview-url {
           font-size: 13px !important;
-          color: #0066cc !important;
+          color: #58a6ff !important;
           display: flex !important;
           align-items: center !important;
           gap: 6px !important;
@@ -1706,11 +1625,11 @@ export default function PostPage() {
           align-items: center;
           gap: 12px;
           padding: 16px 20px;
-          background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-          border: 1px solid #dee2e6;
+          background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+          border: 1px solid #4a5568;
           border-radius: 8px;
           font-size: 14px;
-          color: #6c757d;
+          color: #cbd5e0;
           margin: 0 auto; /* Center the loading state */
           max-width: 400px;
         }
@@ -1720,11 +1639,11 @@ export default function PostPage() {
           align-items: center;
           gap: 10px;
           padding: 12px 16px;
-          background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-          border: 1px solid #ffeaa7;
+          background: linear-gradient(135deg, #744210 0%, #975a16 100%);
+          border: 1px solid #975a16;
           border-radius: 6px;
           font-size: 13px;
-          color: #856404;
+          color: #fbd38d;
           margin: 0 auto; /* Center the error state */
           max-width: 400px;
         }
@@ -1732,8 +1651,8 @@ export default function PostPage() {
         .loading-spinner-small {
           width: 18px;
           height: 18px;
-          border: 2px solid #e1e5e9;
-          border-top: 2px solid #0066cc;
+          border: 2px solid #4a5568;
+          border-top: 2px solid #58a6ff;
           border-radius: 50%;
           animation: spin 1s linear infinite;
           flex-shrink: 0;
@@ -1786,13 +1705,13 @@ export default function PostPage() {
           position: absolute;
           left: 10px;
           top: 4px;
-          color: #0066cc;
+          color: #58a6ff;
           font-weight: bold;
           font-size: 18px;
         }
 
         .content-link {
-          color: #0066cc;
+          color: #58a6ff;
           text-decoration: none;
           border-bottom: 1px solid transparent;
           transition: all 0.2s ease;
@@ -1800,8 +1719,8 @@ export default function PostPage() {
         }
 
         .content-link:hover {
-          border-bottom-color: #0066cc;
-          background-color: rgba(0, 102, 204, 0.08);
+          border-bottom-color: #58a6ff;
+          background-color: rgba(88, 166, 255, 0.1);
           padding: 3px 6px;
           margin: -3px -6px;
           border-radius: 4px;
@@ -1978,32 +1897,30 @@ export default function PostPage() {
           }
         }
 
-        /* Dark mode support */
-        @media (prefers-color-scheme: dark) {
-          .link-preview-card {
-            background: #2d3748 !important;
-            border-color: #4a5568 !important;
-          }
+        /* Force dark mode styles for link previews */
+        .link-preview-card {
+          background: #2d3748 !important;
+          border-color: #4a5568 !important;
+        }
 
-          .link-preview-title {
-            color: #f7fafc !important;
-          }
+        .link-preview-title {
+          color: #f7fafc !important;
+        }
 
-          .link-preview-description {
-            color: #cbd5e0 !important;
-          }
+        .link-preview-description {
+          color: #cbd5e0 !important;
+        }
 
-          .link-preview-loading {
-            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
-            border-color: #4a5568 !important;
-            color: #cbd5e0 !important;
-          }
+        .link-preview-loading {
+          background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%) !important;
+          border-color: #4a5568 !important;
+          color: #cbd5e0 !important;
+        }
 
-          .link-preview-failed {
-            background: linear-gradient(135deg, #744210 0%, #975a16 100%) !important;
-            border-color: #975a16 !important;
-            color: #fbd38d !important;
-          }
+        .link-preview-failed {
+          background: linear-gradient(135deg, #744210 0%, #975a16 100%) !important;
+          border-color: #975a16 !important;
+          color: #fbd38d !important;
         }
       `}</style>
     </>
