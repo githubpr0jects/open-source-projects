@@ -74,8 +74,8 @@ export const metadata = {
   
   // Icons and theme
   icons: {
-    icon: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: '/images/open-source-projects-favicon.png',
+    apple: '/images/open-source-projects-favicon.png',
   },
   
   // Verification (replace with actual verification codes)
