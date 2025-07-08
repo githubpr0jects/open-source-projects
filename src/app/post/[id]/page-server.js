@@ -49,8 +49,7 @@ async function fetchPostDetails(id) {
 
 // Generate metadata for SEO and social sharing
 export async function generateMetadata({ params }) {
-  const resolvedParams = await params;
-  const postDetails = await fetchPostDetails(resolvedParams.id);
+  const postDetails = await fetchPostDetails(params.id);
   
   if (!postDetails || postDetails.length === 0) {
     return {
@@ -92,7 +91,7 @@ export async function generateMetadata({ params }) {
 
   // Get the current URL
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://opensourceprojects.dev';
-  const currentUrl = `${baseUrl}/post/${resolvedParams.id}`;
+  const currentUrl = `${baseUrl}/post/${params.id}`;
   
   // Ensure absolute URL for images
   const absoluteImageUrl = heroImage.startsWith('http') 
@@ -176,6 +175,9 @@ export async function generateMetadata({ params }) {
       canonical: currentUrl,
     },
     
+    // Viewport and mobile optimization
+    viewport: 'width=device-width, initial-scale=1.0',
+    
     // App specific metadata
     applicationName: 'Open-source Projects',
     generator: 'Next.js',
@@ -186,18 +188,9 @@ export async function generateMetadata({ params }) {
   };
 }
 
-// Separate viewport export as required by Next.js 15
-export async function generateViewport() {
-  return {
-    width: 'device-width',
-    initialScale: 1.0,
-  };
-}
-
 export default async function PostPage({ params }) {
-  const resolvedParams = await params;
-  const postDetails = await fetchPostDetails(resolvedParams.id);
+  const postDetails = await fetchPostDetails(params.id);
   
   // Pass the data to the client component
-  return <PostPageClient postDetails={postDetails} params={resolvedParams} />;
+  return <PostPageClient postDetails={postDetails} params={params} />;
 }
