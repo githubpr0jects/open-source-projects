@@ -108,6 +108,18 @@ body {
   color: var(--primary);
 }
 
+.brand-logo {
+  height: 32px;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+  transition: var(--transition);
+}
+
+.brand-link:hover .brand-logo {
+  transform: translateY(-1px);
+}
+
 .brand-link:hover {
   color: var(--primary);
   transform: translateY(-1px);

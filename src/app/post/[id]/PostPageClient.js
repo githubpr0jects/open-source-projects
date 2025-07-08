@@ -437,8 +437,15 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           <nav className="nav">
             <div className="nav-brand">
               <Link href="/" className="brand-link">
-                <i className="fab fa-github brand-icon"></i>
-                <span className="brand-text">Open-source Projects</span>
+                <Image 
+                  src="/images/open-source-projects-dark-mini.png"
+                  alt="Open-source Projects"
+                  width={200}
+                  height={40}
+                  className="brand-logo"
+                  priority
+                  unoptimized
+                />
               </Link>
             </div>
             <div className="nav-links">
@@ -478,8 +485,15 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           <nav className="nav">
             <div className="nav-brand">
               <Link href="/" className="brand-link">
-                <i className="fab fa-github brand-icon"></i>
-                <span className="brand-text">Open-source Projects</span>
+                <Image 
+                  src="/images/open-source-projects-dark-mini.png"
+                  alt="Open-source Projects"
+                  width={200}
+                  height={40}
+                  className="brand-logo"
+                  priority
+                  unoptimized
+                />
               </Link>
             </div>
             <div className="nav-links">
@@ -551,8 +565,15 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           <nav className="nav">
             <div className="nav-brand">
               <Link href="/" className="brand-link">
-                <i className="fab fa-github brand-icon"></i>
-                <span className="brand-text">Open-source Projects</span>
+                <Image 
+                  src="/images/open-source-projects-dark-mini.png"
+                  alt="Open-source Projects"
+                  width={200}
+                  height={40}
+                  className="brand-logo"
+                  priority
+                  unoptimized
+                />
               </Link>
             </div>
             <div className="nav-links">
@@ -625,8 +646,15 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         <nav className="nav">
           <div className="nav-brand">
             <Link href="/" className="brand-link">
-              <i className="fab fa-github brand-icon"></i>
-              <span className="brand-text">Open-source Projects</span>
+              <Image 
+                src="/images/open-source-projects-dark-mini.png"
+                alt="Open-source Projects"
+                width={200}
+                height={40}
+                className="brand-logo"
+                priority
+                unoptimized
+              />
             </Link>
           </div>
           <div className="nav-links">
@@ -947,6 +975,18 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         .brand-link:hover {
           color: #58a6ff;
           transform: translateY(-1px);
+        }
+
+        .brand-logo {
+          height: auto;
+          max-height: 40px;
+          width: auto;
+          transition: all 0.3s ease;
+        }
+
+        .brand-logo:hover {
+          transform: translateY(-1px);
+          filter: brightness(1.1);
         }
 
         .brand-icon {

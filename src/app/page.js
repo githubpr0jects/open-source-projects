@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 function HomePageContent() {
@@ -208,7 +209,46 @@ function HomePageContent() {
 
   if (loading) {
     return (
-      <div className="grain-overlay"></div>
+      <>
+        <div className="grain-overlay"></div>
+        <header className="header">
+          <nav className="nav">
+            <div className="nav-brand">
+              <Link href="/" className="brand-link">
+                <Image 
+                  src="/images/open-source-projects-dark-mini.png"
+                  alt="Open-source Projects"
+                  width={180}
+                  height={32}
+                  className="brand-logo"
+                  priority
+                  unoptimized
+                />
+              </Link>
+            </div>
+            <div className="nav-links">
+              <Link href="/" className="nav-link">
+                <i className="fas fa-home"></i>
+                <span>Home</span>
+              </Link>
+              <Link href="#" className="nav-link">
+                <i className="fas fa-star"></i>
+                <span>Featured</span>
+              </Link>
+              <Link href="#" className="nav-link">
+                <i className="fas fa-gem"></i>
+                <span>Hidden Gems</span>
+              </Link>
+            </div>
+          </nav>
+        </header>
+        <main className="main">
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Loading amazing projects...</p>
+          </div>
+        </main>
+      </>
     );
   }
 
@@ -220,8 +260,15 @@ function HomePageContent() {
           <nav className="nav">
             <div className="nav-brand">
               <Link href="/" className="brand-link">
-                <i className="fab fa-github brand-icon"></i>
-                <span className="brand-text">Open-source Projects</span>
+                <Image 
+                  src="/images/open-source-projects-dark-mini.png"
+                  alt="Open-source Projects"
+                  width={180}
+                  height={32}
+                  className="brand-logo"
+                  priority
+                  unoptimized
+                />
               </Link>
             </div>
             <div className="nav-links">
@@ -260,8 +307,15 @@ function HomePageContent() {
         <nav className="nav">
           <div className="nav-brand">
             <Link href="/" className="brand-link">
-              <i className="fab fa-github brand-icon"></i>
-              <span className="brand-text">Open-source Projects</span>
+              <Image 
+                src="/images/open-source-projects-dark-mini.png"
+                alt="Open-source Projects"
+                width={180}
+                height={32}
+                className="brand-logo"
+                priority
+                unoptimized
+              />
             </Link>
           </div>
           <div className="nav-links">
@@ -346,13 +400,15 @@ function HomePageContent() {
                 <article key={post.id} className="project-card" style={{animationDelay: `${(index % 6) * 0.1}s`}}>
                   {/* Project Image */}
                   <div className="card-image">
-                    <img 
+                    <Image 
                       src={post.github_card_image || getFallbackImage()} 
                       alt={post.content.length > 80 ? `${post.content.substring(0, 80)}...` : post.content}
+                      width={400}
+                      height={200}
                       onError={(e) => {
                         e.target.src = getFallbackImage();
                       }}
-                      loading="lazy"
+                      unoptimized
                     />
                     <div className="card-image-overlay">
                       <div className="project-tags">
