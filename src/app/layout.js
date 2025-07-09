@@ -108,6 +108,21 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* Font Awesome - Complete Kit */}
+        <link 
+          rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+          crossOrigin="anonymous"
+          referrerPolicy="no-referrer"
+        />
+        <link 
+          rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/brands.min.css"
+          integrity="sha512-9YHSK59/rjvhtDcY/b+4rdnl0V4LPDiNVId3pwBlzghVuMdioXas/3/Kl7Rl2Pg2LZMp3kOHZ8YKDhckAKeFQ2w=="
+          crossOrigin="anonymous"
+          referrerPolicy="no-referrer"
+        />
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-PM4NQK4MYG"

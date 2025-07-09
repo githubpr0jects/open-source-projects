@@ -126,9 +126,13 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       return null;
     }
 
+    // Use the final redirected URL if available, otherwise fall back to original URL
+    const finalUrl = preview.finalUrl || preview.url || url;
+    console.log('Using final URL for link:', finalUrl, 'Original:', url);
+
     return (
       <div className={`link-preview-card ${compact ? 'compact' : ''}`}>
-        <a href={url} target="_blank" rel="noopener noreferrer" className="link-preview-link">
+        <a href={finalUrl} target="_blank" rel="noopener noreferrer" className="link-preview-link">
           {preview.image && (
             <div className="link-preview-image">
               <Image 
@@ -162,7 +166,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 <div className="link-preview-url-container">
                   <span className="link-preview-url">
                     <i className="fas fa-external-link-alt"></i>
-                    {preview.hostname || new URL(preview.finalUrl || url).hostname}
+                    {preview.hostname || new URL(finalUrl).hostname}
                   </span>
                   {preview.wasRedirected && (
                     <span className="link-preview-redirected">
@@ -649,8 +653,8 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               <Image 
                 src="/images/open-source-projects-dark-mini.png"
                 alt="Open-source Projects"
-                width={200}
-                height={40}
+                width={180}
+                height={32}
                 className="brand-logo"
                 priority
                 unoptimized
@@ -778,16 +782,16 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                       rel="noopener noreferrer"
                       className="github-repo-link"
                     >
-                      <i className="fab fa-github"></i>
+                      <i class="fab fa-github"></i>
                       <span>View on GitHub</span>
-                      <i className="fas fa-external-link-alt"></i>
+                      <i className="fas fa-external-link-alt" aria-hidden="true"></i>
                     </a>
                   </div>
                 )}
               </div>
 
               {/* Repository Preview Card */}
-              {mainPost.github_repo && (
+              {/* {mainPost.github_repo && (
                 <div className="repository-preview-section">
                   <div className="repository-preview-card">
                     <div className="repository-preview-header">
@@ -811,7 +815,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                     </div>
                   </div>
                 </div>
-              )}
+              )} */}
 
               <div className="article-content">
                 {allPosts.map((post, index) => (
@@ -908,7 +912,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       </footer>
 
       <style jsx global>{`
-        /* Global styles */
+        /* Global styles - Final optimized version */
         * {
           margin: 0;
           padding: 0;
@@ -923,7 +927,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           overflow-x: hidden;
         }
 
-        /* Grain overlay */
+        /* Optimized grain overlay */
         .grain-overlay {
           position: fixed;
           top: 0;
@@ -933,10 +937,10 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           pointer-events: none;
           background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIGJhc2VGcmVxdWVuY3k9Ii45IiByZXN1bHQ9Im5vaXNlIiBudW1PY3RhdmVzPSI0Ii8+PGZlQ29sb3JNYXRyaXggaW49Im5vaXNlIiByZXN1bHQ9Im1hcCIgdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjxmZUNvbXBvbmVudFRyYW5zZmVyIGluPSJtYXAiPjxmZUZ1bmNBIHR5cGU9ImRpc2NyZXRlIiB0YWJsZVZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIC4wNSAwIDAgMCAwIDAgMCAwIC4xIDAgMCAwIDAgMCAwIDAgLjE1IDAgMCAwIDAgMCAwIDAgLjIgMCAwIDAgMCAwIDAgMCAuMjUgMCAwIDAgMCAwIDAgMCAuMyIvPjwvZmVDb21wb25lbnRUcmFuc2Zlcj48L2ZpbHRlcj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI2EpIiBvcGFjaXR5PSIwLjciLz48L3N2Zz4=');
           z-index: 1;
-          opacity: 0.03;
+          opacity: 0.025;
         }
 
-        /* Header styles */
+        /* Optimized header styles */
         .header {
           background: rgba(13, 17, 23, 0.95);
           backdrop-filter: blur(10px);
@@ -944,13 +948,13 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           position: sticky;
           top: 0;
           z-index: 1000;
-          padding: 1rem 0;
+          padding: 0.75rem 0;
         }
 
         .nav {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 0 2rem;
+          padding: 0 1.5rem;
           display: flex;
           justify-content: space-between;
           align-items: center;
@@ -964,11 +968,11 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         .brand-link {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 0.75rem;
           text-decoration: none;
           color: #f0f6fc;
           font-weight: 700;
-          font-size: 1.2rem;
+          font-size: 1.1rem;
           transition: all 0.3s ease;
         }
 
@@ -978,9 +982,10 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         }
 
         .brand-logo {
-          height: auto;
-          max-height: 40px;
+          height: 32px;
           width: auto;
+          max-width: 180px;
+          object-fit: contain;
           transition: all 0.3s ease;
         }
 
@@ -989,26 +994,22 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           filter: brightness(1.1);
         }
 
-        .brand-icon {
-          font-size: 1.5rem;
-          color: #58a6ff;
-        }
-
         .nav-links {
           display: flex;
-          gap: 2rem;
+          gap: 1.5rem;
         }
 
         .nav-link {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 0.5rem;
           text-decoration: none;
           color: #8b949e;
           font-weight: 500;
-          padding: 0.5rem 1rem;
-          border-radius: 8px;
+          padding: 0.5rem 0.75rem;
+          border-radius: 6px;
           transition: all 0.3s ease;
+          font-size: 0.9rem;
         }
 
         .nav-link:hover {
@@ -1017,10 +1018,10 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           transform: translateY(-1px);
         }
 
-        /* Main content */
+        /* Optimized main content */
         .main {
           min-height: 100vh;
-          padding: 2rem 0;
+          padding: 1.5rem 0;
           position: relative;
           z-index: 2;
         }
@@ -1028,22 +1029,22 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         .container {
           max-width: 1200px;
           margin: 0 auto;
-          padding: 0 2rem;
+          padding: 0 1.5rem;
         }
 
-        /* Breadcrumb Navigation */
+        /* Optimized breadcrumb */
         .breadcrumb {
           display: flex;
           align-items: center;
-          gap: 8px;
-          margin-bottom: 2rem;
-          font-size: 14px;
+          gap: 0.5rem;
+          margin-bottom: 1.5rem;
+          font-size: 0.85rem;
         }
 
         .breadcrumb-link {
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 0.4rem;
           color: #58a6ff;
           text-decoration: none;
           transition: color 0.2s ease;
@@ -1055,7 +1056,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
         .breadcrumb-separator {
           color: #8b949e;
-          margin: 0 4px;
+          margin: 0 0.25rem;
         }
 
         .breadcrumb-current {
@@ -1063,14 +1064,14 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           font-weight: 500;
         }
 
-        /* Project styles */
+        /* Optimized project styles */
         .project-hero {
           background: rgba(13, 17, 23, 0.8);
           backdrop-filter: blur(20px);
           border: 1px solid #30363d;
-          border-radius: 20px;
-          padding: 2rem;
-          margin-bottom: 2rem;
+          border-radius: 16px;
+          padding: 1.5rem;
+          margin-bottom: 1.5rem;
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
@@ -1078,79 +1079,79 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1.25rem;
           flex-wrap: wrap;
-          gap: 1rem;
+          gap: 0.75rem;
         }
 
         .project-badge {
           background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
           color: white;
-          padding: 8px 16px;
+          padding: 0.5rem 1rem;
           border-radius: 20px;
-          font-size: 14px;
+          font-size: 0.85rem;
           font-weight: 600;
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 0.5rem;
           box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
         }
 
         .project-date {
           color: #8b949e;
-          font-size: 14px;
+          font-size: 0.85rem;
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 0.5rem;
         }
 
         .project-title {
-          font-size: 2.5rem;
+          font-size: 2.25rem;
           font-weight: 800;
           color: #f0f6fc;
-          margin: 1rem 0;
+          margin: 0.75rem 0;
           line-height: 1.2;
         }
 
         .project-author {
           display: flex;
           align-items: center;
-          gap: 1rem;
-          margin-top: 1.5rem;
+          gap: 0.75rem;
+          margin-top: 1.25rem;
         }
 
         .author-info {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 0.75rem;
         }
 
         .author-avatar {
-          width: 48px;
-          height: 48px;
+          width: 44px;
+          height: 44px;
           background: linear-gradient(135deg, #58a6ff 0%, #0366d6 100%);
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
-          font-size: 1.2rem;
+          font-size: 1.1rem;
         }
 
         .author-details {
           display: flex;
           flex-direction: column;
-          gap: 2px;
+          gap: 0.125rem;
         }
 
         .author-name {
           font-weight: 600;
           color: #f0f6fc;
-          font-size: 1rem;
+          font-size: 0.95rem;
         }
 
         .author-label {
-          font-size: 0.875rem;
+          font-size: 0.8rem;
           color: #8b949e;
         }
 
@@ -1158,9 +1159,9 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           background: rgba(13, 17, 23, 0.6);
           backdrop-filter: blur(15px);
           border: 1px solid #30363d;
-          border-radius: 16px;
-          padding: 2rem;
-          margin-bottom: 2rem;
+          border-radius: 12px;
+          padding: 1.5rem;
+          margin-bottom: 1.5rem;
         }
 
         .project-article {
@@ -1171,32 +1172,32 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 2rem;
-          padding-bottom: 1rem;
+          margin-bottom: 1.5rem;
+          padding-bottom: 0.75rem;
           border-bottom: 1px solid #30363d;
         }
 
         .article-header h2 {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 0.75rem;
           color: #f0f6fc;
-          font-size: 1.5rem;
+          font-size: 1.4rem;
           font-weight: 700;
         }
 
         .article-meta {
           display: flex;
-          gap: 1.5rem;
+          gap: 1.25rem;
           flex-wrap: wrap;
         }
 
         .meta-item {
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 0.4rem;
           color: #8b949e;
-          font-size: 0.9rem;
+          font-size: 0.85rem;
         }
 
         .article-content {
@@ -1205,13 +1206,13 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         }
 
         .content-section {
-          margin-bottom: 2rem;
+          margin-bottom: 1.5rem;
         }
 
         .section-divider {
           height: 1px;
           background: linear-gradient(90deg, transparent, #30363d, transparent);
-          margin: 2rem 0;
+          margin: 1.5rem 0;
         }
 
         .content-heading {
@@ -1722,13 +1723,13 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           color: #8b949e;
         }
 
-        /* Hero Image Styles */
+        /* Optimized hero image */
         .hero-image-container {
           position: relative;
           width: 100%;
-          height: 300px;
-          margin-bottom: 24px;
-          border-radius: 16px;
+          height: 280px;
+          margin-bottom: 1.25rem;
+          border-radius: 12px;
           overflow: hidden;
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
         }
@@ -1760,71 +1761,80 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           pointer-events: none;
         }
 
-        /* GitHub Repository Link Styles */
-        .github-repo-section {
-          margin: 20px 0;
+        /* Optimized GitHub button */
+        .article-github-section {
+          margin: 1rem 0 0 0;
+          padding-top: 0;
         }
 
         .github-repo-link {
           display: inline-flex;
           align-items: center;
-          gap: 12px;
-          padding: 12px 20px;
-          background: linear-gradient(135deg, #333 0%, #1a1a1a 100%);
+          gap: 0.75rem;
+          padding: 0.75rem 1.25rem;
+          background: linear-gradient(135deg, #24292f 0%, #1c2128 100%);
           color: white;
           text-decoration: none;
           border-radius: 8px;
           font-weight: 600;
-          font-size: 16px;
+          font-size: 0.9rem;
           transition: all 0.3s ease;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          border: 1px solid #30363d;
         }
 
         .github-repo-link:hover {
-          background: linear-gradient(135deg, #24292e 0%, #0d1117 100%);
+          background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
           transform: translateY(-2px);
           box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
           color: white;
+          border-color: #58a6ff;
         }
 
-        .github-repo-link i:first-child {
-          font-size: 20px;
+        .github-repo-link .github-icon {
+          font-size: 1.1rem;
+          color: #fff;
+          display: inline-block;
+          width: 1.1rem;
+          text-align: center;
         }
 
         .github-repo-link i:last-child {
-          font-size: 14px;
+          font-size: 0.8rem;
+          opacity: 0.8;
+          display: inline-block;
         }
 
-        /* Project Tags Styles */
+        /* Optimized tags */
         .project-tags {
-          margin: 20px 0;
+          margin: 1rem 0;
           display: flex;
           flex-wrap: wrap;
           align-items: center;
-          gap: 12px;
+          gap: 0.75rem;
         }
 
         .tags-label {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 0.5rem;
           font-weight: 600;
-          color: #666;
-          font-size: 14px;
+          color: #8b949e;
+          font-size: 0.8rem;
         }
 
         .tags-list {
           display: flex;
           flex-wrap: wrap;
-          gap: 8px;
+          gap: 0.5rem;
         }
 
         .tag {
           background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
           color: #1565c0;
-          padding: 6px 12px;
+          padding: 0.35rem 0.75rem;
           border-radius: 16px;
-          font-size: 13px;
+          font-size: 0.75rem;
           font-weight: 500;
           border: 1px solid #90caf9;
           transition: all 0.2s ease;
@@ -2143,152 +2153,207 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           border-radius: 4px;
         }
 
-        /* Responsive Design */
+        /* Optimized footer */
+        .footer {
+          background: rgba(13, 17, 23, 0.95);
+          border-top: 1px solid #30363d;
+          padding: 2rem 0 1rem;
+          margin-top: 2rem;
+        }
+
+        .footer-content {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 1.5rem;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1.5rem;
+        }
+
+        .footer-section h3, .footer-section h4 {
+          color: #f0f6fc;
+          margin-bottom: 0.75rem;
+          font-size: 1.1rem;
+        }
+
+        .footer-section p {
+          color: #8b949e;
+          line-height: 1.6;
+          font-size: 0.9rem;
+        }
+
+        .social-links {
+          display: flex;
+          gap: 0.75rem;
+        }
+
+        .social-link {
+          width: 36px;
+          height: 36px;
+          background: rgba(48, 54, 61, 0.5);
+          border: 1px solid #30363d;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #8b949e;
+          text-decoration: none;
+          transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+          background: rgba(88, 166, 255, 0.1);
+          color: #58a6ff;
+          transform: translateY(-2px);
+        }
+
+        .footer-bottom {
+          max-width: 1200px;
+          margin: 1.5rem auto 0;
+          padding: 1rem 1.5rem 0;
+          border-top: 1px solid #30363d;
+          text-align: center;
+          color: #8b949e;
+          font-size: 0.85rem;
+        }
+
+        /* Final optimized responsive design */
         @media screen and (max-width: 768px) {
           .nav {
             padding: 0 1rem;
           }
 
           .nav-links {
-            gap: 1rem;
+            gap: 0.75rem;
           }
 
           .nav-link {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.9rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
           }
 
           .container {
             padding: 0 1rem;
           }
 
+          .main {
+            padding: 1rem 0;
+          }
+
           .project-hero {
-            padding: 1.5rem;
-            border-radius: 16px;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
           }
 
           .project-title {
-            font-size: 2rem;
+            font-size: 1.75rem;
+            margin: 0.5rem 0;
           }
 
           .project-content {
-            padding: 1.5rem;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
           }
 
           .article-header {
             flex-direction: column;
             align-items: flex-start;
-            gap: 1rem;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
           }
 
-          .article-footer {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-          }
-
-          .project-navigation {
-            flex-direction: column;
-            align-items: stretch;
-            text-align: center;
-          }
-
-          .project-info {
-            justify-content: center;
-          }
-
-          .footer-content {
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-          }
-
-          .hero-image-container {
-            height: 240px;
-            margin-bottom: 20px;
-            border-radius: 12px;
-          }
-
-          .github-repo-link {
-            padding: 10px 16px;
-            font-size: 15px;
-          }
-
-          .project-tags {
-            margin: 16px 0;
-            gap: 8px;
-          }
-
-          .tags-label {
-            font-size: 13px;
-          }
-
-          .tag {
-            padding: 4px 10px;
-            font-size: 12px;
-          }
-
-          .list-item-text,
-          .content-paragraph-with-preview .content-paragraph {
-            text-align: left;
-          }
-        }
-
-        @media screen and (max-width: 480px) {
-          .project-title {
-            font-size: 1.75rem;
+          .article-header h2 {
+            font-size: 1.2rem;
           }
 
           .hero-image-container {
             height: 200px;
-            margin-bottom: 16px;
+            margin-bottom: 1rem;
             border-radius: 8px;
           }
 
           .github-repo-link {
-            padding: 8px 14px;
-            font-size: 14px;
-            gap: 8px;
-          }
-
-          .github-repo-link i:first-child {
-            font-size: 18px;
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+            gap: 0.5rem;
           }
 
           .project-tags {
-            flex-direction: column;
-            align-items: flex-start;
-            margin: 12px 0;
+            margin: 0.75rem 0;
+            gap: 0.5rem;
           }
 
-          .tags-list {
-            width: 100%;
-            gap: 6px;
+          .footer-content {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            padding: 0 1rem;
           }
 
-          .link-preview-card.compact {
-            flex-direction: column;
-            height: auto;
+          .footer {
+            padding: 1.5rem 0 1rem;
+            margin-top: 1.5rem;
+          }
+        }
+
+        @media screen and (max-width: 480px) {
+          .container {
+            padding: 0 0.75rem;
           }
 
-          .link-preview-card.compact .link-preview-image {
-            width: 100%;
-            height: 120px;
+          .main {
+            padding: 0.75rem 0;
           }
 
-          .link-preview-card.compact .link-preview-content {
-            padding: 14px;
+          .project-hero {
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
           }
 
-          .list-item-text {
-            font-size: 15px;
+          .project-title {
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
           }
 
-          .content-list li {
-            padding-left: 24px;
-            margin-bottom: 16px;
+          .project-content {
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
           }
 
-          .list-item-with-preview {
-            margin-bottom: 18px;
+          .article-header h2 {
+            font-size: 1.1rem;
+          }
+
+          .hero-image-container {
+            height: 180px;
+            margin-bottom: 0.75rem;
+            border-radius: 6px;
+          }
+
+          .github-repo-link {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+          }
+
+          .project-tags {
+            margin: 0.5rem 0;
+            gap: 0.4rem;
+          }
+
+          .tag {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.7rem;
+          }
+
+          .footer {
+            padding: 1rem 0;
+            margin-top: 1rem;
+          }
+
+          .footer-content {
+            padding: 0 0.75rem;
           }
         }
         
@@ -2545,8 +2610,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         /* Article GitHub Section Styles */
         .article-github-section {
           margin: 16px 0 0 0;
-          padding-top: 16px;
-          border-top: 1px solid #30363d;
+          padding-top: 0;
         }
 
         .github-repo-link {
@@ -2554,7 +2618,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           align-items: center;
           gap: 12px;
           padding: 12px 20px;
-          background: linear-gradient(135deg, #333 0%, #1a1a1a 100%);
+          background: linear-gradient(135deg, #24292f 0%, #1c2128 100%);
           color: white;
           text-decoration: none;
           border-radius: 8px;
@@ -2562,21 +2626,30 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           font-size: 16px;
           transition: all 0.3s ease;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          border: 1px solid #30363d;
         }
 
         .github-repo-link:hover {
-          background: linear-gradient(135deg, #24292e 0%, #0d1117 100%);
+          background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
           transform: translateY(-2px);
           box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
           color: white;
+          border-color: #58a6ff;
         }
 
-        .github-repo-link i:first-child {
+        .github-repo-link .github-icon {
           font-size: 20px;
+          color: #fff;
+          display: inline-block;
+          width: 20px;
+          text-align: center;
+          font-weight: bold;
         }
 
         .github-repo-link i:last-child {
           font-size: 14px;
+          opacity: 0.8;
+          display: inline-block;
         }
 
         /* Repository Preview Card Styles */
