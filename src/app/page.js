@@ -439,8 +439,6 @@ function HomePageContent() {
       <Footer />
 
       <style jsx global>{`
-        /* Only add new styles for the new features, don't override existing card styles */
-        
         /* Card Image Styles */
         .card-image {
           position: relative;
