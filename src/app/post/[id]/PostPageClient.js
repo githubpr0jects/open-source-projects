@@ -771,10 +771,23 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           background: rgba(13, 17, 23, 0.95);
           backdrop-filter: blur(10px);
           border-bottom: 1px solid #30363d;
-          position: sticky;
+          position: fixed;
           top: 0;
+          left: 0;
+          right: 0;
           z-index: 1000;
           padding: 0.75rem 0;
+          width: 100%;
+          transition: all 0.3s ease;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          animation: slideDown 0.3s ease-out;
+        }
+
+        /* Enhanced fixed header effect */
+        .header.scrolled {
+          background: rgba(13, 17, 23, 0.98);
+          backdrop-filter: blur(15px);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
 
         .nav {
@@ -847,7 +860,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         /* Optimized main content */
         .main {
           min-height: 100vh;
-          padding: 1.5rem 0;
+          padding: calc(80px + 1.5rem) 0 1.5rem 0; /* Add fixed header height + original padding */
           position: relative;
           z-index: 2;
         }
@@ -2081,7 +2094,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           }
 
           .main {
-            padding: 1rem 0;
+            padding: calc(70px + 1rem) 0 1rem 0; /* Adjust for mobile header height */
           }
 
           .project-hero {
@@ -2159,7 +2172,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           }
 
           .main {
-            padding: 0.75rem 0;
+            padding: calc(60px + 0.75rem) 0 0.75rem 0; /* Adjust for smaller mobile header */
           }
 
           .project-hero {
