@@ -6,6 +6,7 @@ import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import BookmarkButton from '../../components/BookmarkButton';
 
 const fallbackImage = '/images/open-source-logo-830x460.jpg';
 
@@ -562,7 +563,12 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               </time>
             </div>
             
-            <h1 className="project-title">{getProjectTitle(mainPost.content)}</h1>
+            <div className="project-header">
+              <h1 className="project-title">{getProjectTitle(mainPost.content)}</h1>
+              <div className="project-actions">
+                <BookmarkButton post={mainPost} size="large" />
+              </div>
+            </div>
             
             {/* Tags */}
             {extractTags(mainPost.content).length > 0 && (

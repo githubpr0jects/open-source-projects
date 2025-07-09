@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import BookmarkButton from './components/BookmarkButton';
 
 function HomePageContent() {
   const [posts, setPosts] = useState([]);
@@ -264,7 +265,7 @@ function HomePageContent() {
           <div className="hero-content">
             <h1 className="hero-title">
               Discover Amazing
-              <span className="gradient-text">Open-source Projects</span>
+              <span className="gradient-text">&nbsp;Open-source Projects</span>
             </h1>
             <p className="hero-description">
               Curating the best open-source projects, hidden gems, and innovative tools that are shaping the future of development.
@@ -349,6 +350,9 @@ function HomePageContent() {
                             <span>{tag.label}</span>
                           </span>
                         ))}
+                      </div>
+                      <div className="bookmark-container">
+                        <BookmarkButton post={post} size="normal" />
                       </div>
                     </div>
                   </div>
@@ -483,6 +487,12 @@ function HomePageContent() {
           gap: 8px;
           flex-wrap: wrap;
           align-self: flex-start;
+        }
+
+        .bookmark-container {
+          align-self: flex-end;
+          display: flex;
+          justify-content: flex-end;
         }
 
         .project-tag {

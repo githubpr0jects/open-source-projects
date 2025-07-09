@@ -2018,3 +2018,47 @@ button:focus {
     font-size: 0.8rem;
   }
 }
+
+/* Bookmark Feature Styles */
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.project-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.bookmark-container {
+  position: relative;
+  z-index: 10;
+}
+
+/* Responsive adjustments for project header */
+@media (max-width: 768px) {
+  .project-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .project-actions {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .project-header {
+    gap: 0.75rem;
+  }
+  
+  .project-actions {
+    align-self: stretch;
+    justify-content: flex-end;
+  }
+}

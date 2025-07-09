@@ -23,6 +23,10 @@ export default function Header({ currentPage = 'home' }) {
             <i className="fas fa-home"></i>
             <span>Home</span>
           </Link>
+          <Link href="/bookmarks" className={`nav-link ${currentPage === 'bookmarks' ? 'active' : ''}`}>
+            <i className="fas fa-bookmark"></i>
+            <span>Bookmarks</span>
+          </Link>
           <Link href="#" className="nav-link">
             <i className="fas fa-star"></i>
             <span>Featured</span>
