@@ -68,8 +68,12 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
 
   // Function to extract project title from content
   const getProjectTitle = (content) => {
-    const firstLine = content.split('\\n')[0];
-    return firstLine.length > 80 ? firstLine.substring(0, 80) + '...' : firstLine || 'Open Source Project';
+    // Handle both escaped and unescaped newlines
+    const firstLine = content.split(/\\n|\n/)[0];
+    // Remove URLs from the title
+    const titleWithoutUrls = firstLine.replace(/https?:\/\/[^\s]+/g, '').trim();
+    const cleanTitle = titleWithoutUrls || 'Open Source Project';
+    return cleanTitle.length > 80 ? cleanTitle.substring(0, 80) + '...' : cleanTitle;
   };
 
   // Function to format date

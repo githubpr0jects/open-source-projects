@@ -8,7 +8,10 @@ const getHeroImage = (post) => {
 
 const getProjectTitle = (content) => {
   const firstLine = content.split('\n')[0];
-  return firstLine.length > 80 ? firstLine.substring(0, 80) + '...' : firstLine || 'Open Source Project';
+  // Remove URLs from the title
+  const titleWithoutUrls = firstLine.replace(/https?:\/\/[^\s]+/g, '').trim();
+  const cleanTitle = titleWithoutUrls || 'Open Source Project';
+  return cleanTitle.length > 80 ? cleanTitle.substring(0, 80) + '...' : cleanTitle;
 };
 
 const extractTags = (content) => {

@@ -53,6 +53,16 @@ function HomePageContent() {
     return '/images/open-source-logo-830x460.jpg';
   };
 
+  // Function to get clean project title without URLs
+  const getProjectTitle = (content) => {
+    // Handle both escaped and unescaped newlines
+    const firstLine = content.split(/\\n|\n/)[0];
+    // Remove URLs from the title
+    const titleWithoutUrls = firstLine.replace(/https?:\/\/[^\s]+/g, '').trim();
+    const cleanTitle = titleWithoutUrls || 'Open Source Project';
+    return cleanTitle.length > 80 ? cleanTitle.substring(0, 80) + '...' : cleanTitle;
+  };
+
   // Function to extract repository name from GitHub URL
   const getRepoName = (githubUrl) => {
     if (!githubUrl) return null;
@@ -402,7 +412,7 @@ function HomePageContent() {
                   <div className="card-image">
                     <Image 
                       src={post.github_card_image || getFallbackImage()} 
-                      alt={post.content.length > 80 ? `${post.content.substring(0, 80)}...` : post.content}
+                      alt={getProjectTitle(post.content)}
                       width={400}
                       height={200}
                       onError={(e) => {
@@ -445,13 +455,11 @@ function HomePageContent() {
                   <div className="card-content">
                     <h3 className="card-title">
                       <Link href={`/post/${post.conversation_id}`}>
-                        {post.content.length > 80 
-                          ? `${post.content.substring(0, 80)}...` 
-                          : post.content}
+                        {getProjectTitle(post.content)}
                       </Link>
                     </h3>
                     <p className="card-excerpt">
-                      By @{post.username} • {post.content}
+                      By @{post.username} • {getProjectTitle(post.content)}
                     </p>
                     
                     {/* Repository Information */}

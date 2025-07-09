@@ -19,7 +19,10 @@ const getSourceLabel = (post) => {
 
 const getProjectTitle = (content) => {
   const firstLine = content.split('\n')[0];
-  return firstLine.length > 80 ? firstLine.substring(0, 80) + '...' : firstLine || 'Open Source Project';
+  // Remove URLs from the title
+  const titleWithoutUrls = firstLine.replace(/https?:\/\/[^\s]+/g, '').trim();
+  const cleanTitle = titleWithoutUrls || 'Open Source Project';
+  return cleanTitle.length > 80 ? cleanTitle.substring(0, 80) + '...' : cleanTitle;
 };
 
 const extractTags = (content) => {
@@ -627,31 +630,33 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           <div className="project-content">
             <article className="project-article">
               <div className="article-header">
-                <h2>
-                  <i className="fas fa-file-alt"></i>
-                  Project Description
-                </h2>
-                <div className="article-meta">
-                  <span className="meta-item">
-                    <i className="fas fa-comments"></i>
-                    {postDetails.length} {postDetails.length === 1 ? 'Post' : 'Posts'}
-                  </span>
-                  <span className="meta-item">
-                    <i className="fas fa-hashtag"></i>
-                    ID: {params.id}
-                  </span>
+                <div className="article-header-left">
+                  <h2>
+                    <i className="fas fa-file-alt"></i>
+                    Project Description
+                  </h2>
+                  <div className="article-meta">
+                    <span className="meta-item">
+                      <i className="fas fa-comments"></i>
+                      {postDetails.length} {postDetails.length === 1 ? 'Post' : 'Posts'}
+                    </span>
+                    <span className="meta-item">
+                      <i className="fas fa-hashtag"></i>
+                      ID: {params.id}
+                    </span>
+                  </div>
                 </div>
                 
                 {/* GitHub Repository Link in Article Header */}
                 {mainPost.github_repo && (
-                  <div className="article-github-section">
+                  <div className="article-header-right">
                     <a 
                       href={mainPost.github_repo} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="github-repo-link"
                     >
-                      <i class="fab fa-github"></i>
+                      <i className="fab fa-github"></i>
                       <span>View on GitHub</span>
                       <i className="fas fa-external-link-alt" aria-hidden="true"></i>
                     </a>
@@ -1020,6 +1025,17 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           margin-bottom: 1.5rem;
           padding-bottom: 0.75rem;
           border-bottom: 1px solid #30363d;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+
+        .article-header-left {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .article-header-right {
+          flex-shrink: 0;
         }
 
         .article-header h2 {
@@ -1029,6 +1045,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           color: #f0f6fc;
           font-size: 1.4rem;
           font-weight: 700;
+          margin-bottom: 0.5rem;
         }
 
         .article-meta {
@@ -2116,8 +2133,18 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
             padding-bottom: 0.5rem;
           }
 
+          .article-header-left {
+            width: 100%;
+          }
+
+          .article-header-right {
+            width: 100%;
+            align-self: flex-start;
+          }
+
           .article-header h2 {
             font-size: 1.2rem;
+            margin-bottom: 0.5rem;
           }
 
           .hero-image-container {
