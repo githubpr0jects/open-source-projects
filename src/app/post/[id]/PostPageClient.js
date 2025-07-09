@@ -188,10 +188,10 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     const [preview, setPreview] = useState(null);
     const [isLoadingPreview, setIsLoadingPreview] = useState(false);
     
-    // Extract URLs from the text
+    // Extract URLs from the text - include t.co for previews
     const urlRegex = /(https?:\/\/[^\s\)\,]+)/g;
     const urls = text.match(urlRegex) || [];
-    const mainUrl = urls[0]; // Use the first URL found
+    const mainUrl = urls[0]; // Use the first URL found (including t.co for previews)
 
     console.log('List item text:', text);
     console.log('Found URLs:', urls);
@@ -251,6 +251,11 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     
     return text.split(urlRegex).map((part, index) => {
       if (urlRegex.test(part)) {
+        // Skip t.co links - don't display them
+        if (part.includes('t.co/')) {
+          return '';
+        }
+        
         return (
           <a 
             key={index} 
@@ -324,10 +329,10 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     const [preview, setPreview] = useState(null);
     const [isLoadingPreview, setIsLoadingPreview] = useState(false);
     
-    // Extract URLs from the text
+    // Extract URLs from the text - include t.co for previews
     const urlRegex = /(https?:\/\/[^\s\)\,]+)/g;
     const urls = text.match(urlRegex) || [];
-    const mainUrl = urls[0]; // Use the first URL found
+    const mainUrl = urls[0]; // Use the first URL found (including t.co for previews)
 
     useEffect(() => {
       if (mainUrl && !linkPreviews[mainUrl] && linkPreviews[mainUrl] !== null) {
