@@ -4,6 +4,8 @@ import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 export default function HomePageClient({ initialData, currentPage = 1 }) {
   const [posts, setPosts] = useState(initialData?.threads || []);
@@ -90,37 +92,7 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
     return (
       <>
         <div className="grain-overlay"></div>
-        <header className="header">
-          <nav className="nav">
-            <div className="nav-brand">
-              <Link href="/" className="brand-link">
-                <Image 
-                  src="/images/open-source-projects-dark-mini.png"
-                  alt="Open-source Projects"
-                  width={200}
-                  height={40}
-                  className="brand-logo"
-                  priority
-                  unoptimized
-                />
-              </Link>
-            </div>
-            <div className="nav-links">
-              <Link href="/" className="nav-link active">
-                <i className="fas fa-home"></i>
-                <span>Home</span>
-              </Link>
-              <Link href="#" className="nav-link">
-                <i className="fas fa-star"></i>
-                <span>Featured</span>
-              </Link>
-              <Link href="#" className="nav-link">
-                <i className="fas fa-gem"></i>
-                <span>Hidden Gems</span>
-              </Link>
-            </div>
-          </nav>
-        </header>
+        <Header currentPage="home" />
         <main className="main">
           <div className="container">
             <div className="loading-state">
@@ -138,37 +110,7 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
     return (
       <>
         <div className="grain-overlay"></div>
-        <header className="header">
-          <nav className="nav">
-            <div className="nav-brand">
-              <Link href="/" className="brand-link">
-                <Image 
-                  src="/images/open-source-projects-dark-mini.png"
-                  alt="Open-source Projects"
-                  width={200}
-                  height={40}
-                  className="brand-logo"
-                  priority
-                  unoptimized
-                />
-              </Link>
-            </div>
-            <div className="nav-links">
-              <Link href="/" className="nav-link active">
-                <i className="fas fa-home"></i>
-                <span>Home</span>
-              </Link>
-              <Link href="#" className="nav-link">
-                <i className="fas fa-star"></i>
-                <span>Featured</span>
-              </Link>
-              <Link href="#" className="nav-link">
-                <i className="fas fa-gem"></i>
-                <span>Hidden Gems</span>
-              </Link>
-            </div>
-          </nav>
-        </header>
+        <Header currentPage="home" />
         <main className="main">
           <div className="container">
             <div className="error-state">
@@ -196,37 +138,7 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
     <>
       <div className="grain-overlay"></div>
       
-      <header className="header">
-        <nav className="nav">
-          <div className="nav-brand">
-            <Link href="/" className="brand-link">
-              <Image 
-                src="/images/open-source-projects-dark-mini.png"
-                alt="Open-source Projects"
-                width={200}
-                height={40}
-                className="brand-logo"
-                priority
-                unoptimized
-              />
-            </Link>
-          </div>
-          <div className="nav-links">
-            <Link href="/" className="nav-link active">
-              <i className="fas fa-home"></i>
-              <span>Home</span>
-            </Link>
-            <Link href="#" className="nav-link">
-              <i className="fas fa-star"></i>
-              <span>Featured</span>
-            </Link>
-            <Link href="#" className="nav-link">
-              <i className="fas fa-gem"></i>
-              <span>Hidden Gems</span>
-            </Link>
-          </div>
-        </nav>
-      </header>
+      <Header currentPage="home" />
 
       <main className="main">
         <div className="container">
@@ -356,31 +268,7 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
         </div>
       </main>
 
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-section">
-            <h3>Open-source Projects</h3>
-            <p>Discovering and showcasing the best open-source projects and hidden gems in the developer community.</p>
-          </div>
-          <div className="footer-section">
-            <h4>Connect</h4>
-            <div className="social-links">
-              <a href="#" className="social-link">
-                <i className="fab fa-github"></i>
-              </a>
-              <a href="#" className="social-link">
-                <i className="fab fa-twitter"></i>
-              </a>
-              <a href="#" className="social-link">
-                <i className="fab fa-discord"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="footer-bottom">
-          <p>© 2024 Open-source Projects. Built with <i className="fas fa-heart"></i> for the community.</p>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Add the same styles as before */}
       <style jsx global>{`
