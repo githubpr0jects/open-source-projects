@@ -224,7 +224,7 @@ function HomePageContent() {
     return (
       <>
         <div className="grain-overlay"></div>
-        <Header />
+        <Header currentPage="home" />
         <main className="main">
           <div className="loading-container">
             <div className="loading-spinner"></div>
@@ -240,7 +240,7 @@ function HomePageContent() {
     return (
       <>
         <div className="grain-overlay"></div>
-        <Header />
+        <Header currentPage="home" />
         <main className="main">
           <div className="error-container">
             <h1>Error loading posts: {error}</h1>
@@ -258,7 +258,7 @@ function HomePageContent() {
     <>
       <div className="grain-overlay"></div>
       
-      <Header />
+      <Header currentPage="home" />
 
       <main className="main">
         <section className="hero">
