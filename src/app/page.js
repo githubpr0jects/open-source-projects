@@ -601,6 +601,13 @@ function HomePageContent() {
             font-size: 13px;
             padding: 5px 10px;
           }
+
+          /* Ensure no horizontal overflow */
+          .repo-info, .card-content, .card-footer {
+            width: 100%;
+            max-width: 100%;
+            overflow-wrap: break-word;
+          }
         }
 
         @media screen and (max-width: 480px) {
@@ -615,6 +622,32 @@ function HomePageContent() {
 
           .project-tag i {
             font-size: 8px;
+          }
+
+          /* Additional mobile fixes */
+          .card-image-overlay {
+            padding: 8px;
+          }
+
+          .repo-link {
+            font-size: 12px;
+            padding: 4px 8px;
+            gap: 6px;
+          }
+
+          .project-tags {
+            gap: 4px;
+          }
+
+          .additional-tags {
+            gap: 4px;
+          }
+
+          /* Ensure text doesn't overflow */
+          .card-title, .card-excerpt {
+            word-break: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
           }
         }
       `}</style>
