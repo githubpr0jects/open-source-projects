@@ -9,20 +9,26 @@ export default function Footer() {
         <div className="footer-section">
           <h4>Connect</h4>
           <div className="social-links">
-            <a href="#" className="social-link">
+            <a href="https://github.com/githubprojects" target="_blank" rel="noopener noreferrer" className="social-link">
               <i className="fab fa-github"></i>
             </a>
-            <a href="#" className="social-link">
+            <a href="https://twitter.com/githubprojects" target="_blank" rel="noopener noreferrer" className="social-link">
               <i className="fab fa-twitter"></i>
             </a>
-            <a href="#" className="social-link">
-              <i className="fab fa-discord"></i>
+            <a href="https://instagram.com/githubprojects" target="_blank" rel="noopener noreferrer" className="social-link">
+              <i className="fab fa-instagram"></i>
+            </a>
+            <a href="https://threads.net/@githubprojects" target="_blank" rel="noopener noreferrer" className="social-link">
+              <i className="fab fa-meta"></i>
+            </a>
+            <a href="https://bsky.app/profile/githubprojects.bsky.social" target="_blank" rel="noopener noreferrer" className="social-link">
+              <i className="fas fa-cloud"></i>
             </a>
           </div>
         </div>
       </div>
       <div className="footer-bottom">
-        <p>© 2024 Open-source Projects. Built with <i className="fas fa-heart"></i> for the community.</p>
+        <p>© 2025 Open-source Projects. Built with <i className="fas fa-heart"></i> for the community.</p>
       </div>
     </footer>
   );

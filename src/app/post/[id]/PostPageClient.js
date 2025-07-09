@@ -447,37 +447,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     return (
       <>
         <div className="grain-overlay"></div>
-        <header className="header">
-          <nav className="nav">
-            <div className="nav-brand">
-              <Link href="/" className="brand-link">
-                <Image 
-                  src="/images/open-source-projects-dark-mini.png"
-                  alt="Open-source Projects"
-                  width={200}
-                  height={40}
-                  className="brand-logo"
-                  priority
-                  unoptimized
-                />
-              </Link>
-            </div>
-            <div className="nav-links">
-              <Link href="/" className="nav-link">
-                <i className="fas fa-home"></i>
-                <span>Home</span>
-              </Link>
-              <Link href="#" className="nav-link">
-                <i className="fas fa-star"></i>
-                <span>Featured</span>
-              </Link>
-              <Link href="#" className="nav-link">
-                <i className="fas fa-gem"></i>
-                <span>Hidden Gems</span>
-              </Link>
-            </div>
-          </nav>
-        </header>
+        <Header currentPage="post" />
         <main className="main">
           <div className="container">
             <div className="loading-state">
