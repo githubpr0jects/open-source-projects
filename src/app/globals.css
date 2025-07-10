@@ -1091,6 +1091,46 @@ html {
   .section-description {
     font-size: 1rem;
   }
+
+  /* Footer mobile responsiveness */
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding: 2rem var(--container-padding) 1.5rem;
+    text-align: center;
+  }
+
+  .footer-section {
+    width: 100%;
+  }
+
+  .footer-section h3 {
+    font-size: 1.125rem;
+  }
+
+  .footer-section h4 {
+    font-size: 0.95rem;
+  }
+
+  .footer-section p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .social-links {
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .social-link {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .footer-bottom {
+    padding: 1rem var(--container-padding);
+    font-size: 0.85rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1136,6 +1176,22 @@ html {
   .projects-grid {
     gap: 1rem;
     padding: 0 0.5rem;
+  }
+
+  /* Footer adjustments for small screens */
+  .footer-content {
+    padding: 1.5rem var(--container-padding) 1rem;
+    gap: 1.5rem;
+  }
+
+  .social-links {
+    gap: 0.5rem;
+  }
+
+  .social-link {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.9rem;
   }
 }
 
