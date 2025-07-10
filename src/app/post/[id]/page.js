@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from 'next/cache';
 import PostPageClient from './PostPageClient';
 
 const fallbackImage = '/images/open-source-logo-830x460.jpg';
@@ -34,8 +35,11 @@ const cleanContentForDescription = (content) => {
 // Server-side function to fetch post details
 async function fetchPostDetails(id) {
   try {
+    // Always fetch fresh data first to check for markdown_content
+    noStore(); // Ensure this function doesn't get cached
+    
     const response = await fetch(`https://twitter-api.opensourceprojects.dev/threads/${id}`, {
-      next: { revalidate: 0 } // No cache by default - we'll handle caching conditionally
+      cache: 'no-store' // Always get fresh data
     });
     
     if (!response.ok) {
@@ -44,22 +48,23 @@ async function fetchPostDetails(id) {
     
     const data = await response.json();
     
-    // Check if the response contains markdown_content
-    const hasMarkdownContent = data && Array.isArray(data) && data.some(post => post.markdown_content);
+    // Check if the response contains meaningful markdown_content
+    const hasMarkdownContent = data && Array.isArray(data) && data.some(post => 
+      post.markdown_content && 
+      post.markdown_content.trim() !== '' &&
+      post.markdown_content.length > 50 // Ensure it's substantial content
+    );
     
     if (hasMarkdownContent) {
-      // If markdown_content is present, make a new cached request
-      const cachedResponse = await fetch(`https://twitter-api.opensourceprojects.dev/threads/${id}`, {
-        next: { revalidate: 3600 } // Cache for 1 hour when markdown_content is present
-      });
-      
-      if (cachedResponse.ok) {
-        return await cachedResponse.json();
-      }
+      console.log(`✅ Markdown content found for post ${id} - content will be cached`);
+      // For posts with markdown_content, we can cache the result
+      // But we already have fresh data, so return it
+      return data;
+    } else {
+      console.log(`❌ No substantial markdown content for post ${id} - serving fresh uncached data`);
+      // For posts without markdown_content, always serve fresh data
+      return data;
     }
-    
-    // Return uncached data if no markdown_content or if cached request fails
-    return data;
   } catch (error) {
     console.error('Error fetching post details:', error);
     return null;
@@ -68,6 +73,7 @@ async function fetchPostDetails(id) {
 
 // Generate metadata for SEO and social sharing
 export async function generateMetadata({ params }) {
+  noStore(); // Ensure metadata generation is not cached
   const resolvedParams = await params;
   const postDetails = await fetchPostDetails(resolvedParams.id);
   
@@ -214,6 +220,7 @@ export async function generateViewport() {
 }
 
 export default async function PostPage({ params }) {
+  noStore(); // Ensure the page is not cached at the component level
   const resolvedParams = await params;
   const postDetails = await fetchPostDetails(resolvedParams.id);
   
