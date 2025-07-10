@@ -74,8 +74,15 @@ export const metadata = {
   
   // Icons and theme
   icons: {
-    icon: '/images/open-source-projects-favicon.png',
-    apple: '/images/open-source-projects-favicon.png',
+    icon: [
+      { url: '/images/open-source-projects-favicon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/images/open-source-projects-favicon.png', sizes: '16x16', type: 'image/png' },
+      { url: '/images/open-source-projects-favicon.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/images/open-source-projects-favicon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: '/images/open-source-projects-favicon.png',
   },
   
   // Verification (replace with actual verification codes)

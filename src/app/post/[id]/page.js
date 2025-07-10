@@ -35,7 +35,7 @@ const cleanContentForDescription = (content) => {
 async function fetchPostDetails(id) {
   try {
     const response = await fetch(`https://twitter-api.opensourceprojects.dev/threads/${id}`, {
-      next: { revalidate: 3600 } // Revalidate every hour
+      next: { revalidate: 0 } // No cache by default - we'll handle caching conditionally
     });
     
     if (!response.ok) {
@@ -43,6 +43,22 @@ async function fetchPostDetails(id) {
     }
     
     const data = await response.json();
+    
+    // Check if the response contains markdown_content
+    const hasMarkdownContent = data && Array.isArray(data) && data.some(post => post.markdown_content);
+    
+    if (hasMarkdownContent) {
+      // If markdown_content is present, make a new cached request
+      const cachedResponse = await fetch(`https://twitter-api.opensourceprojects.dev/threads/${id}`, {
+        next: { revalidate: 3600 } // Cache for 1 hour when markdown_content is present
+      });
+      
+      if (cachedResponse.ok) {
+        return await cachedResponse.json();
+      }
+    }
+    
+    // Return uncached data if no markdown_content or if cached request fails
     return data;
   } catch (error) {
     console.error('Error fetching post details:', error);
