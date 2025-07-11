@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import NewsletterForm from '../../components/NewsletterForm';
 
 const fallbackImage = '/images/open-source-logo-830x460.jpg';
 
@@ -569,6 +570,10 @@ export default function PostPage() {
               <i className="fas fa-home"></i>
               <span>Home</span>
             </Link>
+            <Link href="/newsletter" className="nav-link">
+              <i className="fas fa-envelope"></i>
+              <span>Newsletter</span>
+            </Link>
             <Link href="#" className="nav-link">
               <i className="fas fa-star"></i>
               <span>Featured</span>
@@ -699,8 +704,10 @@ export default function PostPage() {
                   </div>
                 ))}
               </div>
-
               <div className="article-footer">
+                <div className="newsletter-section-container">
+                  <NewsletterForm />
+                </div>
                 <div className="contributors">
                   <h3>
                     <i className="fas fa-users"></i>
@@ -784,6 +791,14 @@ export default function PostPage() {
       </footer>
 
       <style jsx global>{`
+        .newsletter-section-container {
+          margin-top: 4rem;
+          padding: 3rem;
+          background: var(--bg-secondary);
+          border-radius: 1rem;
+          border: 1px solid var(--border);
+        }
+
         /* Hero Image Styles */
         .hero-image-container {
           position: relative;

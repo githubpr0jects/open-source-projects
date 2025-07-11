@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
+import dynamic from 'next/dynamic';
+// Dynamically import NewsletterForm to avoid SSR issues with useState
+const NewsletterForm = dynamic(() => import('./components/NewsletterForm'), { ssr: false });
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -269,6 +272,10 @@ function HomePageContent() {
               <i className="fas fa-home"></i>
               <span>Home</span>
             </Link>
+            <Link href="/newsletter" className="nav-link">
+              <i className="fas fa-envelope"></i>
+              <span>Newsletter</span>
+            </Link>
             <Link href="#" className="nav-link">
               <i className="fas fa-star"></i>
               <span>Featured</span>
@@ -305,6 +312,21 @@ function HomePageContent() {
                 <span className="stat-label">Open Source</span>
               </div>
             </div>
+            {/* Newsletter Form Section */}
+            <section className="newsletter-section" style={{ display: 'flex', justifyContent: 'center', margin: '2rem 0' }}>
+              <div style={{ maxWidth: 400, width: '100%' }}>
+                <NewsletterForm
+                  onSubmit={async (email) => {
+                    // TODO: Replace with your newsletter API integration
+                    await new Promise((resolve) => setTimeout(resolve, 1000));
+                    // throw new Error('Demo error'); // Uncomment to test error state
+                  }}
+                  placeholder="Your email address"
+                  buttonText="Join Newsletter"
+                  successMessage="You're subscribed! 🎉"
+                />
+              </div>
+            </section>
           </div>
           <div className="hero-visual">
             <div className="code-window">
