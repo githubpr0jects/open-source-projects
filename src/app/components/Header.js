@@ -50,6 +50,10 @@ export default function Header({ currentPage = 'home' }) {
             <i className="fas fa-gem"></i>
             <span>Hidden Gems</span>
           </Link>
+          <Link href="/newsletter" className={`nav-link ${currentPage === 'newsletter' ? 'active' : ''}`}>
+            <i className="fas fa-envelope"></i>
+            <span>Newsletter</span>
+          </Link>
         </div>
       </nav>
     </header>
