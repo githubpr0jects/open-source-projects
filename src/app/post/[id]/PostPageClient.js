@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import BookmarkButton from '../../components/BookmarkButton';
+import NewsletterForm from '../../components/NewsletterForm';
 
 const fallbackImage = '/images/open-source-logo-830x460.jpg';
 
@@ -646,6 +647,24 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 {allPosts.map((post, index) => (
                   <div key={post.id} className="content-section">
                     {index > 0 && <div className="section-divider"></div>}
+                    
+                    {/* Newsletter signup before second post */}
+                    {index === 1 && (
+                      <div className="newsletter-inline-section">
+                        <div className="newsletter-inline-box">
+                          <div className="newsletter-inline-content">
+                            <span className="newsletter-inline-icon">📧</span>
+                            <div className="newsletter-inline-text">
+                              <strong>Did you like this read?</strong> Join our newsletter and you will get weekly top stories like this delivered to your inbox. No spam etc.
+                            </div>
+                          </div>
+                          <div className="newsletter-inline-form">
+                            <NewsletterForm compact={true} />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    
                     <div className="section-content">
                       {renderPostContent(post)}
                     </div>
