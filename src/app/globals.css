@@ -1959,7 +1959,7 @@ html {
 .rss-info-container {
   min-height: calc(100vh - 200px); /* Account for header and footer */
   padding: 2rem 1rem;
-  padding-top: 120px; /* Account for fixed header + extra space */
+  padding-top: 140px; /* Account for fixed header + extra space */
   background: var(--bg-primary); /* Use consistent site background */
   position: relative;
 }
@@ -2249,6 +2249,10 @@ html {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  .rss-info-container {
+    padding-top: 110px; /* Adjust for mobile header */
+  }
+  
   .rss-info-header h1 {
     font-size: 2.5rem;
   }
@@ -2282,6 +2286,7 @@ html {
 @media (max-width: 480px) {
   .rss-info-container {
     padding: 1rem 0.5rem;
+    padding-top: 100px; /* Adjust for smaller mobile header */
   }
   
   .rss-info-header h1 {
@@ -2295,5 +2300,11 @@ html {
   
   .method-card {
     padding: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .rss-info-container {
+    padding-top: 95px; /* Even smaller for tiny screens */
   }
 }
