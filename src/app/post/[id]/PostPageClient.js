@@ -641,31 +641,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               </div>
 
               {/* Repository Preview Card */}
-              {/* {mainPost.github_repo && (
-                <div className="repository-preview-section">
-                  <div className="repository-preview-card">
-                    <div className="repository-preview-header">
-                      <i className="fab fa-github"></i>
-                      <span>Repository</span>
-                    </div>
-                    <div className="repository-preview-content">
-                      <div className="repository-url">
-                        <a 
-                          href={mainPost.github_repo} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="repository-link"
-                        >
-                          {mainPost.github_repo.replace('https://github.com/', '')}
-                        </a>
-                      </div>
-                      <div className="repository-description">
-                        Official repository for this project
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )} */}
 
               <div className="article-content">
                 {allPosts.map((post, index) => (

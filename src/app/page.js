@@ -7,6 +7,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import BookmarkButton from './components/BookmarkButton';
+import NewsletterForm from './components/NewsletterForm';
 
 function HomePageContent() {
   const [posts, setPosts] = useState([]);
@@ -280,11 +281,14 @@ function HomePageContent() {
                 <span className="stat-label">Possibilities</span>
               </div>
               <div className="stat">
-                <span className="stat-number">100%</span>
-                <span className="stat-label">Open Source</span>
+                  <span className="stat-number">100%</span>
+                  <span className="stat-label">Open Source</span>
+                </div>
+              </div>
+              <div className="newsletter-container">
+                <NewsletterForm />
               </div>
             </div>
-          </div>
           <div className="hero-visual">
             <div className="code-window">
               <div className="window-header">
@@ -439,6 +443,10 @@ function HomePageContent() {
       <Footer />
 
       <style jsx global>{`
+        .newsletter-container {
+          margin-top: 2.5rem;
+        }
+
         /* Card Image Styles */
         .card-image {
           position: relative;
