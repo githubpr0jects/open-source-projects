@@ -10,20 +10,22 @@ export default function NewsletterPage() {
     <>
       <div className="grain-overlay"></div>
       <Header currentPage="newsletter" />
-      <main className={styles.main}>
-        <section className={styles['projects-section']}> {/* Reusing a section style for padding/width */}
-          <div className={styles['section-header']}>
-            <h1 className={styles['section-title']}>Join Our Newsletter</h1>
-            <p className={styles['section-description']}>
-              Stay updated with the latest open-source projects, news, and insights.
-            </p>
-          </div>
-          <div className={styles['newsletter-container']}>
-            <div style={{ maxWidth: '500px', margin: '0 auto' }}>
-              <NewsletterForm />
+      <main className="main newsletter-main">
+        <div className="container">
+          <section className="newsletter-section">
+            <div className="section-header">
+              <h1 className="section-title">Join Our Newsletter</h1>
+              <p className="section-description">
+                Stay updated with the latest open-source projects, news, and insights.
+              </p>
             </div>
-          </div>
-        </section>
+            <div className="newsletter-container">
+              <div style={{ maxWidth: '500px', margin: '0 auto' }}>
+                <NewsletterForm />
+              </div>
+            </div>
+          </section>
+        </div>
       </main>
       <Footer />
     </>
