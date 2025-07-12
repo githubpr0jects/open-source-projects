@@ -54,6 +54,10 @@ export default function Header({ currentPage = 'home' }) {
             <i className="fas fa-envelope"></i>
             <span>Newsletter</span>
           </Link>
+          <Link href="/rss-info" className={`nav-link ${currentPage === 'rss-info' ? 'active' : ''}`}>
+            <i className="fas fa-rss"></i>
+            <span>RSS</span>
+          </Link>
         </div>
       </nav>
     </header>

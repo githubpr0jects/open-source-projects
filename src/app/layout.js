@@ -115,6 +115,20 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
+        {/* RSS Feed Discovery */}
+        <link 
+          rel="alternate" 
+          type="application/rss+xml" 
+          title="Open Source Projects RSS Feed" 
+          href="https://opensourceprojects.dev/rss" 
+        />
+        <link 
+          rel="alternate" 
+          type="application/atom+xml" 
+          title="Open Source Projects Atom Feed" 
+          href="https://opensourceprojects.dev/feed.xml" 
+        />
+        
         {/* Font Awesome - Complete Kit */}
         <link 
           rel="stylesheet" 
