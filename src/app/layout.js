@@ -72,29 +72,6 @@ export const metadata = {
   generator: 'Next.js',
   referrer: 'origin-when-cross-origin',
   
-  // Icons and theme
-  icons: {
-    icon: [
-      { url: '/images/open-source-projects-favicon.png', sizes: '32x32', type: 'image/png' },
-      { url: '/images/open-source-projects-favicon.png', sizes: '16x16', type: 'image/png' },
-      { url: '/images/open-source-projects-favicon.png', sizes: '192x192', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/images/open-source-projects-favicon.png', sizes: '180x180', type: 'image/png' },
-    ],
-    shortcut: '/images/open-source-projects-favicon.png',
-  },
-  
-  // Verification (replace with actual verification codes)
-  verification: {
-    google: 'your-google-verification-code',
-    yandex: 'your-yandex-verification-code',
-  },
-  
-  // Category and classification
-  category: 'technology',
-  classification: 'Open Source Software Directory',
-  
   // Language and locale
   metadataBase: new URL('https://opensourceprojects.dev'),
 }
