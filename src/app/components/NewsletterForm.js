@@ -5,7 +5,8 @@ import { trackNewsletterSubscription } from '../utils/analytics';
 export default function NewsletterForm({ 
   source = 'unknown', 
   postId = null, 
-  postTitle = null 
+  postTitle = null,
+  compact = false 
 }) {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');

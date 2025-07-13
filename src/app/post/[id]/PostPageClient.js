@@ -659,7 +659,12 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                             </div>
                           </div>
                           <div className="newsletter-inline-form">
-                            <NewsletterForm compact={true} />
+                            <NewsletterForm 
+                              compact={true} 
+                              source="post_details_page"
+                              postId={allPosts[0]?.id || allPosts[0]?.conversation_id}
+                              postTitle={getProjectTitle(allPosts[0]?.content || '')}
+                            />
                           </div>
                         </div>
                       </div>

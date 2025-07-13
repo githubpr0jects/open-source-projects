@@ -19,7 +19,7 @@ export const trackEvent = (action, category, label = '', value = 0, additional_p
 // Track bookmark events
 export const trackBookmark = (action, postId, postTitle, postUrl) => {
   trackEvent(action, 'Bookmark', postTitle, 1, {
-    post_id: postId,
+    post_id: String(postId), // Convert to string to prevent GA from truncating large integers
     post_url: postUrl,
     custom_parameter_1: 'project_bookmark'
   });
@@ -34,7 +34,7 @@ export const trackNewsletterSubscription = (source, email, postId = null, postTi
 
   // Add post-specific data if provided
   if (postId && postTitle) {
-    eventData.post_id = postId;
+    eventData.post_id = String(postId); // Convert to string to prevent GA from truncating large integers
     eventData.post_title = postTitle;
   }
 
@@ -50,7 +50,7 @@ export const trackPageView = (url, title, postId = null) => {
     };
 
     if (postId) {
-      eventData.post_id = postId;
+      eventData.post_id = String(postId); // Convert to string to prevent GA from truncating large integers
     }
 
     window.gtag('config', GA_TRACKING_ID, {
