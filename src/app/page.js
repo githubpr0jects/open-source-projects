@@ -70,7 +70,7 @@ function HomePageContent() {
     fetchPosts();
   }, [currentPage, appliedSearchQuery, sortOrder]);
 
-  const updateURL = (newFilters = {}) => {
+  const updateURL = (newFilters = {}, shouldScroll = false) => {
     const params = new URLSearchParams();
     
     const search = newFilters.search !== undefined ? newFilters.search : appliedSearchQuery;
@@ -90,7 +90,7 @@ function HomePageContent() {
     }
     
     const newURL = params.toString() ? `/?${params.toString()}` : '/';
-    router.push(newURL);
+    router.push(newURL, { scroll: shouldScroll });
   };
 
   const handleSearch = (e) => {
@@ -116,11 +116,11 @@ function HomePageContent() {
     setSearchQuery('');
     setAppliedSearchQuery('');
     setSortOrder('latest');
-    router.push('/');
+    router.push('/', { scroll: false });
   };
 
   const handlePageChange = (page) => {
-    updateURL({ page });
+    updateURL({ page }, true); // true = scroll to top for pagination
   };
 
   // Function to get fallback image
