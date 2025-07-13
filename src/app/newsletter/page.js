@@ -21,7 +21,7 @@ export default function NewsletterPage() {
             </div>
             <div className="newsletter-container">
               <div style={{ maxWidth: '500px', margin: '0 auto' }}>
-                <NewsletterForm />
+                <NewsletterForm source="newsletter_page" />
               </div>
             </div>
           </section>

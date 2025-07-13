@@ -1,6 +1,7 @@
 'use client';
 
 import { useBookmarks } from '../hooks/useBookmarks';
+import { trackBookmark } from '../utils/analytics';
 
 export default function BookmarkButton({ post, className = '', size = 'normal' }) {
   const { isBookmarked, toggleBookmark } = useBookmarks();
@@ -10,6 +11,13 @@ export default function BookmarkButton({ post, className = '', size = 'normal' }
     e.stopPropagation();
     
     const wasAdded = toggleBookmark(post);
+    
+    // Track bookmark event in Google Analytics
+    const action = wasAdded ? 'bookmark_added' : 'bookmark_removed';
+    const postTitle = post.content ? post.content.split('\n')[0].slice(0, 100) : 'Unknown Project';
+    const postUrl = post.github_repo || `https://opensourceprojects.dev/post/${post.conversation_id}`;
+    
+    trackBookmark(action, post.id || post.conversation_id, postTitle, postUrl);
     
     // Optional: Show a brief notification
     if (typeof window !== 'undefined') {

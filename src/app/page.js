@@ -357,7 +357,7 @@ function HomePageContent() {
                 </div>
               </div>
               <div className="newsletter-container">
-                <NewsletterForm />
+                <NewsletterForm source="home_page" />
               </div>
             </div>
           <div className="hero-visual">

@@ -1,7 +1,12 @@
 import { useState } from 'react';
 import styles from './NewsletterForm.module.css';
+import { trackNewsletterSubscription } from '../utils/analytics';
 
-export default function NewsletterForm() {
+export default function NewsletterForm({ 
+  source = 'unknown', 
+  postId = null, 
+  postTitle = null 
+}) {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
@@ -27,6 +32,10 @@ export default function NewsletterForm() {
       if (response.ok) {
         setMessage(data.message);
         setIsSuccess(true);
+        
+        // Track successful newsletter subscription in Google Analytics
+        trackNewsletterSubscription(source, email, postId, postTitle);
+        
         setEmail(''); // Clear input on success
       } else {
         setMessage(data.message || 'Something went wrong.');
