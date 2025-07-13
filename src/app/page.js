@@ -14,18 +14,44 @@ function HomePageContent() {
   const [pagination, setPagination] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [appliedSearchQuery, setAppliedSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState('latest');
   
   const searchParams = useSearchParams();
   const router = useRouter();
   const currentPage = parseInt(searchParams.get('page')) || 1;
 
+  // Initialize filters from URL params
+  useEffect(() => {
+    const search = searchParams.get('search') || '';
+    const sort = searchParams.get('sort') || 'latest';
+    setSearchQuery(search);
+    setAppliedSearchQuery(search);
+    setSortOrder(sort);
+  }, [searchParams]);
+
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
       try {
-        const url = currentPage === 1 
-          ? 'https://twitter-api.opensourceprojects.dev/threads?type=github'
-          : `https://twitter-api.opensourceprojects.dev/threads?type=github&page=${currentPage}`;
+        const params = new URLSearchParams({
+          type: 'github'
+        });
+        
+        if (currentPage > 1) {
+          params.append('page', currentPage.toString());
+        }
+        
+        if (appliedSearchQuery.trim()) {
+          params.append('search', appliedSearchQuery.trim());
+        }
+        
+        if (sortOrder && sortOrder !== 'latest') {
+          params.append('sort', sortOrder);
+        }
+        
+        const url = `https://twitter-api.opensourceprojects.dev/threads?${params.toString()}`;
         
         const response = await fetch(url);
         if (!response.ok) {
@@ -42,14 +68,59 @@ function HomePageContent() {
     };
 
     fetchPosts();
-  }, [currentPage]);
+  }, [currentPage, appliedSearchQuery, sortOrder]);
+
+  const updateURL = (newFilters = {}) => {
+    const params = new URLSearchParams();
+    
+    const search = newFilters.search !== undefined ? newFilters.search : appliedSearchQuery;
+    const sort = newFilters.sort !== undefined ? newFilters.sort : sortOrder;
+    const page = newFilters.page !== undefined ? newFilters.page : 1;
+    
+    if (search.trim()) {
+      params.append('search', search.trim());
+    }
+    
+    if (sort && sort !== 'latest') {
+      params.append('sort', sort);
+    }
+    
+    if (page > 1) {
+      params.append('page', page.toString());
+    }
+    
+    const newURL = params.toString() ? `/?${params.toString()}` : '/';
+    router.push(newURL);
+  };
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setAppliedSearchQuery(searchQuery);
+    updateURL({ search: searchQuery, page: 1 });
+  };
+
+  const handleSortChange = (newSort) => {
+    setSortOrder(newSort);
+  };
+
+  const handleSortApply = (newSort) => {
+    setSortOrder(newSort);
+    updateURL({ sort: newSort, page: 1 });
+  };
+
+  const handleSearchInputChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const clearFilters = () => {
+    setSearchQuery('');
+    setAppliedSearchQuery('');
+    setSortOrder('latest');
+    router.push('/');
+  };
 
   const handlePageChange = (page) => {
-    if (page === 1) {
-      router.push('/');
-    } else {
-      router.push(`/?page=${page}`);
-    }
+    updateURL({ page });
   };
 
   // Function to get fallback image
@@ -318,6 +389,101 @@ function HomePageContent() {
             <p className="section-description">
               Hand-picked open-source projects that are making waves in the developer community
             </p>
+          </div>
+
+          {/* Filter Controls */}
+          <div className="filters-container">
+            <div className="filters-wrapper">
+              <div className="search-wrapper">
+                <form onSubmit={handleSearch} className="search-form">
+                  <div className="search-input-container">
+                    <i className="fas fa-search search-icon"></i>
+                    <input
+                      type="text"
+                      placeholder="Search projects..."
+                      value={searchQuery}
+                      onChange={handleSearchInputChange}
+                      className="search-input"
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSearchQuery('');
+                          setAppliedSearchQuery('');
+                          updateURL({ search: '', page: 1 });
+                        }}
+                        className="clear-search-btn"
+                        aria-label="Clear search"
+                      >
+                        <i className="fas fa-times"></i>
+                      </button>
+                    )}
+                  </div>
+                  <button type="submit" className="search-btn">
+                    Search
+                  </button>
+                </form>
+              </div>
+
+              <div className="sort-wrapper">
+                <label className="sort-label">
+                  <i className="fas fa-sort sort-icon"></i>
+                  Sort by:
+                </label>
+                <div className="sort-buttons">
+                  <button
+                    type="button"
+                    onClick={() => handleSortApply('latest')}
+                    className={`sort-btn ${sortOrder === 'latest' ? 'active' : ''}`}
+                  >
+                    Latest
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSortApply('oldest')}
+                    className={`sort-btn ${sortOrder === 'oldest' ? 'active' : ''}`}
+                  >
+                    Oldest
+                  </button>
+                </div>
+              </div>
+
+              {(appliedSearchQuery || sortOrder !== 'latest') && (
+                <div className="filters-actions">
+                  <button
+                    onClick={clearFilters}
+                    className="clear-filters-btn"
+                  >
+                    <i className="fas fa-times-circle"></i>
+                    Clear Filters
+                  </button>
+                  <div className="active-filters">
+                    {appliedSearchQuery && (
+                      <span className="filter-tag">
+                        {"Search: \"" + appliedSearchQuery + "\""}
+                      </span>
+                    )}
+                    {sortOrder !== 'latest' && (
+                      <span className="filter-tag">
+                        Sort: {sortOrder === 'oldest' ? 'Oldest' : 'Latest'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Results count - only show when filters are applied */}
+            {pagination && (appliedSearchQuery || sortOrder !== 'latest') && (
+              <div className="results-info">
+                <p className="results-count">
+                  {appliedSearchQuery ? 'Found' : 'Showing'} {pagination.total_items} project{pagination.total_items !== 1 ? 's' : ''}
+                  {appliedSearchQuery && ` for "${appliedSearchQuery}"`}
+                  {pagination.total_pages > 1 && ` (Page ${pagination.current_page} of ${pagination.total_pages})`}
+                </p>
+              </div>
+            )}
           </div>
 
           <div className="projects-grid">
