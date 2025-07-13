@@ -628,7 +628,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 {mainPost.github_repo && (
                   <div className="article-header-right">
                     <a 
-                      href={mainPost.github_repo} 
+                      href={mainPost.github_repo + '?utm_source=opensourceprojects.dev&ref=opensourceprojects.dev'} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="github-repo-link"
