@@ -3,7 +3,7 @@
 import { useBookmarks } from '../hooks/useBookmarks';
 import { trackBookmark } from '../utils/analytics';
 
-export default function BookmarkButton({ post, className = '', size = 'normal' }) {
+export default function BookmarkButton({ post, className = '', size = 'normal', onBookmarkChange }) {
   const { isBookmarked, toggleBookmark } = useBookmarks();
   
   const handleClick = (e) => {
@@ -19,10 +19,14 @@ export default function BookmarkButton({ post, className = '', size = 'normal' }
     
     trackBookmark(action, post.id || post.conversation_id, postTitle, postUrl);
     
-    // Optional: Show a brief notification
-    if (typeof window !== 'undefined') {
+    // Call the callback if provided
+    if (onBookmarkChange) {
+      onBookmarkChange(wasAdded);
+    }
+    
+    // Fallback console message if no callback provided
+    if (typeof window !== 'undefined' && !onBookmarkChange) {
       const message = wasAdded ? 'Project bookmarked!' : 'Bookmark removed';
-      // You could integrate with a toast notification system here
       console.log(message);
     }
   };

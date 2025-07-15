@@ -17,10 +17,91 @@ function HomePageContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [appliedSearchQuery, setAppliedSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('latest');
+  const [toast, setToast] = useState({ show: false, message: '', type: '' });
   
   const searchParams = useSearchParams();
   const router = useRouter();
   const currentPage = parseInt(searchParams.get('page')) || 1;
+
+  // Toast notification function
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: '', type: '' });
+    }, 3000);
+  };
+
+  // Toast Component
+  const Toast = ({ show, message, type }) => {
+    if (!show) return null;
+
+    const getIcon = () => {
+      switch (type) {
+        case 'success':
+          return 'fas fa-check-circle';
+        case 'error':
+          return 'fas fa-exclamation-circle';
+        case 'info':
+          return 'fas fa-info-circle';
+        default:
+          return 'fas fa-check-circle';
+      }
+    };
+
+    const getColor = () => {
+      switch (type) {
+        case 'success':
+          return '#28a745';
+        case 'error':
+          return '#dc3545';
+        case 'info':
+          return '#17a2b8';
+        default:
+          return '#28a745';
+      }
+    };
+
+    return (
+      <div 
+        className="toast-notification"
+        style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          background: 'rgba(13, 17, 23, 0.95)',
+          backdropFilter: 'blur(15px)',
+          border: `1px solid ${getColor()}`,
+          borderRadius: '12px',
+          padding: '16px 20px',
+          color: '#f0f6fc',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          zIndex: 10000,
+          boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px ${getColor()}30`,
+          animation: 'slideInFromRight 0.3s ease-out',
+          minWidth: '300px',
+          maxWidth: '400px'
+        }}
+      >
+        <i 
+          className={getIcon()}
+          style={{ 
+            color: getColor(),
+            fontSize: '20px',
+            flexShrink: 0
+          }}
+        />
+        <span style={{ 
+          fontSize: '14px',
+          fontWeight: '500',
+          lineHeight: '1.4'
+        }}>
+          {message}
+        </span>
+      </div>
+    );
+  };
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -522,7 +603,17 @@ function HomePageContent() {
                         ))}
                       </div>
                       <div className="bookmark-container">
-                        <BookmarkButton post={post} size="normal" />
+                        <BookmarkButton 
+                          post={post} 
+                          size="normal" 
+                          onBookmarkChange={(isBookmarked) => {
+                            if (isBookmarked) {
+                              showToast('Project bookmarked! ✨', 'success');
+                            } else {
+                              showToast('Bookmark removed', 'info');
+                            }
+                          }}
+                        />
                       </div>
                     </div>
                   </div>
@@ -607,6 +698,9 @@ function HomePageContent() {
       </main>
 
       <Footer />
+
+      {/* Toast Notification */}
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
 
       <style jsx global>{`
         .newsletter-container {
@@ -822,6 +916,30 @@ function HomePageContent() {
             word-break: break-word;
             overflow-wrap: break-word;
             hyphens: auto;
+          }
+        }
+
+        /* Toast Animation */
+        @keyframes slideInFromRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        /* Mobile responsive toast */
+        @media screen and (max-width: 768px) {
+          .toast-notification {
+            top: 10px !important;
+            right: 10px !important;
+            left: 10px !important;
+            min-width: auto !important;
+            max-width: none !important;
+            padding: 12px 16px !important;
           }
         }
       `}</style>

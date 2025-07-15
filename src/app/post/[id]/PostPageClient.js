@@ -55,6 +55,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
   const [loading, setLoading] = useState(!initialPostDetails);
   const [error, setError] = useState(null);
   const [linkPreviews, setLinkPreviews] = useState({});
+  const [toast, setToast] = useState({ show: false, message: '', type: '' });
 
   useEffect(() => {
     if (!initialPostDetails) {
@@ -78,6 +79,87 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       }
     }
   }, [params.id, initialPostDetails]);
+
+  // Toast notification function
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: '', type: '' });
+    }, 3000);
+  };
+
+  // Toast Component
+  const Toast = ({ show, message, type }) => {
+    console.log('Toast render:', { show, message, type });
+    if (!show) return null;
+
+    const getIcon = () => {
+      switch (type) {
+        case 'success':
+          return 'fas fa-check-circle';
+        case 'error':
+          return 'fas fa-exclamation-circle';
+        case 'info':
+          return 'fas fa-info-circle';
+        default:
+          return 'fas fa-check-circle';
+      }
+    };
+
+    const getColor = () => {
+      switch (type) {
+        case 'success':
+          return '#28a745';
+        case 'error':
+          return '#dc3545';
+        case 'info':
+          return '#17a2b8';
+        default:
+          return '#28a745';
+      }
+    };
+
+    return (
+      <div 
+        className="toast-notification"
+        style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          background: 'rgba(13, 17, 23, 0.95)',
+          backdropFilter: 'blur(15px)',
+          border: `1px solid ${getColor()}`,
+          borderRadius: '12px',
+          padding: '16px 20px',
+          color: '#f0f6fc',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          zIndex: 10000,
+          boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px ${getColor()}30`,
+          animation: 'slideInFromRight 0.3s ease-out',
+          minWidth: '300px',
+          maxWidth: '400px'
+        }}
+      >
+        <i 
+          className={getIcon()}
+          style={{ 
+            color: getColor(),
+            fontSize: '20px',
+            flexShrink: 0
+          }}
+        />
+        <span style={{ 
+          fontSize: '14px',
+          fontWeight: '500',
+          lineHeight: '1.4'
+        }}>
+          {message}
+        </span>
+      </div>
+    );
+  };
 
   // Function to fetch link preview via API route
   const fetchLinkPreview = async (url) => {
@@ -173,7 +255,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 <div className="link-preview-url-container">
                   <span className="link-preview-url">
                     <i className="fas fa-external-link-alt"></i>
-                    {preview.hostname || new URL(finalUrl).hostname}
+                    { preview.title ?? "Browse External Source" }
                   </span>
                   {preview.wasRedirected && (
                     <span className="link-preview-redirected">
@@ -566,9 +648,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
             
             <div className="project-header">
               <h1 className="project-title">{getProjectTitle(mainPost.content)}</h1>
-              <div className="project-actions">
-                <BookmarkButton post={mainPost} size="large" />
-              </div>
             </div>
             
             {/* Tags */}
@@ -624,21 +703,34 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                   </div>
                 </div>
                 
-                {/* GitHub Repository Link in Article Header */}
-                {mainPost.github_repo && (
-                  <div className="article-header-right">
-                    <a 
-                      href={mainPost.github_repo + '?utm_source=opensourceprojects.dev&ref=opensourceprojects.dev'} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="github-repo-link"
-                    >
-                      <i className="fab fa-github"></i>
-                      <span>View on GitHub</span>
-                      <i className="fas fa-external-link-alt" aria-hidden="true"></i>
-                    </a>
+                {/* Action buttons in Article Header */}
+                <div className="article-header-right">
+                  <div className="article-actions">
+                    <BookmarkButton 
+                      post={mainPost} 
+                      size="normal" 
+                      onBookmarkChange={(isBookmarked) => {
+                        if (isBookmarked) {
+                          showToast('Project bookmarked! ✨', 'success');
+                        } else {
+                          showToast('Bookmark removed', 'info');
+                        }
+                      }}
+                    />
+                    {mainPost.github_repo && (
+                      <a 
+                        href={mainPost.github_repo + '?utm_source=opensourceprojects.dev&ref=opensourceprojects.dev'} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="github-repo-link"
+                      >
+                        <i className="fab fa-github"></i>
+                        <span>View on GitHub</span>
+                        <i className="fas fa-external-link-alt" aria-hidden="true"></i>
+                      </a>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Repository Preview Card */}
@@ -735,6 +827,9 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       </main>
 
       <Footer />
+
+      {/* Toast Notification */}
+      <Toast show={toast.show} message={toast.message} type={toast.type} />
 
       <style jsx global>{`
         /* Global styles - Final optimized version */
@@ -917,30 +1012,30 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 1.25rem;
+          margin-bottom: 1rem;
           flex-wrap: wrap;
-          gap: 0.75rem;
+          gap: 0.5rem;
         }
 
         .project-badge {
           background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
           color: white;
-          padding: 0.5rem 1rem;
-          border-radius: 20px;
-          font-size: 0.85rem;
+          padding: 0.375rem 0.75rem;
+          border-radius: 16px;
+          font-size: 0.75rem;
           font-weight: 600;
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.375rem;
           box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
         }
 
         .project-date {
           color: #8b949e;
-          font-size: 0.85rem;
+          font-size: 0.75rem;
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.375rem;
         }
 
         .project-title {
@@ -1024,6 +1119,12 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
         .article-header-right {
           flex-shrink: 0;
+        }
+
+        .article-actions {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
         }
 
         .article-header h2 {
@@ -2589,6 +2690,48 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
         /* Responsive Markdown Styles with 30% reduction on mobile */
         @media screen and (max-width: 768px) {
+          .article-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+          }
+
+          .article-actions {
+            gap: 0.5rem;
+            flex-wrap: wrap;
+          }
+
+          .project-meta {
+            margin-bottom: 0.75rem;
+            gap: 0.375rem;
+          }
+
+          .project-badge {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.7rem;
+            gap: 0.25rem;
+            border-radius: 14px;
+          }
+
+          .project-date {
+            font-size: 0.7rem;
+            gap: 0.25rem;
+          }
+
+          .project-title {
+            font-size: 1.75rem;
+          }
+
+          .project-header {
+            flex-direction: column;
+            gap: 0.75rem;
+          }
+
+          .project-actions {
+            margin-top: 0;
+            align-self: flex-start;
+          }
+
           .markdown-content {
             font-size: 15px;
           }
@@ -2630,6 +2773,31 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         }
 
         @media screen and (max-width: 480px) {
+          .project-meta {
+            margin-bottom: 0.5rem;
+            gap: 0.25rem;
+          }
+
+          .project-badge {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.65rem;
+            gap: 0.2rem;
+            border-radius: 12px;
+          }
+
+          .project-date {
+            font-size: 0.65rem;
+            gap: 0.2rem;
+          }
+
+          .project-title {
+            font-size: 1.5rem;
+          }
+
+          .project-header {
+            gap: 0.5rem;
+          }
+
           .markdown-content {
             font-size: 14px;
           }
@@ -2680,6 +2848,43 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
           .repository-description {
             font-size: 13px;
+          }
+        }
+
+        /* Toast Animation */
+        @keyframes slideInFromRight {
+          from {
+            transform: translateX(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateX(0);
+            opacity: 1;
+          }
+        }
+
+        /* Mobile responsive toast */
+        @media screen and (max-width: 768px) {
+          .toast-notification {
+            top: 10px !important;
+            right: 10px !important;
+            left: 10px !important;
+            min-width: auto !important;
+            max-width: none !important;
+            padding: 12px 16px !important;
+          }
+        }
+
+        @media screen and (max-width: 480px) {
+          .article-actions {
+            gap: 0.375rem;
+            width: 100%;
+            justify-content: space-between;
+          }
+
+          .github-repo-link {
+            flex: 1;
+            justify-content: center;
           }
         }
       `}</style>
