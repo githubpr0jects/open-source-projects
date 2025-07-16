@@ -34,7 +34,7 @@ const cleanContentForDescription = (content) => {
 // Server-side function to fetch post details
 async function fetchPostDetails(id) {
   try {
-    const response = await fetch(`https://twitter-api.opensourceprojects.dev/threads/${id}`, {
+    const response = await fetch(`https://lb2-twitter-api.opensourceprojects.dev/threads/${id}`, {
       next: { revalidate: 3600 } // Revalidate every hour
     });
     

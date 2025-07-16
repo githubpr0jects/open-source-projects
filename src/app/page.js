@@ -132,7 +132,7 @@ function HomePageContent() {
           params.append('sort', sortOrder);
         }
         
-        const url = `https://twitter-api.opensourceprojects.dev/threads?${params.toString()}`;
+        const url = `https://lb2-twitter-api.opensourceprojects.dev/threads?${params.toString()}`;
         
         const response = await fetch(url);
         if (!response.ok) {

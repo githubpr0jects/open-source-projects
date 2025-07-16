@@ -7,7 +7,7 @@ export async function GET() {
   try {
     // First, try fetching data from your existing API
     console.log('Fetching RSS data from API...');
-    const response = await fetch('https://twitter-api.opensourceprojects.dev/threads?type=github', {
+    const response = await fetch('https://lb2-twitter-api.opensourceprojects.dev/threads?type=github', {
       next: { revalidate: 300 }, // Cache for 5 minutes
       headers: {
         'User-Agent': 'Open Source Projects RSS Generator/1.0',

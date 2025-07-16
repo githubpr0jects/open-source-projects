@@ -120,8 +120,8 @@ export default async function HomePage({ searchParams }) {
   let initialData = null;
   try {
     const url = page === 1 
-      ? 'https://twitter-api.opensourceprojects.dev/threads?type=github'
-      : `https://twitter-api.opensourceprojects.dev/threads?type=github&page=${page}`;
+      ? 'https://lb2-twitter-api.opensourceprojects.dev/threads?type=github'
+      : `https://lb2-twitter-api.opensourceprojects.dev/threads?type=github&page=${page}`;
     
     const response = await fetch(url, {
       next: { revalidate: 300 } // Revalidate every 5 minutes

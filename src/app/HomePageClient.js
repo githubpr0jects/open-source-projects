@@ -25,8 +25,8 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
       setLoading(true);
       try {
         const url = currentPage === 1 
-          ? 'https://twitter-api.opensourceprojects.dev/threads'
-          : `https://twitter-api.opensourceprojects.dev/threads?page=${currentPage}`;
+          ? 'https://lb2-twitter-api.opensourceprojects.dev/threads'
+          : `https://lb2-twitter-api.opensourceprojects.dev/threads?page=${currentPage}`;
         
         const response = await fetch(url);
         if (!response.ok) {

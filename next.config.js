@@ -4,7 +4,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'https://twitter-api.opensourceprojects.dev/:path*',
+        destination: 'https://lb2-twitter-api.opensourceprojects.dev/:path*',
       },
     ]
   },

@@ -71,7 +71,7 @@ export default function PostPage() {
   useEffect(() => {
     const fetchPostDetails = async () => {
       try {
-        const response = await fetch(`https://twitter-api.opensourceprojects.dev/threads/${params.id}`);
+        const response = await fetch(`https://lb2-twitter-api.opensourceprojects.dev/threads/${params.id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch post details');
         }

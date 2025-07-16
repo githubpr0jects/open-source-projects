@@ -38,7 +38,7 @@ async function fetchPostDetails(id) {
     // Always fetch fresh data first to check for markdown_content
     noStore(); // Ensure this function doesn't get cached
     
-    const response = await fetch(`https://twitter-api.opensourceprojects.dev/threads/${id}`, {
+    const response = await fetch(`https://lb2-twitter-api.opensourceprojects.dev/threads/${id}`, {
       cache: 'no-store' // Always get fresh data
     });
     
