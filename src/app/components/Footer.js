@@ -19,7 +19,7 @@ export default function Footer() {
         <div className="footer-section">
           <h4>Connect</h4>
           <div className="social-links">
-            <a href="https://github.com/githubprojects" target="_blank" rel="noopener noreferrer" className="social-link">
+            <a href="https://github.com/githubpr0jects" target="_blank" rel="noopener noreferrer" className="social-link">
               <i className="fab fa-github"></i>
             </a>
             <a href="https://twitter.com/githubprojects" target="_blank" rel="noopener noreferrer" className="social-link">
