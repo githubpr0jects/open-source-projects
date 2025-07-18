@@ -134,6 +134,14 @@ export default function RootLayout({ children }) {
             gtag('config', 'G-PM4NQK4MYG');
           `}
         </Script>
+
+        {/* Plausible Analytics */}
+        <Script
+          defer
+          data-domain="opensourceprojects.dev"
+          src="https://plausible.io/js/script.js"
+          strategy="afterInteractive"
+        />
       </head>
       <body>{children}</body>
     </html>
