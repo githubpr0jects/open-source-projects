@@ -770,35 +770,77 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               </div>
 
               <div className="article-footer">
-                <div className="contributors">
-                  <h3>
-                    <i className="fas fa-users"></i>
-                    Contributors
-                  </h3>
-                  <div className="contributors-list">
-                    {[...new Set(postDetails.map(post => post.username))].map((username, index) => (
-                      <div key={index} className="contributor">
-                        <div className="contributor-avatar">
-                          <i className="fas fa-user"></i>
-                        </div>
-                        <span className="contributor-name">@{username}</span>
+                {/* Creative Sponsor Block - Full Width */}
+                <div className="sponsor-promo-block">
+                  <div className="sponsor-promo-content">
+                    <div className="sponsor-promo-icon">
+                      <i className="fas fa-rocket"></i>
+                    </div>
+                    <div className="sponsor-promo-text">
+                      <h3>Love discovering amazing projects?</h3>
+                      <p>
+                        Help us showcase more incredible open-source projects by sponsoring a featured spot. 
+                        Your project could be the next big discovery for thousands of developers.
+                      </p>
+                      <div className="sponsor-promo-features">
+                        <span className="promo-feature">
+                          <i className="fas fa-eye"></i>
+                          Premium visibility
+                        </span>
+                        <span className="promo-feature">
+                          <i className="fas fa-users"></i>
+                          Developer audience
+                        </span>
+                        <span className="promo-feature">
+                          <i className="fas fa-chart-line"></i>
+                          Boost engagement
+                        </span>
                       </div>
-                    ))}
+                    </div>
+                    <div className="sponsor-promo-cta">
+                      <Link href="/sponsor-us" className="sponsor-promo-button">
+                        <span>Sponsor a Spot</span>
+                        <i className="fas fa-arrow-right"></i>
+                      </Link>
+                      {/* <div className="sponsor-promo-price">
+                        Starting at <strong>$99/week</strong>
+                      </div> */}
+                    </div>
                   </div>
                 </div>
+                
+                {/* Two Column Content */}
+                <div className="article-footer-content">
+                  <div className="contributors">
+                    <h3>
+                      <i className="fas fa-users"></i>
+                      Contributors
+                    </h3>
+                    <div className="contributors-list">
+                      {[...new Set(postDetails.map(post => post.username))].map((username, index) => (
+                        <div key={index} className="contributor">
+                          <div className="contributor-avatar">
+                            <i className="fas fa-user"></i>
+                          </div>
+                          <span className="contributor-name">@{username}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-                <div className="project-stats">
-                  <div className="stat-card">
-                    <div className="stat-value">{postDetails.length}</div>
-                    <div className="stat-label">Total Posts</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-value">{[...new Set(postDetails.map(post => post.username))].length}</div>
-                    <div className="stat-label">Contributors</div>
-                  </div>
-                  <div className="stat-card">
-                    <div className="stat-value">{formatDate(mainPost.date).split(',')[0]}</div>
-                    <div className="stat-label">Created</div>
+                  <div className="project-stats">
+                    <div className="stat-card">
+                      <div className="stat-value">{postDetails.length}</div>
+                      <div className="stat-label">Total Posts</div>
+                    </div>
+                    <div className="stat-card">
+                      <div className="stat-value">{[...new Set(postDetails.map(post => post.username))].length}</div>
+                      <div className="stat-label">Contributors</div>
+                    </div>
+                    <div className="stat-card">
+                      <div className="stat-value">{formatDate(mainPost.date).split(',')[0]}</div>
+                      <div className="stat-label">Created</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1192,6 +1234,14 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           margin-top: 3rem;
           padding-top: 2rem;
           border-top: 1px solid #30363d;
+        }
+
+        .article-footer .sponsor-promo-block {
+          width: 100%;
+          margin-bottom: 2rem;
+        }
+
+        .article-footer-content {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 2rem;
@@ -2772,6 +2822,160 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           }
         }
 
+        /* Sponsor Promo Block Styles */
+        .sponsor-promo-block {
+          background: linear-gradient(135deg, 
+            rgba(99, 102, 241, 0.08) 0%, 
+            rgba(16, 185, 129, 0.05) 50%, 
+            rgba(245, 158, 11, 0.08) 100%);
+          border: 2px solid rgba(99, 102, 241, 0.2);
+          border-radius: 16px;
+          margin: 2rem 0;
+          padding: 0;
+          position: relative;
+          overflow: hidden;
+          width: 100%;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+
+        .sponsor-promo-block::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 4px;
+          background: linear-gradient(90deg, #6366f1, #10b981, #f59e0b);
+          animation: shimmer 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes shimmer {
+          0% { opacity: 0.6; transform: translateX(-10px); }
+          100% { opacity: 1; transform: translateX(10px); }
+        }
+
+        .sponsor-promo-content {
+          display: grid;
+          grid-template-columns: auto 1fr auto;
+          gap: 1.5rem;
+          align-items: center;
+          padding: 1.5rem;
+        }
+
+        .sponsor-promo-icon {
+          background: linear-gradient(135deg, #6366f1, #10b981);
+          border-radius: 50%;
+          width: 60px;
+          height: 60px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 1.5rem;
+          box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+          animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-5px); }
+        }
+
+        .sponsor-promo-text h3 {
+          color: #f0f6fc;
+          font-size: 1.25rem;
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+          background: linear-gradient(135deg, #6366f1, #10b981);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .sponsor-promo-text p {
+          color: #8b949e;
+          margin-bottom: 1rem;
+          line-height: 1.6;
+          font-size: 0.95rem;
+        }
+
+        .sponsor-promo-features {
+          display: flex;
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
+
+        .promo-feature {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #58a6ff;
+          font-size: 0.875rem;
+          font-weight: 500;
+        }
+
+        .promo-feature i {
+          font-size: 0.75rem;
+          opacity: 0.8;
+        }
+
+        .sponsor-promo-cta {
+          text-align: center;
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          align-items: center;
+        }
+
+        .sponsor-promo-button {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          background: linear-gradient(135deg, #6366f1, #10b981);
+          color: white;
+          text-decoration: none;
+          padding: 0.875rem 1.5rem;
+          border-radius: 2rem;
+          font-weight: 600;
+          font-size: 0.95rem;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .sponsor-promo-button::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+          transition: left 0.5s;
+        }
+
+        .sponsor-promo-button:hover::before {
+          left: 100%;
+        }
+
+        .sponsor-promo-button:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+          gap: 1rem;
+        }
+
+        .sponsor-promo-price {
+          color: #8b949e;
+          font-size: 0.8rem;
+        }
+
+        .sponsor-promo-price strong {
+          color: #58a6ff;
+          font-weight: 600;
+        }
+
         @media screen and (max-width: 480px) {
           .project-meta {
             margin-bottom: 0.5rem;
@@ -2885,6 +3089,39 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           .github-repo-link {
             flex: 1;
             justify-content: center;
+          }
+
+          /* Article footer mobile styles */
+          .article-footer-content {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+          }
+
+          /* Sponsor block mobile styles */
+          .sponsor-promo-content {
+            grid-template-columns: 1fr;
+            text-align: center;
+            gap: 1rem;
+            padding: 1.25rem;
+          }
+
+          .sponsor-promo-features {
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+          }
+
+          .sponsor-promo-text h3 {
+            font-size: 1.1rem;
+          }
+
+          .sponsor-promo-text p {
+            font-size: 0.9rem;
+          }
+
+          .sponsor-promo-button {
+            padding: 0.75rem 1.25rem;
+            font-size: 0.9rem;
           }
         }
       `}</style>

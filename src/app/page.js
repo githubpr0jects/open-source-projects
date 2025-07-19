@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -569,104 +569,99 @@ function HomePageContent() {
 
           <div className="projects-grid">
             {posts.map((post, index) => {
+              // Insert sponsor post at 3rd position (index 2) conditionally
+              const showSponsorPost = true; // Set this condition as needed
+              const shouldShowSponsor = showSponsorPost && index === 2;
               const projectTags = getProjectTags(post);
               const repoName = getRepoName(post.github_repo);
               
               return (
-                <article key={post.id} className="project-card" style={{animationDelay: `${(index % 6) * 0.1}s`}}>
-                  {/* Project Image */}
-                  <div className="card-image">
-                    <Image 
-                      src={post.github_card_image || getFallbackImage()} 
-                      alt={getProjectTitle(post.content)}
-                      width={400}
-                      height={200}
-                      onError={(e) => {
-                        e.target.src = getFallbackImage();
-                      }}
-                      unoptimized
-                    />
-                    <div className="card-image-overlay">
-                      <div className="project-tags">
-                        {projectTags.slice(0, 2).map((tag, tagIndex) => (
-                          <span 
-                            key={tagIndex} 
-                            className="project-tag"
-                            style={{
-                              color: tag.color,
-                              backgroundColor: tag.bgColor
-                            }}
-                          >
-                            <i className={tag.icon}></i>
-                            <span>{tag.label}</span>
-                          </span>
-                        ))}
-                      </div>
-                      <div className="bookmark-container">
-                        <BookmarkButton 
-                          post={post} 
-                          size="normal" 
-                          onBookmarkChange={(isBookmarked) => {
-                            if (isBookmarked) {
-                              showToast('Project bookmarked! ✨', 'success');
-                            } else {
-                              showToast('Bookmark removed', 'info');
-                            }
-                          }}
+                <React.Fragment key={`post-${post.id}-${index}`}>
+                  {shouldShowSponsor && (
+                    <article key="sponsor-post" className="project-card sponsor-card" style={{animationDelay: `${(index % 6) * 0.1}s`}}>
+                      {/* Sponsor Project Image */}
+                      <div className="card-image sponsor-image">
+                        <Image 
+                          src="/images/sponsor.jpg"
+                          alt="Sponsor This Spot - Showcase Your Project"
+                          width={400}
+                          height={200}
+                          unoptimized
                         />
+                        <div className="card-image-overlay sponsor-overlay">
+                          <div className="sponsor-badge">
+                            <span className="sponsor-tag">
+                              <i className="fas fa-star"></i>
+                              <span>Sponsored Spot</span>
+                            </span>
+                          </div>
+                          <div className="sponsor-cta">
+                            <i className="fas fa-rocket"></i>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="card-header">
-                    <div className="card-meta">
-                      <span className="card-category">Open Source</span>
-                      <time className="card-date" dateTime={post.date}>
-                        {new Date(post.date).toLocaleDateString('en-US', { 
-                          year: 'numeric', 
-                          month: 'long', 
-                          day: 'numeric' 
-                        })}
-                      </time>
-                    </div>
-                  </div>
-
-                  <div className="card-content">
-                    <h3 className="card-title">
-                      <Link href={`/post/${post.conversation_id}`}>
-                        {getProjectTitle(post.content)}
-                      </Link>
-                    </h3>
-                    <p className="card-excerpt">
-                      By @{post.username} • {getProjectTitle(post.content)}
-                    </p>
-                    
-                    {/* Repository Information */}
-                    {post.github_repo && (
-                      <div className="repo-info">
-                        <a
-                          href={post.github_repo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="repo-link"
-                        >
-                          <i className="fab fa-github"></i>
-                          <span>{repoName}</span>
-                          <i className="fas fa-external-link-alt"></i>
-                        </a>
+                      <div className="card-header">
+                        <div className="card-meta">
+                          <span className="card-category sponsor-category">Sponsorship</span>
+                          <span className="sponsor-availability">Available Now</span>
+                        </div>
                       </div>
-                    )}
-                  </div>
 
-                  <div className="card-footer">
-                    <div className="card-links">
-                      {/* Additional tags if more than 2 */}
-                      {projectTags.length > 2 && (
-                        <div className="additional-tags">
-                          {projectTags.slice(2).map((tag, tagIndex) => (
+                      <div className="card-content">
+                        <h3 className="card-title sponsor-title">
+                          <Link href="/sponsor-us">
+                            Showcase Your Project Here
+                          </Link>
+                        </h3>
+                        <p className="card-excerpt sponsor-excerpt">
+                          Claim this premium spot to showcase your project to thousands of developers. Get maximum visibility for your open-source work.
+                        </p>
+                        
+                        <div className="sponsor-features">
+                          <div className="sponsor-feature">
+                            <i className="fas fa-eye"></i>
+                            <span>Prime Visibility</span>
+                          </div>
+                          {/* <div className="sponsor-feature">
+                            <i className="fas fa-users"></i>
+                            <span>Developer Audience</span>
+                          </div>
+                          <div className="sponsor-feature">
+                            <i className="fas fa-chart-line"></i>
+                            <span>Boost Your Project</span>
+                          </div> */}
+                        </div>
+                      </div>
+
+                      <div className="card-footer sponsor-footer">
+                        <Link href="/sponsor-us" className="sponsor-cta-button">
+                          <span>Claim This Spot</span>
+                          <i className="fas fa-arrow-right"></i>
+                        </Link>
+                      </div>
+                    </article>
+                  )}
+                  
+                  <article key={post.id} className="project-card" style={{animationDelay: `${((index + (showSponsorPost && index >= 2 ? 1 : 0)) % 6) * 0.1}s`}}>
+                    {/* Project Image */}
+                    <div className="card-image">
+                      <Image 
+                        src={post.github_card_image || getFallbackImage()} 
+                        alt={getProjectTitle(post.content)}
+                        width={400}
+                        height={200}
+                        onError={(e) => {
+                          e.target.src = getFallbackImage();
+                        }}
+                        unoptimized
+                      />
+                      <div className="card-image-overlay">
+                        <div className="project-tags">
+                          {projectTags.slice(0, 2).map((tag, tagIndex) => (
                             <span 
                               key={tagIndex} 
-                              className="project-tag small"
+                              className="project-tag"
                               style={{
                                 color: tag.color,
                                 backgroundColor: tag.bgColor
@@ -677,14 +672,90 @@ function HomePageContent() {
                             </span>
                           ))}
                         </div>
+                        <div className="bookmark-container">
+                          <BookmarkButton 
+                            post={post} 
+                            size="normal" 
+                            onBookmarkChange={(isBookmarked) => {
+                              if (isBookmarked) {
+                                showToast('Project bookmarked! ✨', 'success');
+                              } else {
+                                showToast('Bookmark removed', 'info');
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="card-header">
+                      <div className="card-meta">
+                        <span className="card-category">Open Source</span>
+                        <time className="card-date" dateTime={post.date}>
+                          {new Date(post.date).toLocaleDateString('en-US', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                          })}
+                        </time>
+                      </div>
+                    </div>
+
+                    <div className="card-content">
+                      <h3 className="card-title">
+                        <Link href={`/post/${post.conversation_id}`}>
+                          {getProjectTitle(post.content)}
+                        </Link>
+                      </h3>
+                      <p className="card-excerpt">
+                        By @{post.username} • {getProjectTitle(post.content)}
+                      </p>
+                      
+                      {/* Repository Information */}
+                      {post.github_repo && (
+                        <div className="repo-info">
+                          <a
+                            href={post.github_repo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="repo-link"
+                          >
+                            <i className="fab fa-github"></i>
+                            <span>{repoName}</span>
+                            <i className="fas fa-external-link-alt"></i>
+                          </a>
+                        </div>
                       )}
                     </div>
-                    <Link href={`/post/${post.conversation_id}`} className="read-more">
-                      <span>Learn More</span>
-                      <i className="fas fa-arrow-right"></i>
-                    </Link>
-                  </div>
-                </article>
+
+                    <div className="card-footer">
+                      <div className="card-links">
+                        {/* Additional tags if more than 2 */}
+                        {projectTags.length > 2 && (
+                          <div className="additional-tags">
+                            {projectTags.slice(2).map((tag, tagIndex) => (
+                              <span 
+                                key={tagIndex} 
+                                className="project-tag small"
+                                style={{
+                                  color: tag.color,
+                                  backgroundColor: tag.bgColor
+                                }}
+                              >
+                                <i className={tag.icon}></i>
+                                <span>{tag.label}</span>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <Link href={`/post/${post.conversation_id}`} className="read-more">
+                        <span>Learn More</span>
+                        <i className="fas fa-arrow-right"></i>
+                      </Link>
+                    </div>
+                  </article>
+                </React.Fragment>
               );
             })}
           </div>
