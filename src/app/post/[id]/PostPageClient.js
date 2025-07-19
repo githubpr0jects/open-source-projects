@@ -831,15 +831,24 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                   <div className="project-stats">
                     <div className="stat-card">
                       <div className="stat-value">{postDetails.length}</div>
-                      <div className="stat-label">Total Posts</div>
+                      <div className="stat-label">
+                        <span className="stat-label-full">Total Posts</span>
+                        <span className="stat-label-short">Posts</span>
+                      </div>
                     </div>
                     <div className="stat-card">
                       <div className="stat-value">{[...new Set(postDetails.map(post => post.username))].length}</div>
-                      <div className="stat-label">Contributors</div>
+                      <div className="stat-label">
+                        <span className="stat-label-full">Contributors</span>
+                        <span className="stat-label-short">Users</span>
+                      </div>
                     </div>
                     <div className="stat-card">
                       <div className="stat-value">{formatDate(mainPost.date).split(',')[0]}</div>
-                      <div className="stat-label">Created</div>
+                      <div className="stat-label">
+                        <span className="stat-label-full">Created</span>
+                        <span className="stat-label-short">Date</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -1317,6 +1326,14 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           font-size: 0.8rem;
           color: #8b949e;
           font-weight: 500;
+        }
+
+        .stat-label-short {
+          display: none;
+        }
+
+        .stat-label-full {
+          display: inline;
         }
 
         .project-navigation {
@@ -3077,6 +3094,36 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
             max-width: none !important;
             padding: 12px 16px !important;
           }
+
+          /* Contributors tablet styles */
+          .contributor {
+            padding: 6px 10px;
+            max-width: calc(50% - 0.5rem);
+          }
+
+          .contributor-name {
+            font-size: 0.85rem;
+            max-width: 100px;
+          }
+
+          /* Project stats tablet styles */
+          .stat-card {
+            padding: 0.875rem 0.75rem;
+            min-width: 75px;
+          }
+
+          .stat-label {
+            font-size: 0.7rem;
+            line-height: 1.3;
+          }
+
+          .stat-label-full {
+            display: inline;
+          }
+
+          .stat-label-short {
+            display: none;
+          }
         }
 
         @media screen and (max-width: 480px) {
@@ -3122,6 +3169,73 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           .sponsor-promo-button {
             padding: 0.75rem 1.25rem;
             font-size: 0.9rem;
+          }
+
+          /* Contributors mobile styles */
+          .contributors-list {
+            gap: 0.5rem;
+          }
+
+          .contributor {
+            padding: 4px 6px;
+            max-width: calc(50% - 0.25rem);
+            overflow: hidden;
+            gap: 4px;
+            min-width: 0;
+          }
+
+          .contributor-name {
+            font-size: 0.75rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 80px;
+            min-width: 0;
+            flex: 1;
+          }
+
+          .contributor-avatar {
+            width: 18px;
+            height: 18px;
+            font-size: 0.55rem;
+            flex-shrink: 0;
+          }
+
+          /* Project stats mobile styles */
+          .project-stats {
+            gap: 0.5rem;
+          }
+
+          .stat-card {
+            padding: 0.5rem 0.25rem;
+            min-width: 60px;
+            flex: 1;
+            max-width: calc(33.33% - 0.33rem);
+          }
+
+          .stat-value {
+            font-size: 1.1rem;
+            margin-bottom: 0.125rem;
+          }
+
+          .stat-label {
+            font-size: 0.55rem;
+            line-height: 1.1;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+
+          .stat-label-full {
+            display: none;
+          }
+
+          .stat-label-short {
+            display: inline;
           }
         }
       `}</style>
