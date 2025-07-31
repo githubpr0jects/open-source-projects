@@ -569,17 +569,112 @@ function HomePageContent() {
 
           <div className="projects-grid">
             {posts.map((post, index) => {
-              // Insert sponsor post at 3rd position (index 2) conditionally
-              const showSponsorPost = true; // Set this condition as needed
-              const shouldShowSponsor = showSponsorPost && index === 2;
+              // Insert DroidRun sponsor post at 2nd position (index 1)
+              // Insert Sponsor Us card at 4th position (index 3)
+              const showSponsorPost = true;
+              const shouldShowDroidRun = showSponsorPost && index === 1;
+              const shouldShowSponsorUs = showSponsorPost && index === 3;
               const projectTags = getProjectTags(post);
               const repoName = getRepoName(post.github_repo);
               
               return (
                 <React.Fragment key={`post-${post.id}-${index}`}>
-                  {shouldShowSponsor && (
-                    <article key="sponsor-post" className="project-card sponsor-card" style={{animationDelay: `${(index % 6) * 0.1}s`}}>
-                      {/* Sponsor Project Image */}
+                  {shouldShowDroidRun && (
+                    <article key="droidrun-sponsor" className="project-card sponsor-card" style={{animationDelay: `${(index % 6) * 0.1}s`}}>
+                      {/* DroidRun Sponsored Project Image */}
+                      <div className="card-image">
+                        <Image 
+                          src="https://opengraph.githubassets.com/8190d792d99e38d0f692153671df84bdcc818a6797f136d88cf243807f94d0de/droidrun/droidrun"
+                          alt="DroidRun - A powerful framework for controlling Android and iOS devices through LLM agents"
+                          width={400}
+                          height={200}
+                          unoptimized
+                        />
+                        <div className="card-image-overlay">
+                          <div className="project-tags">
+                            <span className="project-tag" style={{color: '#ff6b35', backgroundColor: 'rgba(255, 107, 53, 0.1)'}}>
+                              <i className="fas fa-mobile-alt"></i>
+                              <span>Mobile Testing</span>
+                            </span>
+                            <span className="project-tag" style={{color: '#4CAF50', backgroundColor: 'rgba(76, 175, 80, 0.1)'}}>
+                              <i className="fas fa-robot"></i>
+                              <span>LLM Integration</span>
+                            </span>
+                          </div>
+                          <div className="sponsored-badge">
+                            <span className="sponsor-tag">
+                              <i className="fas fa-star"></i>
+                              <span>SPONSORED</span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="card-header">
+                        <div className="card-meta">
+                          <span className="card-category sponsor-category">Sponsored Project</span>
+                          <span className="sponsor-highlight">Featured</span>
+                        </div>
+                      </div>
+
+                      <div className="card-content">
+                        <h3 className="card-title">
+                          <a 
+                            href="https://track.opensourceprojects.dev/droidrun-sponsor"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{textDecoration: 'none', color: 'inherit'}}
+                          >
+                            A powerful framework for controlling Android and iOS devices through LLM agents
+                          </a>
+                        </h3>
+                        <p className="card-excerpt">
+                          Revolutionary framework that bridges the gap between Large Language Models and mobile device automation. Build intelligent testing suites and automation scripts with natural language commands.
+                        </p>
+                        
+                        <div className="repo-info">
+                          <a
+                            href="https://track.opensourceprojects.dev/droidrun-sponsor"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="repo-link"
+                          >
+                            <i className="fab fa-github"></i>
+                            <span>droidrun/droidrun</span>
+                            <i className="fas fa-external-link-alt"></i>
+                          </a>
+                        </div>
+                      </div>
+
+                      <div className="card-footer">
+                        <div className="card-links">
+                          <div className="additional-tags">
+                            <span className="project-tag small" style={{color: '#2196F3', backgroundColor: 'rgba(33, 150, 243, 0.1)'}}>
+                              <i className="fas fa-cogs"></i>
+                              <span>DevOps</span>
+                            </span>
+                            <span className="project-tag small" style={{color: '#9C27B0', backgroundColor: 'rgba(156, 39, 176, 0.1)'}}>
+                              <i className="fas fa-brain"></i>
+                              <span>AI/ML</span>
+                            </span>
+                          </div>
+                        </div>
+                        <a 
+                          href="https://track.opensourceprojects.dev/droidrun-sponsor"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="read-more"
+                        >
+                          <span>Learn More</span>
+                          <i className="fas fa-arrow-right"></i>
+                        </a>
+                      </div>
+                    </article>
+                  )}
+
+                  {shouldShowSponsorUs && (
+                    <article key="sponsor-us-card" className="project-card sponsor-card" style={{animationDelay: `${(index % 6) * 0.1}s`}}>
+                      {/* Sponsor Us Card Image */}
                       <div className="card-image sponsor-image">
                         <Image 
                           src="/images/sponsor.jpg"
@@ -623,14 +718,6 @@ function HomePageContent() {
                             <i className="fas fa-eye"></i>
                             <span>Prime Visibility</span>
                           </div>
-                          {/* <div className="sponsor-feature">
-                            <i className="fas fa-users"></i>
-                            <span>Developer Audience</span>
-                          </div>
-                          <div className="sponsor-feature">
-                            <i className="fas fa-chart-line"></i>
-                            <span>Boost Your Project</span>
-                          </div> */}
                         </div>
                       </div>
 
@@ -643,7 +730,7 @@ function HomePageContent() {
                     </article>
                   )}
                   
-                  <article key={post.id} className="project-card" style={{animationDelay: `${((index + (showSponsorPost && index >= 2 ? 1 : 0)) % 6) * 0.1}s`}}>
+                  <article key={post.id} className="project-card" style={{animationDelay: `${((index + (shouldShowDroidRun ? 1 : 0) + (shouldShowSponsorUs ? 1 : 0)) % 6) * 0.1}s`}}>
                     {/* Project Image */}
                     <div className="card-image">
                       <Image 
@@ -913,6 +1000,183 @@ function HomePageContent() {
           align-items: center;
         }
 
+        /* Sponsored Badge Styles */
+        .sponsored-badge {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          z-index: 10;
+        }
+
+        .sponsor-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          background: linear-gradient(135deg, #ff6b35, #f7931e);
+          color: white;
+          border-radius: 20px;
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+          animation: sponsor-pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes sponsor-pulse {
+          0% { 
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+            transform: scale(1);
+          }
+          100% { 
+            box-shadow: 0 6px 25px rgba(255, 107, 53, 0.6);
+            transform: scale(1.05);
+          }
+        }
+
+        .sponsor-tag i {
+          font-size: 10px;
+        }
+
+        /* Sponsor Card Specific Styles */
+        .sponsor-card {
+          border: 2px solid rgba(255, 107, 53, 0.3);
+          background: linear-gradient(135deg, 
+            rgba(255, 107, 53, 0.05) 0%,
+            rgba(13, 17, 23, 0.95) 20%,
+            rgba(13, 17, 23, 0.95) 100%);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .sponsor-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #ff6b35, #f7931e, #ff6b35);
+          animation: sponsor-border-flow 3s ease-in-out infinite;
+        }
+
+        @keyframes sponsor-border-flow {
+          0%, 100% { 
+            background-position: 0% 50%;
+          }
+          50% { 
+            background-position: 100% 50%;
+          }
+        }
+
+        .sponsor-card:hover {
+          border-color: rgba(255, 107, 53, 0.5);
+          transform: translateY(-5px);
+          box-shadow: 0 20px 40px rgba(255, 107, 53, 0.2);
+        }
+
+        .sponsor-category {
+          background: linear-gradient(135deg, #ff6b35, #f7931e);
+          color: white;
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .sponsor-highlight {
+          background: rgba(255, 107, 53, 0.1);
+          color: #ff6b35;
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 10px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border: 1px solid rgba(255, 107, 53, 0.3);
+        }
+
+        /* Sponsor Us Card Specific Styles */
+        .sponsor-image {
+          position: relative;
+        }
+
+        .sponsor-overlay {
+          background: linear-gradient(
+            to bottom,
+            rgba(255, 107, 53, 0.2) 0%,
+            transparent 30%,
+            transparent 70%,
+            rgba(255, 107, 53, 0.4) 100%
+          );
+        }
+
+        .sponsor-availability {
+          background: rgba(76, 175, 80, 0.1);
+          color: #4CAF50;
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 10px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+
+        .sponsor-features {
+          display: flex;
+          gap: 12px;
+          margin-top: 12px;
+        }
+
+        .sponsor-feature {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: #8b949e;
+          font-size: 12px;
+        }
+
+        .sponsor-feature i {
+          color: #ff6b35;
+          font-size: 14px;
+        }
+
+        .sponsor-footer {
+          border-top: 1px solid rgba(255, 107, 53, 0.2);
+        }
+
+        .sponsor-cta-button {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: linear-gradient(135deg, #ff6b35, #f7931e);
+          color: white;
+          padding: 12px 24px;
+          border-radius: 8px;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 14px;
+          transition: all 0.3s ease;
+          border: none;
+          width: 100%;
+          justify-content: center;
+        }
+
+        .sponsor-cta-button:hover {
+          background: linear-gradient(135deg, #e55a2b, #e67e1a);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .sponsor-cta {
+          color: #ff6b35;
+          font-size: 24px;
+        }
+
         /* Responsive adjustments for new elements only */
         @media screen and (max-width: 768px) {
           .card-image {
@@ -946,6 +1210,28 @@ function HomePageContent() {
             width: 100%;
             max-width: 100%;
             overflow-wrap: break-word;
+          }
+
+          /* Sponsored elements mobile styles */
+          .sponsored-badge {
+            top: 8px;
+            right: 8px;
+          }
+
+          .sponsor-tag {
+            padding: 4px 8px;
+            font-size: 9px;
+            gap: 4px;
+          }
+
+          .sponsor-tag i {
+            font-size: 8px;
+          }
+
+          .sponsor-category,
+          .sponsor-highlight {
+            font-size: 9px;
+            padding: 3px 6px;
           }
         }
 
@@ -987,6 +1273,28 @@ function HomePageContent() {
             word-break: break-word;
             overflow-wrap: break-word;
             hyphens: auto;
+          }
+
+          /* Sponsored elements extra small mobile styles */
+          .sponsored-badge {
+            top: 6px;
+            right: 6px;
+          }
+
+          .sponsor-tag {
+            padding: 3px 6px;
+            font-size: 8px;
+            gap: 3px;
+          }
+
+          .sponsor-tag i {
+            font-size: 7px;
+          }
+
+          .sponsor-category,
+          .sponsor-highlight {
+            font-size: 8px;
+            padding: 2px 4px;
           }
         }
 
