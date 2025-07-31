@@ -111,6 +111,43 @@ function SponsorUs() {
           </div>
         </section>
 
+        {/* Current Sponsors Section */}
+        <section className="current-sponsors">
+          <div className="section-header">
+            <h2>Current Sponsors</h2>
+            <p>Thank you to our amazing sponsors who help keep this platform running</p>
+          </div>
+          
+          <div className="sponsors-list">
+            <div className="sponsor-item">
+              <span className="sponsor-badge">
+                <i className="fas fa-star"></i>
+                Featured
+              </span>
+              <a 
+                href="https://track.opensourceprojects.dev/droidrun-sponsor" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="sponsor-name"
+              >
+                DroidRun
+              </a>
+            </div>
+          </div>
+          
+          <div className="sponsors-cta">
+            <p>Want to be featured here?</p>
+            <button 
+              className="cta-button"
+              onClick={() => {
+                document.querySelector('.sponsor-packages').scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              View Sponsorship Packages
+            </button>
+          </div>
+        </section>
+
         {/* Benefits Section */}
         <section className="sponsor-benefits">
           <div className="section-header">
@@ -384,7 +421,7 @@ function SponsorUs() {
                 <i className="fas fa-envelope"></i>
                 <div>
                   <strong>Email Us</strong>
-                  <span>osp@cosmicstack.uk</span>
+                  <span>sponsors@opensourceprojects.dev</span>
                 </div>
               </a>
               
