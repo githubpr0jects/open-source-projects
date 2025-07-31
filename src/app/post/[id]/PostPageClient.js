@@ -770,6 +770,111 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               </div>
 
               <div className="article-footer">
+                {/* DroidRun Sponsored Project - Above sponsor promo */}
+                <div className="sponsored-project-section">
+                  <div className="sponsored-project-header">
+                    <h3>
+                      <i className="fas fa-star"></i>
+                      Featured Sponsor
+                    </h3>
+                    <span className="sponsored-badge">
+                      <i className="fas fa-gem"></i>
+                      SPONSORED
+                    </span>
+                  </div>
+                  
+                  <div className="sponsored-project-card">
+                    <div className="sponsored-project-image">
+                      <Image 
+                        src="https://opengraph.githubassets.com/8190d792d99e38d0f692153671df84bdcc818a6797f136d88cf243807f94d0de/droidrun/droidrun"
+                        alt="DroidRun - A powerful framework for controlling Android and iOS devices through LLM agents"
+                        width={600}
+                        height={300}
+                        unoptimized
+                        className="sponsored-image"
+                      />
+                      <div className="sponsored-image-overlay">
+                        <div className="sponsored-project-tags">
+                          <span className="sponsored-tag">
+                            <i className="fas fa-mobile-alt"></i>
+                            Mobile Testing
+                          </span>
+                          <span className="sponsored-tag">
+                            <i className="fas fa-robot"></i>
+                            LLM Integration
+                          </span>
+                          <span className="sponsored-tag">
+                            <i className="fas fa-cogs"></i>
+                            DevOps
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="sponsored-project-content">
+                      <div className="sponsored-project-header-content">
+                        <h4 className="sponsored-project-title">
+                          <a 
+                            href="https://track.opensourceprojects.dev/droidrun-sponsor"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            A powerful framework for controlling Android and iOS devices through LLM agents
+                          </a>
+                        </h4>
+                        <div className="sponsored-project-meta">
+                          <span className="sponsored-repo">
+                            <i className="fab fa-github"></i>
+                            droidrun/droidrun
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <p className="sponsored-project-description">
+                        Revolutionary framework that bridges the gap between Large Language Models and mobile device automation. 
+                        Build intelligent testing suites and automation scripts with natural language commands. Perfect for QA teams, 
+                        developers, and anyone looking to streamline mobile app testing workflows.
+                      </p>
+                      
+                      <div className="sponsored-project-features">
+                        <div className="sponsored-feature">
+                          <i className="fas fa-brain"></i>
+                          <span>AI-Powered Automation</span>
+                        </div>
+                        <div className="sponsored-feature">
+                          <i className="fas fa-mobile-alt"></i>
+                          <span>Cross-Platform Support</span>
+                        </div>
+                        <div className="sponsored-feature">
+                          <i className="fas fa-language"></i>
+                          <span>Natural Language Control</span>
+                        </div>
+                      </div>
+                      
+                      <div className="sponsored-project-actions">
+                        <a 
+                          href="https://track.opensourceprojects.dev/droidrun-sponsor"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="sponsored-cta-primary"
+                        >
+                          <span>Explore DroidRun</span>
+                          <i className="fas fa-arrow-right"></i>
+                        </a>
+                        <a 
+                          href="https://track.opensourceprojects.dev/droidrun-sponsor"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="sponsored-cta-secondary"
+                        >
+                          <i className="fab fa-github"></i>
+                          <span>View Source</span>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Creative Sponsor Block - Full Width */}
                 <div className="sponsor-promo-block">
                   <div className="sponsor-promo-content">
@@ -2993,6 +3098,279 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           font-weight: 600;
         }
 
+        /* Sponsored Project Section Styles */
+        .sponsored-project-section {
+          background: linear-gradient(135deg, 
+            rgba(255, 107, 53, 0.08) 0%, 
+            rgba(13, 17, 23, 0.95) 20%, 
+            rgba(13, 17, 23, 0.95) 100%);
+          border: 2px solid rgba(255, 107, 53, 0.3);
+          border-radius: 16px;
+          margin: 2rem 0;
+          padding: 1.5rem;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .sponsored-project-section::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #ff6b35, #f7931e, #ff6b35);
+          animation: sponsor-border-flow 3s ease-in-out infinite;
+        }
+
+        @keyframes sponsor-border-flow {
+          0%, 100% { 
+            background-position: 0% 50%;
+          }
+          50% { 
+            background-position: 100% 50%;
+          }
+        }
+
+        .sponsored-project-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.5rem;
+        }
+
+        .sponsored-project-header h3 {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          color: #f0f6fc;
+          font-size: 1.25rem;
+          font-weight: 700;
+          margin: 0;
+        }
+
+        .sponsored-project-header h3 i {
+          color: #ff6b35;
+          font-size: 1.1rem;
+        }
+
+        .sponsored-badge {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: linear-gradient(135deg, #ff6b35, #f7931e);
+          color: white;
+          padding: 0.5rem 1rem;
+          border-radius: 20px;
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+          animation: sponsor-pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes sponsor-pulse {
+          0% { 
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+            transform: scale(1);
+          }
+          100% { 
+            box-shadow: 0 6px 25px rgba(255, 107, 53, 0.6);
+            transform: scale(1.05);
+          }
+        }
+
+        .sponsored-badge i {
+          font-size: 0.7rem;
+        }
+
+        .sponsored-project-card {
+          display: grid;
+          grid-template-columns: 1fr 2fr;
+          gap: 1.5rem;
+          align-items: start;
+        }
+
+        .sponsored-project-image {
+          position: relative;
+          border-radius: 12px;
+          overflow: hidden;
+          background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .sponsored-image {
+          width: 100%;
+          height: auto;
+          display: block;
+          transition: transform 0.3s ease;
+        }
+
+        .sponsored-project-card:hover .sponsored-image {
+          transform: scale(1.05);
+        }
+
+        .sponsored-image-overlay {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: linear-gradient(
+            to top,
+            rgba(255, 107, 53, 0.8) 0%,
+            transparent 100%
+          );
+          padding: 1rem;
+        }
+
+        .sponsored-project-tags {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .sponsored-tag {
+          display: flex;
+          align-items: center;
+          gap: 0.375rem;
+          background: rgba(255, 255, 255, 0.9);
+          color: #333;
+          padding: 0.25rem 0.5rem;
+          border-radius: 12px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          backdrop-filter: blur(10px);
+        }
+
+        .sponsored-tag i {
+          font-size: 0.7rem;
+        }
+
+        .sponsored-project-content {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .sponsored-project-header-content {
+          border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+          padding-bottom: 1rem;
+        }
+
+        .sponsored-project-title {
+          margin: 0 0 0.5rem 0;
+          font-size: 1.1rem;
+          font-weight: 700;
+          line-height: 1.3;
+        }
+
+        .sponsored-project-title a {
+          color: #f0f6fc;
+          text-decoration: none;
+          transition: color 0.3s ease;
+        }
+
+        .sponsored-project-title a:hover {
+          color: #ff6b35;
+        }
+
+        .sponsored-project-meta {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .sponsored-repo {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #8b949e;
+          font-size: 0.875rem;
+          font-family: 'SF Mono', 'Monaco', monospace;
+        }
+
+        .sponsored-repo i {
+          color: #ff6b35;
+        }
+
+        .sponsored-project-description {
+          color: #8b949e;
+          line-height: 1.6;
+          font-size: 0.95rem;
+          margin: 0;
+        }
+
+        .sponsored-project-features {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 0.75rem;
+        }
+
+        .sponsored-feature {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #8b949e;
+          font-size: 0.875rem;
+        }
+
+        .sponsored-feature i {
+          color: #ff6b35;
+          font-size: 1rem;
+          width: 16px;
+          text-align: center;
+        }
+
+        .sponsored-project-actions {
+          display: flex;
+          gap: 1rem;
+          margin-top: 0.5rem;
+        }
+
+        .sponsored-cta-primary {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: linear-gradient(135deg, #ff6b35, #f7931e);
+          color: white;
+          text-decoration: none;
+          padding: 0.75rem 1.25rem;
+          border-radius: 8px;
+          font-weight: 600;
+          font-size: 0.9rem;
+          transition: all 0.3s ease;
+          flex: 1;
+          justify-content: center;
+        }
+
+        .sponsored-cta-primary:hover {
+          background: linear-gradient(135deg, #e55a2b, #e67e1a);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        .sponsored-cta-secondary {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: rgba(255, 107, 53, 0.1);
+          color: #ff6b35;
+          text-decoration: none;
+          padding: 0.75rem 1.25rem;
+          border-radius: 8px;
+          border: 1px solid rgba(255, 107, 53, 0.3);
+          font-weight: 600;
+          font-size: 0.9rem;
+          transition: all 0.3s ease;
+          justify-content: center;
+        }
+
+        .sponsored-cta-secondary:hover {
+          background: rgba(255, 107, 53, 0.2);
+          border-color: rgba(255, 107, 53, 0.5);
+          transform: translateY(-2px);
+        }
+
         @media screen and (max-width: 480px) {
           .project-meta {
             margin-bottom: 0.5rem;
@@ -3236,6 +3614,61 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
           .stat-label-short {
             display: inline;
+          }
+
+          /* Sponsored project mobile styles */
+          .sponsored-project-section {
+            padding: 1rem;
+            margin: 1.5rem 0;
+          }
+
+          .sponsored-project-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+          }
+
+          .sponsored-project-header h3 {
+            font-size: 1rem;
+          }
+
+          .sponsored-badge {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.65rem;
+          }
+
+          .sponsored-project-card {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+
+          .sponsored-project-title {
+            font-size: 1rem;
+          }
+
+          .sponsored-project-description {
+            font-size: 0.875rem;
+          }
+
+          .sponsored-project-features {
+            grid-template-columns: 1fr;
+            gap: 0.5rem;
+          }
+
+          .sponsored-feature {
+            font-size: 0.8rem;
+          }
+
+          .sponsored-project-actions {
+            flex-direction: column;
+            gap: 0.75rem;
+          }
+
+          .sponsored-cta-primary,
+          .sponsored-cta-secondary {
+            padding: 0.625rem 1rem;
+            font-size: 0.85rem;
           }
         }
       `}</style>
