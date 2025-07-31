@@ -417,7 +417,7 @@ function SponsorUs() {
             </div>
             
             <div className="contact-methods">
-              <a href="mailto:sponsor@opensourceprojects.dev" className="contact-method">
+              <a href="mailto:sponsors@opensourceprojects.dev" className="contact-method">
                 <i className="fas fa-envelope"></i>
                 <div>
                   <strong>Email Us</strong>
