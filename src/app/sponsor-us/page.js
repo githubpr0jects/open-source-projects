@@ -190,7 +190,7 @@ function SponsorUs() {
                 <li><i className="fas fa-check"></i> 7 days visibility</li>
                 <li><i className="fas fa-check"></i> Custom project description</li>
                 <li><i className="fas fa-check"></i> Click tracking</li>
-                <li><i className="fas fa-check"></i> Social media mention</li>
+                {/* <li><i className="fas fa-check"></i> Social media mention</li> */}
               </ul>
               <button 
                 className="package-cta"
