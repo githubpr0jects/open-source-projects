@@ -43,8 +43,8 @@ export default function Header({ currentPage = 'home' }) {
             <span>Bookmarks</span>
           </Link>
           <Link href="/sponsor-us" className={`nav-link ${currentPage === 'sponsor-us' ? 'active' : ''}`}>
-            <i className="fas fa-star"></i>
-            <span>Featured</span>
+            <i className="fas fa-gem"></i>
+            <span>Sponsors</span>
           </Link>
           {/* <Link href="#" className="nav-link">
             <i className="fas fa-gem"></i>

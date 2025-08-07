@@ -56,6 +56,28 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
   const [error, setError] = useState(null);
   const [linkPreviews, setLinkPreviews] = useState({});
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
+  const [selectedSponsor, setSelectedSponsor] = useState(null);
+
+  // Fetch a random active sponsor from API
+  const fetchRandomSponsor = async () => {
+    try {
+      const response = await fetch('/api/sponsors?active=true&random=true');
+      if (response.ok) {
+        const data = await response.json();
+        if (data.sponsors && data.sponsors.length > 0) {
+          setSelectedSponsor(data.sponsors[0]);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch random sponsor:', error);
+      setSelectedSponsor(null);
+    }
+  };
+
+  // Initialize random sponsor on component mount
+  useEffect(() => {
+    fetchRandomSponsor();
+  }, []);
 
   useEffect(() => {
     if (!initialPostDetails) {
@@ -770,110 +792,117 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               </div>
 
               <div className="article-footer">
-                {/* DroidRun Sponsored Project - Above sponsor promo */}
-                <div className="sponsored-project-section">
-                  <div className="sponsored-project-header">
-                    <h3>
-                      <i className="fas fa-star"></i>
-                      Featured Sponsor
-                    </h3>
-                    <span className="sponsored-badge">
-                      <i className="fas fa-gem"></i>
-                      SPONSORED
-                    </span>
-                  </div>
-                  
-                  <div className="sponsored-project-card">
-                    <div className="sponsored-project-image">
-                      <Image 
-                        src="https://opengraph.githubassets.com/8190d792d99e38d0f692153671df84bdcc818a6797f136d88cf243807f94d0de/droidrun/droidrun"
-                        alt="DroidRun - A powerful framework for controlling Android and iOS devices through LLM agents"
-                        width={600}
-                        height={300}
-                        unoptimized
-                        className="sponsored-image"
-                      />
-                      <div className="sponsored-image-overlay">
-                        <div className="sponsored-project-tags">
-                          <span className="sponsored-tag">
-                            <i className="fas fa-mobile-alt"></i>
-                            Mobile Testing
-                          </span>
-                          <span className="sponsored-tag">
-                            <i className="fas fa-robot"></i>
-                            LLM Integration
-                          </span>
-                          <span className="sponsored-tag">
-                            <i className="fas fa-cogs"></i>
-                            DevOps
-                          </span>
-                        </div>
-                      </div>
+                {/* Dynamic Sponsored Project - Above sponsor promo */}
+                {selectedSponsor && (
+                  <div className="sponsored-project-section">
+                    <div className="sponsored-project-header">
+                      <h3>
+                        <i className="fas fa-star"></i>
+                        Featured Sponsor
+                      </h3>
+                      <span className="sponsored-badge">
+                        <i className="fas fa-gem"></i>
+                        SPONSORED
+                      </span>
                     </div>
                     
-                    <div className="sponsored-project-content">
-                      <div className="sponsored-project-header-content">
-                        <h4 className="sponsored-project-title">
+                    <div className="sponsored-project-card">
+                      <div className="sponsored-project-image">
+                        <Image 
+                          src={selectedSponsor.image}
+                          alt={selectedSponsor.description}
+                          width={600}
+                          height={300}
+                          unoptimized
+                          className="sponsored-image"
+                        />
+                        <div className="sponsored-image-overlay">
+                          <div className="sponsored-project-tags">
+                            {selectedSponsor.tags.map((tag, index) => (
+                              <span 
+                                key={index} 
+                                className="sponsored-tag"
+                                style={{
+                                  backgroundColor: tag.bgColor || 'rgba(255, 255, 255, 0.9)',
+                                  color: tag.color || '#333'
+                                }}
+                              >
+                                <i className={tag.icon}></i>
+                                {tag.label}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="sponsored-project-content">
+                        <div className="sponsored-project-header-content">
+                          <h4 className="sponsored-project-title">
+                            <a 
+                              href={selectedSponsor.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {selectedSponsor.description}
+                            </a>
+                          </h4>
+                          <div className="sponsored-project-meta">
+                            <span className="sponsored-repo">
+                              <i className="fab fa-github"></i>
+                              {selectedSponsor.repo}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <p className="sponsored-project-description">
+                          {selectedSponsor.tagline}
+                        </p>
+                        
+                        <div className="sponsored-project-features">
+                          {selectedSponsor.tags.slice(3).map((tag, index) => (
+                            <div key={index} className="sponsored-feature">
+                              <i className={tag.icon}></i>
+                              <span>{tag.label}</span>
+                            </div>
+                          ))}
+                          {selectedSponsor.tags.length < 4 && (
+                            <>
+                              <div className="sponsored-feature">
+                                <i className="fas fa-star"></i>
+                                <span>Premium Quality</span>
+                              </div>
+                              <div className="sponsored-feature">
+                                <i className="fas fa-shield-alt"></i>
+                                <span>Trusted by Developers</span>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                        
+                        <div className="sponsored-project-actions">
                           <a 
-                            href="https://track.opensourceprojects.dev/droidrun-sponsor"
+                            href={selectedSponsor.link}
                             target="_blank"
                             rel="noopener noreferrer"
+                            className="sponsored-cta-primary"
                           >
-                            A powerful framework for controlling Android and iOS devices through LLM agents
+                            <span>Explore {selectedSponsor.name}</span>
+                            <i className="fas fa-arrow-right"></i>
                           </a>
-                        </h4>
-                        <div className="sponsored-project-meta">
-                          <span className="sponsored-repo">
+                          <a 
+                            href={selectedSponsor.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="sponsored-cta-secondary"
+                          >
                             <i className="fab fa-github"></i>
-                            droidrun/droidrun
-                          </span>
+                            <span>View Source</span>
+                          </a>
                         </div>
-                      </div>
-                      
-                      <p className="sponsored-project-description">
-                        Revolutionary framework that bridges the gap between Large Language Models and mobile device automation. 
-                        Build intelligent testing suites and automation scripts with natural language commands. Perfect for QA teams, 
-                        developers, and anyone looking to streamline mobile app testing workflows.
-                      </p>
-                      
-                      <div className="sponsored-project-features">
-                        <div className="sponsored-feature">
-                          <i className="fas fa-brain"></i>
-                          <span>AI-Powered Automation</span>
-                        </div>
-                        <div className="sponsored-feature">
-                          <i className="fas fa-mobile-alt"></i>
-                          <span>Cross-Platform Support</span>
-                        </div>
-                        <div className="sponsored-feature">
-                          <i className="fas fa-language"></i>
-                          <span>Natural Language Control</span>
-                        </div>
-                      </div>
-                      
-                      <div className="sponsored-project-actions">
-                        <a 
-                          href="https://track.opensourceprojects.dev/droidrun-sponsor"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="sponsored-cta-primary"
-                        >
-                          <span>Explore DroidRun</span>
-                          <i className="fas fa-arrow-right"></i>
-                        </a>
-                        <a 
-                          href="https://track.opensourceprojects.dev/droidrun-sponsor"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="sponsored-cta-secondary"
-                        >
-                          <i className="fab fa-github"></i>
-                          <span>View Source</span>
-                        </a>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* Creative Sponsor Block - Full Width */}
                 <div className="sponsor-promo-block">
@@ -3227,6 +3256,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           display: flex;
           gap: 0.5rem;
           flex-wrap: wrap;
+          max-width: 100%;
         }
 
         .sponsored-tag {
@@ -3235,11 +3265,19 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           gap: 0.375rem;
           background: rgba(255, 255, 255, 0.9);
           color: #333;
-          padding: 0.25rem 0.5rem;
-          border-radius: 12px;
+          padding: 0.375rem 0.75rem;
+          border-radius: 16px;
           font-size: 0.75rem;
           font-weight: 600;
           backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          white-space: nowrap;
+          transition: all 0.2s ease;
+        }
+
+        .sponsored-tag:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .sponsored-tag i {

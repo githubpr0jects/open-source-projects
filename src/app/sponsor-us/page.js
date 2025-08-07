@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Image from 'next/image';
@@ -18,6 +18,46 @@ function SponsorUs() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [sponsors, setSponsors] = useState([]);
+  const [sponsorsLoading, setSponsorsLoading] = useState(true);
+
+  // Fetch all sponsors from API
+  const fetchSponsors = async () => {
+    try {
+      setSponsorsLoading(true);
+      const response = await fetch('/api/sponsors');
+      if (response.ok) {
+        const data = await response.json();
+        // Sort sponsors by start date (most recent first)
+        const sortedSponsors = (data.sponsors || []).sort((a, b) => {
+          return new Date(b.startDate) - new Date(a.startDate);
+        });
+        setSponsors(sortedSponsors);
+      }
+    } catch (error) {
+      console.error('Failed to fetch sponsors:', error);
+      setSponsors([]);
+    } finally {
+      setSponsorsLoading(false);
+    }
+  };
+
+  // Fetch sponsors on component mount
+  useEffect(() => {
+    fetchSponsors();
+  }, []);
+
+  // Helper function to get sponsor icon
+  const getSponsorIcon = (sponsorId) => {
+    switch (sponsorId) {
+      case 'droidrun':
+        return 'fas fa-mobile-alt';
+      case 'hyprnote':
+        return 'fas fa-sticky-note';
+      default:
+        return 'fas fa-heart';
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -119,20 +159,82 @@ function SponsorUs() {
           </div>
           
           <div className="sponsors-list">
-            <div className="sponsor-item">
-              <span className="sponsor-badge">
-                <i className="fas fa-star"></i>
-                Featured
-              </span>
-              <a 
-                href="https://track.opensourceprojects.dev/droidrun-sponsor" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="sponsor-name"
-              >
-                DroidRun
-              </a>
-            </div>
+            {sponsorsLoading ? (
+              <div className="sponsors-loading">
+                <div className="loading-spinner"></div>
+                <p>Loading sponsors...</p>
+              </div>
+            ) : sponsors.length > 0 ? (
+              sponsors.map((sponsor, index) => {
+                // Check if sponsor is currently active
+                const now = new Date();
+                const startDate = new Date(sponsor.startDate);
+                const endDate = new Date(startDate);
+                endDate.setDate(startDate.getDate() + (sponsor.durationDays || 30));
+                const isActive = now >= startDate && now <= endDate;
+                
+                return (
+                  <div key={sponsor.id} className="sponsor-item">
+                    {/* Sponsor Header with Icon */}
+                    <div className="sponsor-header">
+                      <div className={`sponsor-icon ${sponsor.id}`}>
+                        <i className={getSponsorIcon(sponsor.id)}></i>
+                      </div>
+                      <div className="sponsor-title-section">
+                        <a 
+                          href={sponsor.link}
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="sponsor-name"
+                        >
+                          {sponsor.name}
+                        </a>
+                        {/* Badges */}
+                        <div className="sponsor-badge-container">
+                          {index === 0 && (
+                            <span className="sponsor-badge featured">
+                              <i className="fas fa-crown"></i>
+                              Latest
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Sponsor Details */}
+                    <div className="sponsor-details">
+                      <p className="sponsor-description">{sponsor.description}</p>
+                      <div className="sponsor-meta">
+                        <span className="sponsor-repo">
+                          <i className="fab fa-github"></i>
+                          {sponsor.repo}
+                        </span>
+                      </div>
+                      <div className="sponsor-tags">
+                        {sponsor.tags.slice(0, 3).map((tag, tagIndex) => (
+                          <span 
+                            key={tagIndex}
+                            className="sponsor-tag"
+                            style={{
+                              color: tag.color,
+                              backgroundColor: tag.bgColor
+                            }}
+                          >
+                            <i className={tag.icon}></i>
+                            {tag.label}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div className="no-sponsors">
+                <i className="fas fa-heart"></i>
+                <p>No sponsors yet. Be the first to support this platform!</p>
+              </div>
+            )}
           </div>
           
           <div className="sponsors-cta">
@@ -218,7 +320,7 @@ function SponsorUs() {
               <div className="package-header">
                 <h3>Featured Spot</h3>
                 <div className="package-price">
-                  <span className="price">$99</span>
+                  <span className="price">$179</span>
                   <span className="period">/week</span>
                 </div>
               </div>
@@ -232,7 +334,7 @@ function SponsorUs() {
               <button 
                 className="package-cta"
                 onClick={() => {
-                  setFormData(prev => ({ ...prev, bidding_amount: '99' }));
+                  setFormData(prev => ({ ...prev, bidding_amount: '179' }));
                   document.querySelector('.sponsor-form-container').scrollIntoView({ behavior: 'smooth' });
                 }}
               >
@@ -245,7 +347,7 @@ function SponsorUs() {
               <div className="package-header">
                 <h3>Premium Boost</h3>
                 <div className="package-price">
-                  <span className="price">$249</span>
+                  <span className="price">$499</span>
                   <span className="period">/month</span>
                 </div>
               </div>
@@ -260,7 +362,7 @@ function SponsorUs() {
               <button 
                 className="package-cta primary"
                 onClick={() => {
-                  setFormData(prev => ({ ...prev, bidding_amount: '249' }));
+                  setFormData(prev => ({ ...prev, bidding_amount: '499' }));
                   document.querySelector('.sponsor-form-container').scrollIntoView({ behavior: 'smooth' });
                 }}
               >
@@ -287,7 +389,7 @@ function SponsorUs() {
               <button 
                 className="package-cta"
                 onClick={() => {
-                  setFormData(prev => ({ ...prev, bidding_amount: '500' }));
+                  setFormData(prev => ({ ...prev, bidding_amount: '1000' }));
                   document.querySelector('.sponsor-form-container').scrollIntoView({ behavior: 'smooth' });
                 }}
               >
@@ -357,8 +459,8 @@ function SponsorUs() {
                       value={formData.bidding_amount}
                       onChange={handleInputChange}
                       required
-                      min="99"
-                      placeholder="299"
+                      min="179"
+                      placeholder="499"
                       className="form-input"
                     />
                   </div>

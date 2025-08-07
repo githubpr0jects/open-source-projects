@@ -18,6 +18,46 @@ function HomePageContent() {
   const [appliedSearchQuery, setAppliedSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState('latest');
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
+  const [activeSponsors, setActiveSponsors] = useState([]);
+
+  // Fetch active sponsors from API
+  const fetchActiveSponsors = async () => {
+    try {
+      const response = await fetch('/api/sponsors?active=true&shuffle=true');
+      if (response.ok) {
+        const data = await response.json();
+        setActiveSponsors(data.sponsors || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch sponsors:', error);
+      setActiveSponsors([]);
+    }
+  };
+
+  // Update active sponsors on component mount and daily
+  useEffect(() => {
+    // Fetch immediately
+    fetchActiveSponsors();
+    
+    // Update daily at midnight
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+    const timeUntilMidnight = tomorrow - now;
+    
+    const dailyUpdate = setInterval(fetchActiveSponsors, 24 * 60 * 60 * 1000);
+    const initialUpdate = setTimeout(() => {
+      fetchActiveSponsors();
+      // Start daily updates after first midnight update
+      setInterval(fetchActiveSponsors, 24 * 60 * 60 * 1000);
+    }, timeUntilMidnight);
+    
+    return () => {
+      clearInterval(dailyUpdate);
+      clearTimeout(initialUpdate);
+    };
+  }, []);
   
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -569,37 +609,45 @@ function HomePageContent() {
 
           <div className="projects-grid">
             {posts.map((post, index) => {
-              // Insert DroidRun sponsor post at 2nd position (index 1)
-              // Insert Sponsor Us card at 4th position (index 3)
-              const showSponsorPost = true;
-              const shouldShowDroidRun = showSponsorPost && index === 1;
-              const shouldShowSponsorUs = showSponsorPost && index === 3;
+              // Dynamic sponsor placement - reserve positions 2 and 3 for sponsors
+              const sponsorAtPosition2 = index === 1 && activeSponsors[0];
+              const sponsorAtPosition3 = index === 2 && activeSponsors[1];
+              const currentSponsor = sponsorAtPosition2 ? activeSponsors[0] : (sponsorAtPosition3 ? activeSponsors[1] : null);
+              
+              // Show sponsor us card after all active sponsors (position 4 if 2 sponsors, position 3 if 1 sponsor, etc.)
+              const shouldShowSponsorUs = index === (1 + activeSponsors.length) && activeSponsors.length < 3;
+              
               const projectTags = getProjectTags(post);
               const repoName = getRepoName(post.github_repo);
               
               return (
                 <React.Fragment key={`post-${post.id}-${index}`}>
-                  {shouldShowDroidRun && (
-                    <article key="droidrun-sponsor" className="project-card sponsor-card" style={{animationDelay: `${(index % 6) * 0.1}s`}}>
-                      {/* DroidRun Sponsored Project Image */}
+                  {currentSponsor && (
+                    <article key={`sponsor-${currentSponsor.id}`} className="project-card sponsor-card" style={{animationDelay: `${(index % 6) * 0.1}s`}}>
+                      {/* Dynamic Sponsored Project Image */}
                       <div className="card-image">
                         <Image 
-                          src="https://opengraph.githubassets.com/8190d792d99e38d0f692153671df84bdcc818a6797f136d88cf243807f94d0de/droidrun/droidrun"
-                          alt="DroidRun - A powerful framework for controlling Android and iOS devices through LLM agents"
+                          src={currentSponsor.image}
+                          alt={currentSponsor.description}
                           width={400}
                           height={200}
                           unoptimized
                         />
                         <div className="card-image-overlay">
                           <div className="project-tags">
-                            <span className="project-tag" style={{color: '#ff6b35', backgroundColor: 'rgba(255, 107, 53, 0.1)'}}>
-                              <i className="fas fa-mobile-alt"></i>
-                              <span>Mobile Testing</span>
-                            </span>
-                            <span className="project-tag" style={{color: '#4CAF50', backgroundColor: 'rgba(76, 175, 80, 0.1)'}}>
-                              <i className="fas fa-robot"></i>
-                              <span>LLM Integration</span>
-                            </span>
+                            {currentSponsor.tags.slice(0, 2).map((tag, tagIndex) => (
+                              <span 
+                                key={tagIndex} 
+                                className="project-tag"
+                                style={{
+                                  color: tag.color,
+                                  backgroundColor: tag.bgColor
+                                }}
+                              >
+                                <i className={tag.icon}></i>
+                                <span>{tag.label}</span>
+                              </span>
+                            ))}
                           </div>
                           <div className="sponsored-badge">
                             <span className="sponsor-tag">
@@ -620,27 +668,27 @@ function HomePageContent() {
                       <div className="card-content">
                         <h3 className="card-title">
                           <a 
-                            href="https://track.opensourceprojects.dev/droidrun-sponsor"
+                            href={currentSponsor.link}
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{textDecoration: 'none', color: 'inherit'}}
                           >
-                            A powerful framework for controlling Android and iOS devices through LLM agents
+                            {currentSponsor.description}
                           </a>
                         </h3>
                         <p className="card-excerpt">
-                          Revolutionary framework that bridges the gap between Large Language Models and mobile device automation. Build intelligent testing suites and automation scripts with natural language commands.
+                          {currentSponsor.tagline}
                         </p>
                         
                         <div className="repo-info">
                           <a
-                            href="https://track.opensourceprojects.dev/droidrun-sponsor"
+                            href={currentSponsor.link}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="repo-link"
                           >
                             <i className="fab fa-github"></i>
-                            <span>droidrun/droidrun</span>
+                            <span>{currentSponsor.repo}</span>
                             <i className="fas fa-external-link-alt"></i>
                           </a>
                         </div>
@@ -649,18 +697,23 @@ function HomePageContent() {
                       <div className="card-footer">
                         <div className="card-links">
                           <div className="additional-tags">
-                            <span className="project-tag small" style={{color: '#2196F3', backgroundColor: 'rgba(33, 150, 243, 0.1)'}}>
-                              <i className="fas fa-cogs"></i>
-                              <span>DevOps</span>
-                            </span>
-                            <span className="project-tag small" style={{color: '#9C27B0', backgroundColor: 'rgba(156, 39, 176, 0.1)'}}>
-                              <i className="fas fa-brain"></i>
-                              <span>AI/ML</span>
-                            </span>
+                            {currentSponsor.tags.slice(2).map((tag, tagIndex) => (
+                              <span 
+                                key={tagIndex} 
+                                className="project-tag small"
+                                style={{
+                                  color: tag.color,
+                                  backgroundColor: tag.bgColor
+                                }}
+                              >
+                                <i className={tag.icon}></i>
+                                <span>{tag.label}</span>
+                              </span>
+                            ))}
                           </div>
                         </div>
                         <a 
-                          href="https://track.opensourceprojects.dev/droidrun-sponsor"
+                          href={currentSponsor.link}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="read-more"
@@ -730,7 +783,7 @@ function HomePageContent() {
                     </article>
                   )}
                   
-                  <article key={post.id} className="project-card" style={{animationDelay: `${((index + (shouldShowDroidRun ? 1 : 0) + (shouldShowSponsorUs ? 1 : 0)) % 6) * 0.1}s`}}>
+                  <article key={post.id} className="project-card" style={{animationDelay: `${((index + (currentSponsor ? 1 : 0) + (shouldShowSponsorUs ? 1 : 0)) % 6) * 0.1}s`}}>
                     {/* Project Image */}
                     <div className="card-image">
                       <Image 
