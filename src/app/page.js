@@ -609,13 +609,16 @@ function HomePageContent() {
 
           <div className="projects-grid">
             {posts.map((post, index) => {
-              // Dynamic sponsor placement - reserve positions 2 and 3 for sponsors
+              // Dynamic sponsor placement - reserve positions 2, 3, and 4 for sponsors
               const sponsorAtPosition2 = index === 1 && activeSponsors[0];
               const sponsorAtPosition3 = index === 2 && activeSponsors[1];
-              const currentSponsor = sponsorAtPosition2 ? activeSponsors[0] : (sponsorAtPosition3 ? activeSponsors[1] : null);
+              const sponsorAtPosition4 = index === 3 && activeSponsors[2];
+              const currentSponsor = sponsorAtPosition2 ? activeSponsors[0] : 
+                                    (sponsorAtPosition3 ? activeSponsors[1] : 
+                                    (sponsorAtPosition4 ? activeSponsors[2] : null));
               
-              // Show sponsor us card after all active sponsors (position 4 if 2 sponsors, position 3 if 1 sponsor, etc.)
-              const shouldShowSponsorUs = index === (1 + activeSponsors.length) && activeSponsors.length < 3;
+              // Show sponsor us card after all active sponsors
+              const shouldShowSponsorUs = index === (1 + activeSponsors.length);
               
               const projectTags = getProjectTags(post);
               const repoName = getRepoName(post.github_repo);

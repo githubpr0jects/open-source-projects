@@ -3,12 +3,29 @@ import { NextResponse } from 'next/server';
 // Centralized sponsors configuration - Single source of truth
 const sponsors = [
   {
+    id: 'bytebot',
+    name: 'ByteBot',
+    image: 'https://opengraph.githubassets.com/1/bytebot-ai/bytebot',
+    description: 'ByteBot: Open-Source AI Desktop Agent that has its own computer',
+    tagline: 'Give AI its own computer to automate tasks autonomously. ByteBot can use any application, download files, read documents, and complete complex multi-step workflows across different programs.',
+    link: 'https://click.opensourceprojects.dev/s/bytebot-sponsor',
+    repo: 'bytebot-ai/bytebot',
+    startDate: '2025-08-16',
+    durationDays: 30,
+    tags: [
+      { label: 'AI Automation', icon: 'fas fa-robot', color: '#3498db', bgColor: 'rgba(52, 152, 219, 0.1)' },
+      { label: 'Desktop Agent', icon: 'fas fa-desktop', color: '#2ecc71', bgColor: 'rgba(46, 204, 113, 0.1)' },
+      { label: 'Workflow', icon: 'fas fa-project-diagram', color: '#e74c3c', bgColor: 'rgba(231, 76, 60, 0.1)' },
+      { label: 'Open Source', icon: 'fas fa-code-branch', color: '#f39c12', bgColor: 'rgba(243, 156, 18, 0.1)' }
+    ]
+  },
+  {
     id: 'droidrun',
     name: 'DroidRun',
     image: 'https://opengraph.githubassets.com/8190d792d99e38d0f692153671df84bdcc818a6797f136d88cf243807f94d0de/droidrun/droidrun',
     description: 'A powerful framework for controlling Android and iOS devices through LLM agents',
     tagline: 'Revolutionary framework that bridges the gap between Large Language Models and mobile device automation. Build intelligent testing suites and automation scripts with natural language commands.',
-    link: 'https://track.opensourceprojects.dev/droidrun-sponsor',
+    link: 'https://click.opensourceprojects.dev/s/droidrun-sponsor',
     repo: 'droidrun/droidrun',
     startDate: '2025-07-31',
     durationDays: 30,
@@ -25,7 +42,7 @@ const sponsors = [
     image: 'https://opengraph.githubassets.com/1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e/hyprnote/hyprnote',
     description: 'Hyprnote: The next-gen note-taking app for developers and teams',
     tagline: 'Revolutionize your note-taking experience with AI-powered organization, code snippets, and seamless team collaboration.',
-    link: 'https://track.opensourceprojects.dev/hyprnote-sponsor',
+    link: 'https://click.opensourceprojects.dev/s/hyprnote-sponsor',
     repo: 'hyprnote/hyprnote',
     startDate: '2025-08-06',
     durationDays: 30,
