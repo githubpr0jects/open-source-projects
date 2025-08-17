@@ -4,10 +4,10 @@ import { NextResponse } from 'next/server';
 const sponsors = [
   {
     id: 'bytebot',
-    name: 'ByteBot',
+    name: 'Bytebot',
     image: 'https://opengraph.githubassets.com/1/bytebot-ai/bytebot',
-    description: 'ByteBot: Open-Source AI Desktop Agent that has its own computer',
-    tagline: 'Give AI its own computer to automate tasks autonomously. ByteBot can use any application, download files, read documents, and complete complex multi-step workflows across different programs.',
+    description: 'Bytebot: Open-Source AI Desktop Agent that has its own computer',
+    tagline: 'Give AI its own computer to automate tasks autonomously. Bytebot can use any application, download files, read documents, and complete complex multi-step workflows across different programs.',
     link: 'https://click.opensourceprojects.dev/s/bytebot-sponsor',
     repo: 'bytebot-ai/bytebot',
     startDate: '2025-08-16',
