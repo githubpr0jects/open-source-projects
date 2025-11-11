@@ -636,6 +636,13 @@ function HomePageContent() {
                           height={200}
                           unoptimized
                         />
+                        <a
+                          className="image-link-overlay"
+                          href={currentSponsor.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={currentSponsor.description}
+                        />
                         <div className="card-image-overlay">
                           <div className="project-tags">
                             {currentSponsor.tags.slice(0, 2).map((tag, tagIndex) => (
@@ -739,6 +746,7 @@ function HomePageContent() {
                           height={200}
                           unoptimized
                         />
+                        <Link href="/sponsor-us" className="image-link-overlay" aria-label="Sponsor This Spot - Showcase Your Project" />
                         <div className="card-image-overlay sponsor-overlay">
                           <div className="sponsor-badge">
                             <span className="sponsor-tag">
@@ -799,6 +807,7 @@ function HomePageContent() {
                         }}
                         unoptimized
                       />
+                      <Link href={`/post/${post.conversation_id}`} className="image-link-overlay" aria-label={getProjectTitle(post.content)} />
                       <div className="card-image-overlay">
                         <div className="project-tags">
                           {projectTags.slice(0, 2).map((tag, tagIndex) => (
@@ -931,6 +940,23 @@ function HomePageContent() {
           background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
         }
 
+        /* Ensure link that wraps the image fills the card so clicks land on the anchor */
+        .card-image > a {
+          display: block;
+          width: 100%;
+          height: 100%;
+        }
+
+        /* Make any image or image wrapper inside the anchor fill the container */
+        .card-image > a img,
+        .card-image > a picture,
+        .card-image > a > span,
+        .card-image > a > div {
+          width: 100% !important;
+          height: 100% !important;
+          display: block !important;
+        }
+
         .card-image img {
           width: 100%;
           height: 100%;
@@ -960,6 +986,15 @@ function HomePageContent() {
           flex-direction: column;
           justify-content: space-between;
           padding: 16px;
+          /* allow clicks to pass through to underlying image/link by default */
+          pointer-events: none;
+        }
+
+        /* Make interactive overlay children still receive pointer events */
+        .card-image-overlay .project-tags,
+        .card-image-overlay .bookmark-container,
+        .card-image-overlay .sponsored-badge {
+          pointer-events: auto;
         }
 
         .project-tags {
@@ -1007,6 +1042,26 @@ function HomePageContent() {
 
         .project-tag.small i {
           font-size: 9px;
+        }
+
+        /* Absolute overlay link that covers the image area to reliably capture clicks */
+        .image-link-overlay {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 1; /* below overlay children which have higher z-index */
+          display: block;
+        }
+
+        /* Ensure interactive overlay children float above the image link */
+        .card-image-overlay,
+        .card-image-overlay .project-tags,
+        .card-image-overlay .bookmark-container,
+        .sponsored-badge {
+          position: relative;
+          z-index: 2;
         }
 
         /* Repository Info Styles - adapt to existing card colors */
