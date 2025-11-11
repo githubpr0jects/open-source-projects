@@ -1,5 +1,6 @@
 /* CSS Custom Properties */
 @import './sponsor-page.css';
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap');
 
 :root {
   /* Colors */
@@ -38,6 +39,7 @@
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-serif: 'Merriweather', Georgia, serif;
   
   /* Transitions */
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1075,6 +1077,18 @@ html {
   font-size: 1.125rem;
   line-height: 1.8;
   margin-bottom: 3rem;
+}
+
+/* Use a readable serif typeface for long-form content */
+.article-content,
+.markdown-content,
+.post-content,
+.project-article,
+.content-paragraph,
+.markdown-paragraph {
+  font-family: var(--font-serif);
+  /* a slightly lighter color for contrast on dark bg */
+  color: #e6e9ef;
 }
 
 .post-content h1,
@@ -2750,5 +2764,55 @@ html {
     flex-direction: column;
     gap: 1rem;
     align-items: center;
+  }
+}
+
+/* Increase readability for post/article content on small screens */
+@media (max-width: 480px) {
+  /* Primary content containers used in PostPageClient */
+  .article-content,
+  .markdown-content,
+  .post-content,
+  .content-paragraph,
+  .markdown-paragraph,
+  .post-excerpt,
+  .content-section .markdown-paragraph,
+  .content-section .content-paragraph {
+    font-size: 1.15rem; /* bump up base paragraph size */
+    line-height: 1.95; /* more breathing room on small screens */
+    color: var(--text-primary);
+  }
+
+  /* Headings inside the article should scale reasonably */
+  .markdown-h1,
+  .markdown-h2,
+  .project-title,
+  .post-title,
+  .content-heading {
+    font-size: clamp(1.25rem, 4.5vw, 1.6rem);
+    line-height: 1.25;
+  }
+
+  /* Ensure code blocks and preformatted text remain readable */
+  .markdown-pre,
+  .post-content pre {
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+
+  /* Slightly increase list item text */
+  .markdown-list-item,
+  .post-content li,
+  .content-list li {
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  /* Keep images and other media responsive */
+  .markdown-image,
+  .hero-image,
+  .sponsored-image {
+    max-width: 100% !important;
+    height: auto !important;
   }
 }
