@@ -320,7 +320,7 @@ function SponsorUs() {
               <div className="package-header">
                 <h3>Featured Spot</h3>
                 <div className="package-price">
-                  <span className="price">$179</span>
+                  <span className="price">$99</span>
                   <span className="period">/week</span>
                 </div>
               </div>
@@ -334,7 +334,7 @@ function SponsorUs() {
               <button 
                 className="package-cta"
                 onClick={() => {
-                  setFormData(prev => ({ ...prev, bidding_amount: '179' }));
+                  setFormData(prev => ({ ...prev, bidding_amount: '99' }));
                   document.querySelector('.sponsor-form-container').scrollIntoView({ behavior: 'smooth' });
                 }}
               >
@@ -347,7 +347,7 @@ function SponsorUs() {
               <div className="package-header">
                 <h3>Premium Boost</h3>
                 <div className="package-price">
-                  <span className="price">$499</span>
+                  <span className="price">$249</span>
                   <span className="period">/month</span>
                 </div>
               </div>
@@ -362,7 +362,7 @@ function SponsorUs() {
               <button 
                 className="package-cta primary"
                 onClick={() => {
-                  setFormData(prev => ({ ...prev, bidding_amount: '499' }));
+                  setFormData(prev => ({ ...prev, bidding_amount: '249' }));
                   document.querySelector('.sponsor-form-container').scrollIntoView({ behavior: 'smooth' });
                 }}
               >
@@ -374,7 +374,7 @@ function SponsorUs() {
               <div className="package-header">
                 <h3>Enterprise</h3>
                 <div className="package-price">
-                  <span className="price">Custom</span>
+                  <span className="price">$500</span>
                   <span className="period">pricing</span>
                 </div>
               </div>
@@ -389,7 +389,7 @@ function SponsorUs() {
               <button 
                 className="package-cta"
                 onClick={() => {
-                  setFormData(prev => ({ ...prev, bidding_amount: '1000' }));
+                  setFormData(prev => ({ ...prev, bidding_amount: '500' }));
                   document.querySelector('.sponsor-form-container').scrollIntoView({ behavior: 'smooth' });
                 }}
               >
@@ -459,8 +459,8 @@ function SponsorUs() {
                       value={formData.bidding_amount}
                       onChange={handleInputChange}
                       required
-                      min="179"
-                      placeholder="499"
+                      min="99"
+                      placeholder="299"
                       className="form-input"
                     />
                   </div>
