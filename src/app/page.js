@@ -567,6 +567,14 @@ function HomePageContent() {
                   >
                     Oldest
                   </button>
+                    <button
+                      type="button"
+                      onClick={() => handleSortApply('views')}
+                      className={`sort-btn ${sortOrder === 'views' ? 'active' : ''}`}
+                    >
+                      <i className="fas fa-chart-line"></i>
+                      <span style={{marginLeft: '6px'}}>Trending</span>
+                    </button>
                 </div>
               </div>
 
@@ -587,7 +595,7 @@ function HomePageContent() {
                     )}
                     {sortOrder !== 'latest' && (
                       <span className="filter-tag">
-                        Sort: {sortOrder === 'oldest' ? 'Oldest' : 'Latest'}
+                        Sort: {sortOrder === 'oldest' ? 'Oldest' : (sortOrder === 'views' ? 'Trending' : 'Latest')}
                       </span>
                     )}
                   </div>
