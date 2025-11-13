@@ -374,7 +374,7 @@ function SponsorUs() {
               <div className="package-header">
                 <h3>Enterprise</h3>
                 <div className="package-price">
-                  <span className="price">$Custom</span>
+                  <span className="price">Custom</span>
                   <span className="period">pricing</span>
                 </div>
               </div>
