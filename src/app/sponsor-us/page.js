@@ -260,7 +260,7 @@ function SponsorUs() {
           <div className="benefits-grid">
             <div className="benefit-card">
               <div className="benefit-icon">
-                <i className="fas fa-eye"></i>
+                <i className="fas fa-chart-line"></i>
               </div>
               <h3>Premium Visibility</h3>
               <p>Your project gets featured in the top 3 positions on our homepage, ensuring maximum exposure to our audience.</p>

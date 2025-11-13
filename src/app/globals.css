@@ -783,6 +783,44 @@ html {
   }
 }
 
+/* Compact sort controls for very small screens */
+@media (max-width: 520px) {
+  .sort-wrapper {
+    gap: 0.5rem;
+  }
+
+  .sort-label {
+    flex-basis: 100%;
+    margin-bottom: 6px;
+  }
+
+  .sort-buttons {
+    width: 100%;
+    gap: 0.4rem;
+    display: flex;
+  }
+
+  .sort-btn {
+    flex: 1 1 auto;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  /* For Trending button, hide text and only show icon to save space */
+  .sort-btn.trending span {
+    display: none;
+  }
+
+  .sort-btn.trending i {
+    margin-right: 0;
+  }
+}
+
 @media (max-width: 480px) {
   .filters-container {
     padding: 0 1rem;
@@ -868,6 +906,34 @@ html {
 .card-date {
   font-size: 0.875rem;
   color: var(--text-muted);
+}
+
+/* Impressions display for cards */
+.card-impressions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.card-impressions .impressions-label {
+  display: none; /* hidden on small screens */
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-left: 6px;
+}
+
+.card-impressions .impressions-value {
+  color: var(--accent-2, #39d353);
+  font-weight: 700;
+}
+
+@media (min-width: 520px) {
+  .card-impressions .impressions-label {
+    display: inline-block;
+  }
 }
 
 .featured-badge {

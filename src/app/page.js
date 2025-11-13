@@ -102,7 +102,7 @@ function HomePageContent() {
     };
 
     return (
-      <div 
+      <div
         className="toast-notification"
         style={{
           position: 'fixed',
@@ -112,33 +112,17 @@ function HomePageContent() {
           backdropFilter: 'blur(15px)',
           border: `1px solid ${getColor()}`,
           borderRadius: '12px',
-          padding: '16px 20px',
+          padding: '12px 16px',
           color: '#f0f6fc',
           display: 'flex',
           alignItems: 'center',
-          gap: '12px',
+          gap: '0.75rem',
           zIndex: 10000,
-          boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3), 0 0 20px ${getColor()}30`,
-          animation: 'slideInFromRight 0.3s ease-out',
-          minWidth: '300px',
-          maxWidth: '400px'
+          minWidth: '280px'
         }}
       >
-        <i 
-          className={getIcon()}
-          style={{ 
-            color: getColor(),
-            fontSize: '20px',
-            flexShrink: 0
-          }}
-        />
-        <span style={{ 
-          fontSize: '14px',
-          fontWeight: '500',
-          lineHeight: '1.4'
-        }}>
-          {message}
-        </span>
+        <i className={getIcon()} style={{ color: getColor(), fontSize: 18, flexShrink: 0 }} />
+        <span style={{ fontSize: '0.95rem', fontWeight: 500 }}>{message}</span>
       </div>
     );
   };
@@ -247,6 +231,15 @@ function HomePageContent() {
   // Function to get fallback image
   const getFallbackImage = () => {
     return '/images/open-source-logo-830x460.jpg';
+  };
+
+  // Format large numbers into short form (k, m, b)
+  const formatImpressions = (num) => {
+    const n = Number(num) || 0;
+    if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'b';
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'm';
+    if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
+    return String(n);
   };
 
   // Function to get clean project title without URLs
@@ -570,7 +563,7 @@ function HomePageContent() {
                     <button
                       type="button"
                       onClick={() => handleSortApply('views')}
-                      className={`sort-btn ${sortOrder === 'views' ? 'active' : ''}`}
+                      className={`sort-btn trending ${sortOrder === 'views' ? 'active' : ''}`}
                     >
                       <i className="fas fa-chart-line"></i>
                       <span style={{marginLeft: '6px'}}>Trending</span>
@@ -787,9 +780,9 @@ function HomePageContent() {
                         
                         <div className="sponsor-features">
                           <div className="sponsor-feature">
-                            <i className="fas fa-eye"></i>
-                            <span>Prime Visibility</span>
-                          </div>
+                              <i className="fas fa-chart-line"></i>
+                              <span>Prime Visibility</span>
+                            </div>
                         </div>
                       </div>
 
@@ -850,7 +843,7 @@ function HomePageContent() {
 
                     <div className="card-header">
                       <div className="card-meta">
-                        <span className="card-category">Open Source</span>
+                          <span className="card-category">Open Source</span>
                         <time className="card-date" dateTime={post.date}>
                           {new Date(post.date).toLocaleDateString('en-US', { 
                             year: 'numeric', 
@@ -858,6 +851,14 @@ function HomePageContent() {
                             day: 'numeric' 
                           })}
                         </time>
+                          {/* Impressions (view_count) */}
+                          {post.view_count !== undefined && (
+                            <span className="card-impressions" title={`${post.view_count} impressions`} style={{marginLeft: '8px'}}>
+                              <i className="fas fa-chart-line" aria-hidden="true"></i>
+                              <span className="impressions-label">Impressions</span>
+                              <span className="impressions-value">&nbsp;{formatImpressions(post.view_count)}</span>
+                            </span>
+                          )}
                       </div>
                     </div>
 

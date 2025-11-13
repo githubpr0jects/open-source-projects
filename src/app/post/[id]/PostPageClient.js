@@ -183,6 +183,15 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     );
   };
 
+  // Format large numbers into short form (k, m, b)
+  const formatImpressions = (num) => {
+    const n = Number(num) || 0;
+    if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'b';
+    if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'm';
+    if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
+    return String(n);
+  };
+
   // Function to fetch link preview via API route
   const fetchLinkPreview = async (url) => {
     if (linkPreviews[url]) {
@@ -666,6 +675,13 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 <i className="fas fa-calendar"></i>
                 {formatDate(mainPost.date)}
               </time>
+              {typeof mainPost.view_count !== 'undefined' && (
+                <span className="project-impressions">
+                  <i className="fas fa-chart-line" aria-hidden="true"></i>
+                  <span className="impressions-label">Impressions</span>
+                  <span className="impressions-value">{formatImpressions(mainPost.view_count)}</span>
+                </span>
+              )}
             </div>
             
             <div className="project-header">
@@ -918,7 +934,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                       </p>
                       <div className="sponsor-promo-features">
                         <span className="promo-feature">
-                          <i className="fas fa-eye"></i>
+                          <i className="fas fa-chart-line"></i>
                           Premium visibility
                         </span>
                         <span className="promo-feature">
@@ -1202,6 +1218,17 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           gap: 0.5rem;
         }
 
+        /* When impressions are present, create a small gap between date and impressions */
+        @media screen and (min-width: 520px) {
+          .project-impressions .impressions-label {
+            display: inline-block;
+            margin-left: 6px;
+            color: #8b949e;
+            font-weight: 500;
+            font-size: 0.75rem;
+          }
+        }
+
         .project-badge {
           background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
           color: white;
@@ -1221,6 +1248,23 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           display: flex;
           align-items: center;
           gap: 0.375rem;
+        }
+
+        .project-impressions {
+          display: flex;
+          align-items: center;
+          gap: 0.4rem;
+          color: #8b949e;
+          font-size: 0.75rem;
+        }
+
+        .project-impressions .impressions-label {
+          display: none; /* keep label hidden on small screens, show icon + value */
+        }
+
+        .project-impressions .impressions-value {
+          font-weight: 600;
+          color: #39d353;
         }
 
         .project-title {
