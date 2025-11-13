@@ -1075,7 +1075,7 @@ html {
 /* Post Content */
 .post-content {
   /* slightly smaller than before for denser reading */
-  font-size: 1.02rem;
+  font-size: 0.98rem;
   line-height: 1.75;
   margin-bottom: 3rem;
 }
@@ -2779,8 +2779,8 @@ html {
   .post-excerpt,
   .content-section .markdown-paragraph,
   .content-section .content-paragraph {
-    font-size: 1.05rem; /* slightly larger on mobile but more conservative */
-    line-height: 1.9; /* more breathing room on small screens */
+  font-size: 1.02rem; /* slightly larger on mobile but more conservative */
+  line-height: 1.9; /* more breathing room on small screens */
     color: var(--text-primary);
   }
 
