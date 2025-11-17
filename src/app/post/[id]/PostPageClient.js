@@ -102,208 +102,62 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     }
   }, [params.id, initialPostDetails]);
 
-  // Load Carbon Cover ad on post detail page
+  // Load Carbon Cover ad on post detail page - use static inline slot
   useEffect(() => {
-    // Ensure there's an ad container inside the article. If not present,
-    // dynamically insert one at ~30% of the article height so the ad
-    // appears roughly one-third down the content (or in the middle as fallback).
-    let container = document.getElementById('carbon-cover-post');
-    let createdInline = false;
-    let createdFloating = false;
-    if (!container) {
-      const article = document.querySelector('article.project-article');
-      if (article) {
-        // ensure article is a positioning context for the floating ad
-        try { article.style.position = article.style.position || 'relative'; } catch (err) {}
+    // Try primary inline slot first (rendered before newsletter), fall back to footer
+    let container = document.getElementById('carbon-cover-post-inline') || document.getElementById('carbon-cover-post');
+    if (!container) return;
 
-  // create primary inline slot (in-article) at ~30%
-  const inlineSlot = document.createElement('div');
-  inlineSlot.id = 'carbon-cover-post';
-  inlineSlot.className = 'carbon-cover-post in-article-ad';
-  inlineSlot.innerHTML = `<div class="carbon-fallback"><div class="inhouse-ad">Sponsored — <a href=\"/sponsor-us\">Sponsor us</a></div></div>`;
-
-  // create secondary inline slot at ~20% for earlier exposure during reading
-  const inlineSlotEarly = document.createElement('div');
-  inlineSlotEarly.id = 'carbon-cover-post-early';
-  inlineSlotEarly.className = 'carbon-cover-post-early in-article-ad';
-  inlineSlotEarly.innerHTML = `<div class="carbon-fallback"><div class="inhouse-ad">Sponsored — <a href=\"/sponsor-us\">Sponsor us</a></div></div>`;
-
-        // compute insertion point: 30% from top of article
-        const articleTop = article.getBoundingClientRect().top + window.scrollY;
-        const insertY = articleTop + article.offsetHeight * 0.3;
-        let insertBeforeNode = null;
-        for (const child of Array.from(article.children)) {
-          const childTop = child.getBoundingClientRect().top + window.scrollY;
-          if (childTop >= insertY) { insertBeforeNode = child; break; }
-        }
-        if (insertBeforeNode) article.insertBefore(inlineSlot, insertBeforeNode);
-        else {
-          const midIndex = Math.floor(article.children.length / 2) || article.children.length;
-          if (article.children[midIndex]) article.insertBefore(inlineSlot, article.children[midIndex]);
-          else article.appendChild(inlineSlot);
-        }
-        // insert the early slot near 20% position
-        const insertYearly = articleTop + article.offsetHeight * 0.2;
-        let insertBeforeNodeEarly = null;
-        for (const child of Array.from(article.children)) {
-          const childTop = child.getBoundingClientRect().top + window.scrollY;
-          if (childTop >= insertYearly) { insertBeforeNodeEarly = child; break; }
-        }
-        if (insertBeforeNodeEarly) article.insertBefore(inlineSlotEarly, insertBeforeNodeEarly);
-        else article.insertBefore(inlineSlotEarly, inlineSlot);
-        const createdEarly = true;
-        createdInline = true;
-
-        // create floating desktop slot (hidden on mobile)
-        const floatSlot = document.createElement('div');
-        floatSlot.id = 'carbon-floating-post';
-        floatSlot.className = 'carbon-floating-post in-article-ad';
-        floatSlot.innerHTML = `<div class="carbon-fallback"><div class="inhouse-ad">Sponsored — <a href=\"/sponsor-us\">Sponsor us</a></div></div>`;
-        // append to article so it's positioned relative to it
-        article.appendChild(floatSlot);
-        createdFloating = true;
-
-        // choose which slot to use based on viewport (desktop -> floating, mobile -> earliest inline)
-        const isDesktop = window.innerWidth >= 900;
-        if (isDesktop) {
-          container = floatSlot;
-          try { inlineSlot.style.display = 'none'; inlineSlotEarly.style.display = 'none'; } catch (err) {}
-        } else {
-          // mobile: prefer the early slot (20%) to capture readers sooner
-          container = inlineSlotEarly || inlineSlot;
-          try { floatSlot.style.display = 'none'; } catch (err) {}
-        }
-      } else {
-        // No article found; abort loading here
-        return;
-      }
-    }
-
-    // If Carbon already loaded or loading elsewhere, skip
+    // If another Carbon ad already loaded on the page, skip
     if (window.__carbonLoaded || window.__carbonLoading) return;
 
     let io = null;
     let didTryResponsive = false;
 
+    const isScriptPresent = () => !!document.getElementById('_carbonads_js');
+
     const loadCarbon = (format = 'cover') => {
+      // Ensure not double-loading
       if (window.__carbonLoaded || window.__carbonLoading) return;
-      if (document.getElementById('_carbonads_js')) return; // already present
+      if (isScriptPresent()) return;
+
       window.__carbonLoading = true;
 
+      // fallback
       let fallback = document.createElement('div');
       fallback.className = 'carbon-fallback';
-      fallback.innerHTML = `<div class="inhouse-ad">Sponsored — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
+      fallback.innerHTML = `<div class="inhouse-ad">Sponsored — <a href="/sponsor-us">Sponsor us</a></div>`;
       container.appendChild(fallback);
 
-  const script = document.createElement('script');
-  script.async = true;
-  script.type = 'text/javascript';
-  script.id = '_carbonads_js';
-  script.src = `https://cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev&format=${format}`;
+      const script = document.createElement('script');
+      script.async = true;
+      script.type = 'text/javascript';
+      script.id = '_carbonads_js';
+      script.src = `//cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev&format=${format}`;
 
       let observer = null;
       let timeoutId = null;
 
       script.onload = () => {
-        console.info('[Carbon] post ad script loaded');
+        console.info(`[Carbon] post ad script loaded (${format})`);
       };
 
       script.onerror = (e) => {
         console.warn('[Carbon] post ad failed to load', e);
         if (fallback) {
-          fallback.innerHTML = `<div class="inhouse-ad error">Ad failed to load — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
+          fallback.innerHTML = `<div class="inhouse-ad error">Ad failed to load — <a href="/sponsor-us">Sponsor us</a></div>`;
           fallback.classList.add('carbon-fallback-error');
         }
         window.__carbonLoading = false;
       };
 
-      // Attach a defensive global error listener to suppress runtime errors
-      // originating from the Carbon script (e.g., internal attempts to read
-      // element.src when an element is null). We remove this listener on
-      // all cleanup paths so it doesn't catch unrelated errors.
-      const carbonErrorHandler = (ev) => {
-        try {
-          const filename = ev && (ev.filename || (ev?.target && ev.target.src) || '');
-          if (typeof filename === 'string' && filename.includes('carbonads.com')) {
-            console.warn('[Carbon] suppressed runtime error from carbon script:', ev.message || ev.error || ev);
-            if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
-          }
-        } catch (err) {
-          // be extra defensive — never throw from our handler
-          console.warn('[Carbon] error handler failed:', err);
-        }
-      };
-      const carbonUnhandledRejectionHandler = (ev) => {
-        try {
-          const reason = ev && (ev.reason || '').toString();
-          if (typeof reason === 'string' && reason.includes('carbonads.com')) {
-            console.warn('[Carbon] suppressed unhandledrejection from carbon script:', reason);
-            if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
-          }
-        } catch (err) {
-          console.warn('[Carbon] unhandledrejection handler failed:', err);
-        }
-      };
-      window.addEventListener('error', carbonErrorHandler);
-      window.addEventListener('unhandledrejection', carbonUnhandledRejectionHandler);
-
-      // Also wrap window.onerror and window.onunhandledrejection to more reliably
-      // suppress console noise caused by Carbon's remote script in development.
-      const prevOnError = window.onerror;
-      const prevOnUnhandledRejection = window.onunhandledrejection;
-
-      window.onerror = function(message, source, lineno, colno, error) {
-        try {
-          if (typeof source === 'string' && source.includes('carbonads.com')) {
-            console.warn('[Carbon] suppressed error via window.onerror:', message, source, lineno, colno, error);
-            return true; // signal that the error was handled
-          }
-        } catch (err) {
-          console.warn('[Carbon] window.onerror wrapper failed:', err);
-        }
-        if (typeof prevOnError === 'function') {
-          try { return prevOnError.apply(this, arguments); } catch (e) { /* ignore */ }
-        }
-        return false;
-      };
-
-      window.onunhandledrejection = function(ev) {
-        try {
-          const reason = ev && (ev.reason || '').toString();
-          if (typeof reason === 'string' && reason.includes('carbonads.com')) {
-            console.warn('[Carbon] suppressed unhandledrejection via window.onunhandledrejection:', reason);
-            if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
-            return true;
-          }
-        } catch (err) {
-          console.warn('[Carbon] window.onunhandledrejection wrapper failed:', err);
-        }
-        if (typeof prevOnUnhandledRejection === 'function') {
-          try { return prevOnUnhandledRejection.apply(this, arguments); } catch (e) { /* ignore */ }
-        }
-        return false;
-      };
-
-    // Append script into the ad container so carbon.js uses the script's
-    // parentNode as the insertion point for the ad. Carbon's script expects
-    // to be located where the ad should appear (it typically uses
-    // script.parentNode to insert the ad markup). Using the canonical id
-    // plus placing the script in the container avoids getUrlVar null reads
-    // and ensures the ad is inserted into the intended slot.
-    container.appendChild(script);
+      // Append script into the ad container
+      container.appendChild(script);
 
       observer = new MutationObserver(() => {
         if (container.querySelector('.carbon-wrap, #carbonads, .carbon')) {
-          console.info('[Carbon] post ad markup detected in container');
+          console.info('[Carbon] post ad markup detected');
           if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
-          // remove defensive listener — Carbon finished initialization
-          try {
-            window.removeEventListener('error', carbonErrorHandler);
-            window.removeEventListener('unhandledrejection', carbonUnhandledRejectionHandler);
-            // restore previous handlers
-            try { window.onerror = prevOnError; } catch (er) {}
-            try { window.onunhandledrejection = prevOnUnhandledRejection; } catch (er) {}
-          } catch (e) {}
           window.__carbonLoaded = true;
           observer.disconnect();
           window.__carbonLoading = false;
@@ -317,49 +171,40 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         if (!didTryResponsive && format !== 'responsive') {
           didTryResponsive = true;
           if (observer) observer.disconnect();
-          // remove defensive listener before removing script
-          try {
-            window.removeEventListener('error', carbonErrorHandler);
-            window.removeEventListener('unhandledrejection', carbonUnhandledRejectionHandler);
-            try { window.onerror = prevOnError; } catch (er) {}
-            try { window.onunhandledrejection = prevOnUnhandledRejection; } catch (er) {}
-          } catch (e) {}
           if (script && script.parentNode) script.parentNode.removeChild(script);
           if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
           window.__carbonLoading = false;
           setTimeout(() => loadCarbon('responsive'), 300);
           return;
         }
+
         if (fallback) {
-          fallback.innerHTML = `<div class="inhouse-ad error">Ad not available — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
+          fallback.innerHTML = `<div class="inhouse-ad error">Ad not available — <a href="/sponsor-us">Sponsor us</a></div>`;
           fallback.classList.add('carbon-fallback-error');
         }
         if (observer) observer.disconnect();
         window.__carbonLoading = false;
       }, 6000);
 
-      // Attach cleanup to script
-      script._cleanup = () => {
-        // remove defensive listener if still attached
-        try {
-          window.removeEventListener('error', carbonErrorHandler);
-          window.removeEventListener('unhandledrejection', carbonUnhandledRejectionHandler);
-          try { window.onerror = prevOnError; } catch (er) {}
-          try { window.onunhandledrejection = prevOnUnhandledRejection; } catch (er) {}
-        } catch (e) {}
+      const cleanup = () => {
         if (script && script.parentNode) script.parentNode.removeChild(script);
         if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
         if (observer) observer.disconnect();
         if (timeoutId) clearTimeout(timeoutId);
         window.__carbonLoading = false;
       };
+
+      script._cleanup = cleanup;
     };
 
+    // Use IntersectionObserver for deferred loading
     io = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           loadCarbon('cover');
-          if (io) io.disconnect();
+          if (io) {
+            io.disconnect();
+          }
         }
       });
     }, { root: null, rootMargin: '0px 0px 300% 0px', threshold: 0 });
@@ -368,22 +213,11 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
     return () => {
       if (io) io.disconnect();
-      const scriptEl = document.getElementById('_carbonads_js');
-      if (scriptEl && typeof scriptEl._cleanup === 'function') scriptEl._cleanup();
-      try { if (scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl); } catch (e) {}
-      try { window.removeEventListener('error', carbonErrorHandler); window.removeEventListener('unhandledrejection', carbonUnhandledRejectionHandler); } catch (e) {}
-      // remove dynamic slots if we added them (clean SPA navigations)
-      try {
-        if (createdInline) {
-          const el = document.getElementById('carbon-cover-post'); if (el && el.parentNode) el.parentNode.removeChild(el);
-          const ee = document.getElementById('carbon-cover-post-early'); if (ee && ee.parentNode) ee.parentNode.removeChild(ee);
-        }
-        if (createdFloating) {
-          const fe = document.getElementById('carbon-floating-post'); if (fe && fe.parentNode) fe.parentNode.removeChild(fe);
-        }
-      } catch (e) {}
+      const script = document.getElementById('_carbonads_js');
+      if (script && typeof script._cleanup === 'function') script._cleanup();
+      try { if (script && script.parentNode) script.parentNode.removeChild(script); } catch (e) {}
     };
-  }, []);
+  }, [postDetails]);
 
   // In-house fallback renderer for post page
   const renderInHouseFallbackPost = (container) => {
@@ -1085,6 +919,11 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                   <div key={post.id} className="content-section">
                     {index > 0 && <div className="section-divider"></div>}
                     
+                    {/* Carbon ad before newsletter - strategic placement after 1st post for high visibility */}
+                    {index === 1 && (
+                      <div id="carbon-cover-post-inline" className="carbon-ad-container in-article-ad" aria-hidden="false"></div>
+                    )}
+                    
                     {/* Newsletter signup before second post */}
                     {index === 1 && (
                       <div className="newsletter-inline-section">
@@ -1115,9 +954,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               </div>
 
               <div className="article-footer">
-                {/* Carbon Cover ad - insert above sponsored project and footer comps */}
-                <div id="carbon-cover-post" className="carbon-ad-container" aria-hidden="false"></div>
-
+               
                 {/* Dynamic Sponsored Project - Above sponsor promo */}
                 {selectedSponsor && (
                   <div className="sponsored-project-section">

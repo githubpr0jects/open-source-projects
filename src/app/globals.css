@@ -918,11 +918,13 @@ html {
   #carbon-cover, #carbon-cover-post {
     max-width: 980px;
     margin: 1.5rem auto;
-    display: block;
-    width: calc(100% - 2rem);
+    display: flex;
+    justify-content: center;
+    width: 100%;
     box-sizing: border-box;
     position: relative;
     z-index: 5;
+    min-height: 90px;
   }
 
   #carbon-cover .carbon-wrap, #carbon-cover-post .carbon-wrap,
@@ -994,6 +996,11 @@ html {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    max-width: 100%;
+    margin: 1.5rem 0;
+    background: transparent;
+    border: 2px dashed rgba(88, 166, 255, 0.3); /* Debug border - remove after testing */
   }
 
   /* In-house fallback ad styles (policy-compliant) */

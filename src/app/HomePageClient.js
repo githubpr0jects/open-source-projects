@@ -55,6 +55,7 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
 
   // Load Carbon ad in the homepage component, using IntersectionObserver and a safe fallback flow
   useEffect(() => {
+    // Wait until posts have been rendered (avoid running before DOM exists)
     const container = document.getElementById('carbon-cover');
     if (!container) return;
 
@@ -64,12 +65,12 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
     let io = null;
     let didTryResponsive = false;
 
-  const isScriptPresent = () => !!document.getElementById('_carbonads_js');
+    const isScriptPresent = () => !!document.getElementById('_carbonads_js');
 
     const loadCarbon = (format = 'cover') => {
-  // Ensure not double-loading
-  if (window.__carbonLoaded || window.__carbonLoading) return;
-  if (isScriptPresent()) return;
+      // Ensure not double-loading
+      if (window.__carbonLoaded || window.__carbonLoading) return;
+      if (isScriptPresent()) return;
 
       window.__carbonLoading = true;
 
@@ -79,14 +80,12 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
       fallback.innerHTML = `<div class="inhouse-ad">Sponsored — <a href="/sponsor-us">Sponsor us</a></div>`;
       container.appendChild(fallback);
 
-  const script = document.createElement('script');
-  script.async = true;
-  script.type = 'text/javascript';
-  // Use the canonical Carbon script id so the Carbon script can locate itself
-  // and safely read URL params. Using a nonstandard id caused getUrlVar to
-  // attempt to read .src of a null element.
-  script.id = '_carbonads_js';
-  script.src = `https://cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev&format=${format}`;
+      const script = document.createElement('script');
+      script.async = true;
+      script.type = 'text/javascript';
+      // Use canonical id and protocol-relative src per request
+      script.id = '_carbonads_js';
+      script.src = `//cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev&format=${format}`;
 
       let observer = null;
       let timeoutId = null;
@@ -104,10 +103,8 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
         window.__carbonLoading = false;
       };
 
-    // Append script into the ad container so carbon.js can insert the ad
-    // markup at the script's parentNode. This is how Carbon expects to be
-    // embedded when the ad must render inside a specific slot on the page.
-    container.appendChild(script);
+      // Append script into the ad container so carbon.js can insert the ad
+      container.appendChild(script);
 
       observer = new MutationObserver(() => {
         if (container.querySelector('.carbon-wrap, #carbonads, .carbon')) {
@@ -174,11 +171,11 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
     return () => {
       if (io) io.disconnect();
       // If a script was inserted and has a cleanup method, call it
-  const script = document.getElementById('_carbonads_js');
-  if (script && typeof script._cleanup === 'function') script._cleanup();
-  try { if (script && script.parentNode) script.parentNode.removeChild(script); } catch (e) {}
+      const script = document.getElementById('_carbonads_js');
+      if (script && typeof script._cleanup === 'function') script._cleanup();
+      try { if (script && script.parentNode) script.parentNode.removeChild(script); } catch (e) {}
     };
-  }, []);
+  }, [posts]);
 
   const handlePageChange = (page) => {
     if (page === 1) {
