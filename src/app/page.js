@@ -20,6 +20,70 @@ function HomePageContent() {
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
   const [activeSponsors, setActiveSponsors] = useState([]);
 
+  // Load Carbon Cover ad only on the homepage
+  useEffect(() => {
+    const container = document.getElementById('carbon-cover');
+    if (!container) return;
+    // avoid injecting twice
+    if (document.getElementById('_carbonads_js_home')) return;
+
+    // add a small fallback visible placeholder so devs can see something when ad is blocked
+    let fallback = document.createElement('div');
+    fallback.className = 'carbon-fallback';
+    fallback.textContent = 'Advertisement';
+    container.appendChild(fallback);
+
+    const script = document.createElement('script');
+    script.async = true;
+    script.type = 'text/javascript';
+    // use explicit https to avoid protocol issues
+    script.src = 'https://cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev&format=cover';
+    script.id = '_carbonads_js_home';
+
+    script.onload = () => {
+      console.info('[Carbon] homepage ad script loaded');
+      // remove fallback if ad successfully loaded
+      if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+    };
+
+    script.onerror = (e) => {
+      console.warn('[Carbon] homepage ad failed to load', e);
+      if (fallback) {
+        fallback.textContent = 'Ad blocked or failed to load';
+        fallback.classList.add('carbon-fallback-error');
+      }
+    };
+
+    container.appendChild(script);
+
+    // Detect whether Carbon injected its ad markup into the container
+    const observer = new MutationObserver((mutations) => {
+      if (container.querySelector('.carbon-wrap, #carbonads, .carbon')) {
+        console.info('[Carbon] homepage ad markup detected in container');
+        if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+        observer.disconnect();
+        clearTimeout(timeoutId);
+      }
+    });
+    observer.observe(container, { childList: true, subtree: true });
+
+    const timeoutId = setTimeout(() => {
+      console.warn('[Carbon] homepage ad did not render within timeout; likely blocked or no inventory');
+      if (fallback) {
+        fallback.textContent = 'Ad not rendered (blocked or no inventory)';
+        fallback.classList.add('carbon-fallback-error');
+      }
+      observer.disconnect();
+    }, 6000);
+
+    return () => {
+      if (script.parentNode) script.parentNode.removeChild(script);
+      if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+      observer.disconnect();
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
   // Fetch active sponsors from API
   const fetchActiveSponsors = async () => {
     try {
@@ -609,6 +673,8 @@ function HomePageContent() {
           </div>
 
           <div className="projects-grid">
+            {/* Carbon Cover ad - homepage only. The script will inject the ad markup here. */}
+            <div id="carbon-cover" className="carbon-ad-container" aria-hidden="false"></div>
             {posts.map((post, index) => {
               // Dynamic sponsor placement - reserve positions 2, 3, and 4 for sponsors
               const sponsorAtPosition2 = index === 1 && activeSponsors[0];

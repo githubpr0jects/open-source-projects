@@ -102,6 +102,65 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     }
   }, [params.id, initialPostDetails]);
 
+  // Load Carbon Cover ad on post detail page
+  useEffect(() => {
+    const container = document.getElementById('carbon-cover-post');
+    if (!container) return;
+    if (document.getElementById('_carbonads_js_post')) return;
+
+    let fallback = document.createElement('div');
+    fallback.className = 'carbon-fallback';
+    fallback.textContent = 'Advertisement';
+    container.appendChild(fallback);
+
+    const script = document.createElement('script');
+    script.async = true;
+    script.type = 'text/javascript';
+    script.src = 'https://cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev&format=cover';
+    script.id = '_carbonads_js_post';
+
+    script.onload = () => {
+      console.info('[Carbon] post ad script loaded');
+      if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+    };
+
+    script.onerror = (e) => {
+      console.warn('[Carbon] post ad failed to load', e);
+      if (fallback) {
+        fallback.textContent = 'Ad blocked or failed to load';
+        fallback.classList.add('carbon-fallback-error');
+      }
+    };
+
+    container.appendChild(script);
+
+    const observer = new MutationObserver((mutations) => {
+      if (container.querySelector('.carbon-wrap, #carbonads, .carbon')) {
+        console.info('[Carbon] post ad markup detected in container');
+        if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+        observer.disconnect();
+        clearTimeout(timeoutId);
+      }
+    });
+    observer.observe(container, { childList: true, subtree: true });
+
+    const timeoutId = setTimeout(() => {
+      console.warn('[Carbon] post ad did not render within timeout; likely blocked or no inventory');
+      if (fallback) {
+        fallback.textContent = 'Ad not rendered (blocked or no inventory)';
+        fallback.classList.add('carbon-fallback-error');
+      }
+      observer.disconnect();
+    }, 6000);
+
+    return () => {
+      if (script.parentNode) script.parentNode.removeChild(script);
+      if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+      observer.disconnect();
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
   // Toast notification function
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -808,6 +867,9 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               </div>
 
               <div className="article-footer">
+                {/* Carbon Cover ad - insert above sponsored project and footer comps */}
+                <div id="carbon-cover-post" className="carbon-ad-container" aria-hidden="false"></div>
+
                 {/* Dynamic Sponsored Project - Above sponsor promo */}
                 {selectedSponsor && (
                   <div className="sponsored-project-section">
