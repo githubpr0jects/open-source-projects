@@ -45,6 +45,111 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
     fetchPosts();
   }, [currentPage, initialData]);
 
+  // Diagnostics: log posts length to help debug empty card issue
+  useEffect(() => {
+    console.info('[HomePageClient] posts count:', posts.length);
+    if (posts.length > 0) {
+      console.info('[HomePageClient] first post id/title:', posts[0].id || posts[0].conversation_id, getProjectTitle(posts[0].content || ''));
+    }
+  }, [posts]);
+
+  // Load Carbon Cover ad in the homepage component (if not already loaded)
+  useEffect(() => {
+    const container = document.getElementById('carbon-cover');
+    if (!container) return;
+
+    // Policy: Only load the official Carbon script and only once per page.
+    if (window.__carbonLoading || document.getElementById('_carbonads_js_home')) return;
+
+    // Determine viewport and placement visibility per Carbon placement policy
+    const isDesktopLarge = window.innerWidth >= 1366 && window.innerHeight >= 768;
+    const isMobile = window.innerWidth < 768;
+
+    // For mobile, Carbon requires the ad to be visible within 3x the viewport height from the top.
+    const containerRect = container.getBoundingClientRect();
+    const containerTopFromViewport = containerRect.top; // relative to viewport top
+    const mobileVisibleWithin = window.innerHeight * 3;
+
+    const shouldLoad = isDesktopLarge || (isMobile && containerTopFromViewport <= mobileVisibleWithin);
+
+    // If placement isn't likely visible per policy, don't load Carbon — show in-house promo instead.
+    if (!shouldLoad) {
+      console.info('[Carbon] skipping load: placement not visible per policy (HomePageClient)');
+      renderInHouseFallback(container);
+      return;
+    }
+
+    // Mark carbon as loading to prevent duplicate loads during SPA navigations
+    window.__carbonLoading = true;
+
+    // Add a branded in-house fallback while the remote script loads or if it fails
+    let fallback = document.createElement('div');
+    fallback.className = 'carbon-fallback';
+    fallback.innerHTML = `<div class="inhouse-ad">
+      <strong>Sponsored:</strong> Support Open Source — check out our sponsor opportunities.
+      <a href="/sponsor-us" style="margin-left:8px; text-decoration:underline;">Sponsor us</a>
+    </div>`;
+    container.appendChild(fallback);
+
+    // Important: Per placement policy, do NOT host or modify the Carbon script. Use the exact CDN URL.
+    const script = document.createElement('script');
+    script.async = true;
+    script.type = 'text/javascript';
+    script.src = 'https://cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev&format=cover';
+    script.id = '_carbonads_js_home';
+
+    // Track load/error and detect whether Carbon injected ad markup
+    let observer = null;
+    let timeoutId = null;
+
+    script.onload = () => {
+      console.info('[Carbon] homepage ad script loaded (HomePageClient)');
+      // Wait briefly for Carbon to inject markup; observer will remove fallback when detected.
+    };
+
+    script.onerror = (e) => {
+      console.warn('[Carbon] homepage ad failed to load (HomePageClient)', e);
+      if (fallback) {
+        fallback.innerHTML = `<div class="inhouse-ad error">Ad failed to load — <a href="/sponsor-us">Sponsor us instead</a></div>`;
+        fallback.classList.add('carbon-fallback-error');
+      }
+      window.__carbonLoading = false;
+    };
+
+    container.appendChild(script);
+
+    observer = new MutationObserver(() => {
+      if (container.querySelector('.carbon-wrap, #carbonads, .carbon')) {
+        console.info('[Carbon] homepage ad markup detected (HomePageClient)');
+        if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+        // Mark Carbon as active for this page so other components don't load a second ad
+        window.__carbonLoaded = true;
+        observer.disconnect();
+        window.__carbonLoading = false;
+        clearTimeout(timeoutId);
+      }
+    });
+    observer.observe(container, { childList: true, subtree: true });
+
+    timeoutId = setTimeout(() => {
+      console.warn('[Carbon] homepage ad did not render within timeout (HomePageClient)');
+      if (fallback) {
+        fallback.innerHTML = `<div class="inhouse-ad error">Ad not available — <a href="/sponsor-us">Sponsor us</a></div>`;
+        fallback.classList.add('carbon-fallback-error');
+      }
+      if (observer) observer.disconnect();
+      window.__carbonLoading = false;
+    }, 6000);
+
+    return () => {
+      if (script && script.parentNode) script.parentNode.removeChild(script);
+      if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+      if (observer) observer.disconnect();
+      if (timeoutId) clearTimeout(timeoutId);
+      window.__carbonLoading = false;
+    };
+  }, []);
+
   const handlePageChange = (page) => {
     if (page === 1) {
       router.push('/');
@@ -83,6 +188,17 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  // Render a simple in-house fallback ad (policy-compliant alternative)
+  const renderInHouseFallback = (container) => {
+    if (!container) return;
+    // Remove existing children
+    container.innerHTML = '';
+    const box = document.createElement('div');
+    box.className = 'inhouse-ad box';
+    box.innerHTML = `<strong>Sponsored:</strong> Support Open Source — <a href="/sponsor-us">Sponsor us</a>`;
+    container.appendChild(box);
   };
 
   // Function to extract tags
@@ -186,13 +302,25 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
               </div>
             </div>
 
-            <div className="projects-grid">
+              {/* Carbon ad container (homepage) */}
+              <div id="carbon-cover" className="carbon-ad-container" aria-hidden="false"></div>
+
+              {/* Dev debug: show first post object when not in production */}
+              {process.env.NODE_ENV !== 'production' && posts.length > 0 && (
+                <details className="dev-first-post-debug" style={{margin: '8px 0'}}>
+                  <summary>Debug: first post preview</summary>
+                  <pre style={{maxHeight: '240px', overflow: 'auto', fontSize: '12px'}}>{JSON.stringify(posts[0], null, 2)}</pre>
+                </details>
+              )}
+
+              <div className="projects-grid">
               {posts.map((post) => (
-                <Link 
-                  key={post.id} 
-                  href={`/post/${post.id}`} 
-                  className="project-card"
-                >
+                  post && ( // guard against empty/undefined post objects
+                  <Link 
+                    key={post.id || post.conversation_id || Math.random().toString(36).slice(2,8)} 
+                    href={`/post/${post.id || post.conversation_id || ''}`} 
+                    className="project-card"
+                  >
                   <div className="card-image">
                     <Image 
                       src={getHeroImage(post)} 
@@ -239,6 +367,19 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
                     )}
                   </div>
                 </Link>
+                ) || (
+                  <div key={Math.random().toString(36).slice(2,8)} className="project-card placeholder">
+                    <div className="card-image placeholder-image"></div>
+                    <div className="card-content">
+                      <h3 className="card-title">Unavailable</h3>
+                      <div className="card-meta">
+                        <div className="card-author">—</div>
+                        <div className="card-date">—</div>
+                      </div>
+                      <div className="card-tags"><span className="tag">—</span></div>
+                    </div>
+                  </div>
+                )
               ))}
             </div>
 

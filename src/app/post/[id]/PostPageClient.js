@@ -106,11 +106,31 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
   useEffect(() => {
     const container = document.getElementById('carbon-cover-post');
     if (!container) return;
-    if (document.getElementById('_carbonads_js_post')) return;
+
+    // Don't load another carbon ad if one is already active on this page
+    if (window.__carbonLoaded || window.__carbonLoading || document.getElementById('_carbonads_js_post')) {
+      console.info('[Carbon] skipping post ad load because an ad is already active on this page');
+      return;
+    }
+
+    // Determine placement visibility (desktop requirement or mobile within 3x viewport)
+    const isDesktopLarge = window.innerWidth >= 1366 && window.innerHeight >= 768;
+    const isMobile = window.innerWidth < 768;
+    const containerRect = container.getBoundingClientRect();
+    const mobileVisibleWithin = window.innerHeight * 3;
+    const shouldLoad = isDesktopLarge || (isMobile && containerRect.top <= mobileVisibleWithin);
+
+    if (!shouldLoad) {
+      console.info('[Carbon] skipping post ad load: placement not visible per policy (PostPageClient)');
+      renderInHouseFallbackPost(container);
+      return;
+    }
+
+    window.__carbonLoading = true;
 
     let fallback = document.createElement('div');
     fallback.className = 'carbon-fallback';
-    fallback.textContent = 'Advertisement';
+    fallback.innerHTML = `<div class="inhouse-ad">Sponsored — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
     container.appendChild(fallback);
 
     const script = document.createElement('script');
@@ -119,47 +139,64 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     script.src = 'https://cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev&format=cover';
     script.id = '_carbonads_js_post';
 
+    let observer = null;
+    let timeoutId = null;
+
     script.onload = () => {
-      console.info('[Carbon] post ad script loaded');
-      if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+      console.info('[Carbon] post ad script loaded (PostPageClient)');
     };
 
     script.onerror = (e) => {
-      console.warn('[Carbon] post ad failed to load', e);
+      console.warn('[Carbon] post ad failed to load (PostPageClient)', e);
       if (fallback) {
-        fallback.textContent = 'Ad blocked or failed to load';
+        fallback.innerHTML = `<div class="inhouse-ad error">Ad failed to load — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
         fallback.classList.add('carbon-fallback-error');
       }
+      window.__carbonLoading = false;
     };
 
     container.appendChild(script);
 
-    const observer = new MutationObserver((mutations) => {
+    observer = new MutationObserver(() => {
       if (container.querySelector('.carbon-wrap, #carbonads, .carbon')) {
-        console.info('[Carbon] post ad markup detected in container');
+        console.info('[Carbon] post ad markup detected in container (PostPageClient)');
         if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+        window.__carbonLoaded = true;
         observer.disconnect();
+        window.__carbonLoading = false;
         clearTimeout(timeoutId);
       }
     });
     observer.observe(container, { childList: true, subtree: true });
 
-    const timeoutId = setTimeout(() => {
-      console.warn('[Carbon] post ad did not render within timeout; likely blocked or no inventory');
+    timeoutId = setTimeout(() => {
+      console.warn('[Carbon] post ad did not render within timeout (PostPageClient)');
       if (fallback) {
-        fallback.textContent = 'Ad not rendered (blocked or no inventory)';
+        fallback.innerHTML = `<div class="inhouse-ad error">Ad not available — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
         fallback.classList.add('carbon-fallback-error');
       }
-      observer.disconnect();
+      if (observer) observer.disconnect();
+      window.__carbonLoading = false;
     }, 6000);
 
     return () => {
-      if (script.parentNode) script.parentNode.removeChild(script);
+      if (script && script.parentNode) script.parentNode.removeChild(script);
       if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
-      observer.disconnect();
-      clearTimeout(timeoutId);
+      if (observer) observer.disconnect();
+      if (timeoutId) clearTimeout(timeoutId);
+      window.__carbonLoading = false;
     };
   }, []);
+
+  // In-house fallback renderer for post page
+  const renderInHouseFallbackPost = (container) => {
+    if (!container) return;
+    container.innerHTML = '';
+    const box = document.createElement('div');
+    box.className = 'inhouse-ad box';
+    box.innerHTML = `<strong>Sponsored:</strong> Help fund open-source — <a href="/sponsor-us">Sponsor us</a>`;
+    container.appendChild(box);
+  };
 
   // Toast notification function
   const showToast = (message, type = 'success') => {

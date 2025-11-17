@@ -882,6 +882,50 @@ html {
     border-style: solid;
   }
 
+  /* Dev-only first-post debug panel */
+  .dev-first-post-debug summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-muted, #444);
+  }
+  .dev-first-post-debug pre {
+    background: rgba(0,0,0,0.04);
+    padding: 8px;
+    border-radius: 6px;
+    color: var(--text-secondary);
+  }
+
+  /* Carbon ad container neutral styling */
+  .carbon-ad-container {
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* In-house fallback ad styles (policy-compliant) */
+  .inhouse-ad {
+    display: inline-block;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(16,185,129,0.03));
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .inhouse-ad a {
+    color: var(--primary);
+    text-decoration: underline;
+    margin-left: 8px;
+    font-weight: 700;
+  }
+
+  .inhouse-ad.error {
+    background: linear-gradient(135deg, rgba(248,81,73,0.06), rgba(248,81,73,0.02));
+    color: #f87171;
+  }
+
 @media (max-width: 480px) {
   .filters-container {
     padding: 0 1rem;
