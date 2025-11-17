@@ -390,6 +390,43 @@ html {
   margin-bottom: 1.5rem;
 }
 
+/* In-article ad slot styling: responsive and visually integrated */
+.in-article-ad {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.in-article-ad .carbon-fallback,
+.in-article-ad .carbon-wrap,
+.in-article-ad #carbonads,
+.in-article-ad .carbon {
+  width: 100%;
+  max-width: 820px; /* desktop max width for large covers */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow-glow);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.03);
+}
+
+/* Make cover creatives breathe on desktop */
+@media (min-width: 900px) {
+  .in-article-ad .carbon-wrap, .in-article-ad #carbonads {
+    padding: 20px;
+  }
+}
+
+/* Mobile-friendly: make ad fluid and stack nicely */
+@media (max-width: 899px) {
+  .in-article-ad { margin: 1.25rem 0; }
+  .in-article-ad .carbon-fallback, .in-article-ad .carbon-wrap, .in-article-ad #carbonads {
+    padding: 12px;
+    border-radius: 10px;
+  }
+}
+
 .gradient-text {
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;

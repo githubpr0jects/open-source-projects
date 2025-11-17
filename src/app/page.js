@@ -809,7 +809,14 @@ function HomePageContent() {
                         width={400}
                         height={200}
                         onError={(e) => {
-                          e.target.src = getFallbackImage();
+                          const el = e.currentTarget || e.target;
+                          try {
+                            if (el && typeof el.src !== 'undefined') {
+                              el.src = getFallbackImage();
+                            }
+                          } catch (err) {
+                            console.warn('Home page card image onError handler failed:', err);
+                          }
                         }}
                         unoptimized
                       />

@@ -104,87 +104,248 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
   // Load Carbon Cover ad on post detail page
   useEffect(() => {
-    const container = document.getElementById('carbon-cover-post');
-    if (!container) return;
+    // Ensure there's an ad container inside the article. If not present,
+    // dynamically insert one at ~30% of the article height so the ad
+    // appears roughly one-third down the content (or in the middle as fallback).
+    let container = document.getElementById('carbon-cover-post');
+    let createdSlot = false;
+    if (!container) {
+      const article = document.querySelector('article.project-article');
+      if (article) {
+        // compute insertion point: 30% from top of article
+        const articleTop = article.getBoundingClientRect().top + window.scrollY;
+        const insertY = articleTop + article.offsetHeight * 0.3;
 
-    // Don't load another carbon ad if one is already active on this page
-    if (window.__carbonLoaded || window.__carbonLoading || document.getElementById('_carbonads_js_post')) {
-      console.info('[Carbon] skipping post ad load because an ad is already active on this page');
-      return;
-    }
+        // find the first child element that starts after insertY
+        let insertBeforeNode = null;
+        for (const child of Array.from(article.children)) {
+          const childTop = child.getBoundingClientRect().top + window.scrollY;
+          if (childTop >= insertY) {
+            insertBeforeNode = child;
+            break;
+          }
+        }
 
-    // Determine placement visibility (desktop requirement or mobile within 3x viewport)
-    const isDesktopLarge = window.innerWidth >= 1366 && window.innerHeight >= 768;
-    const isMobile = window.innerWidth < 768;
-    const containerRect = container.getBoundingClientRect();
-    const mobileVisibleWithin = window.innerHeight * 3;
-    const shouldLoad = isDesktopLarge || (isMobile && containerRect.top <= mobileVisibleWithin);
+        const slot = document.createElement('div');
+        slot.id = 'carbon-cover-post';
+        slot.className = 'carbon-cover-post in-article-ad';
+        // provide a minimal placeholder so layout is calculated immediately
+        slot.innerHTML = `<div class="carbon-fallback"><div class="inhouse-ad">Sponsored — <a href=\"/sponsor-us\">Sponsor us</a></div></div>`;
 
-    if (!shouldLoad) {
-      console.info('[Carbon] skipping post ad load: placement not visible per policy (PostPageClient)');
-      renderInHouseFallbackPost(container);
-      return;
-    }
+        if (insertBeforeNode) {
+          article.insertBefore(slot, insertBeforeNode);
+        } else {
+          // fallback: append near middle or end
+          const midIndex = Math.floor(article.children.length / 2) || article.children.length;
+          if (article.children[midIndex]) article.insertBefore(slot, article.children[midIndex]);
+          else article.appendChild(slot);
+        }
 
-    window.__carbonLoading = true;
-
-    let fallback = document.createElement('div');
-    fallback.className = 'carbon-fallback';
-    fallback.innerHTML = `<div class="inhouse-ad">Sponsored — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
-    container.appendChild(fallback);
-
-    const script = document.createElement('script');
-    script.async = true;
-    script.type = 'text/javascript';
-    script.src = 'https://cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev&format=cover';
-    script.id = '_carbonads_js_post';
-
-    let observer = null;
-    let timeoutId = null;
-
-    script.onload = () => {
-      console.info('[Carbon] post ad script loaded (PostPageClient)');
-    };
-
-    script.onerror = (e) => {
-      console.warn('[Carbon] post ad failed to load (PostPageClient)', e);
-      if (fallback) {
-        fallback.innerHTML = `<div class="inhouse-ad error">Ad failed to load — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
-        fallback.classList.add('carbon-fallback-error');
+        container = slot;
+        createdSlot = true;
+      } else {
+        // No article found; abort loading here
+        return;
       }
-      window.__carbonLoading = false;
-    };
+    }
 
+    // If Carbon already loaded or loading elsewhere, skip
+    if (window.__carbonLoaded || window.__carbonLoading) return;
+
+    let io = null;
+    let didTryResponsive = false;
+
+    const loadCarbon = (format = 'cover') => {
+      if (window.__carbonLoaded || window.__carbonLoading) return;
+      if (document.getElementById('_carbonads_js')) return; // already present
+      window.__carbonLoading = true;
+
+      let fallback = document.createElement('div');
+      fallback.className = 'carbon-fallback';
+      fallback.innerHTML = `<div class="inhouse-ad">Sponsored — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
+      container.appendChild(fallback);
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.type = 'text/javascript';
+  script.id = '_carbonads_js';
+  script.src = `https://cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev&format=${format}`;
+
+      let observer = null;
+      let timeoutId = null;
+
+      script.onload = () => {
+        console.info('[Carbon] post ad script loaded');
+      };
+
+      script.onerror = (e) => {
+        console.warn('[Carbon] post ad failed to load', e);
+        if (fallback) {
+          fallback.innerHTML = `<div class="inhouse-ad error">Ad failed to load — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
+          fallback.classList.add('carbon-fallback-error');
+        }
+        window.__carbonLoading = false;
+      };
+
+      // Attach a defensive global error listener to suppress runtime errors
+      // originating from the Carbon script (e.g., internal attempts to read
+      // element.src when an element is null). We remove this listener on
+      // all cleanup paths so it doesn't catch unrelated errors.
+      const carbonErrorHandler = (ev) => {
+        try {
+          const filename = ev && (ev.filename || (ev?.target && ev.target.src) || '');
+          if (typeof filename === 'string' && filename.includes('carbonads.com')) {
+            console.warn('[Carbon] suppressed runtime error from carbon script:', ev.message || ev.error || ev);
+            if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+          }
+        } catch (err) {
+          // be extra defensive — never throw from our handler
+          console.warn('[Carbon] error handler failed:', err);
+        }
+      };
+      const carbonUnhandledRejectionHandler = (ev) => {
+        try {
+          const reason = ev && (ev.reason || '').toString();
+          if (typeof reason === 'string' && reason.includes('carbonads.com')) {
+            console.warn('[Carbon] suppressed unhandledrejection from carbon script:', reason);
+            if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+          }
+        } catch (err) {
+          console.warn('[Carbon] unhandledrejection handler failed:', err);
+        }
+      };
+      window.addEventListener('error', carbonErrorHandler);
+      window.addEventListener('unhandledrejection', carbonUnhandledRejectionHandler);
+
+      // Also wrap window.onerror and window.onunhandledrejection to more reliably
+      // suppress console noise caused by Carbon's remote script in development.
+      const prevOnError = window.onerror;
+      const prevOnUnhandledRejection = window.onunhandledrejection;
+
+      window.onerror = function(message, source, lineno, colno, error) {
+        try {
+          if (typeof source === 'string' && source.includes('carbonads.com')) {
+            console.warn('[Carbon] suppressed error via window.onerror:', message, source, lineno, colno, error);
+            return true; // signal that the error was handled
+          }
+        } catch (err) {
+          console.warn('[Carbon] window.onerror wrapper failed:', err);
+        }
+        if (typeof prevOnError === 'function') {
+          try { return prevOnError.apply(this, arguments); } catch (e) { /* ignore */ }
+        }
+        return false;
+      };
+
+      window.onunhandledrejection = function(ev) {
+        try {
+          const reason = ev && (ev.reason || '').toString();
+          if (typeof reason === 'string' && reason.includes('carbonads.com')) {
+            console.warn('[Carbon] suppressed unhandledrejection via window.onunhandledrejection:', reason);
+            if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+            return true;
+          }
+        } catch (err) {
+          console.warn('[Carbon] window.onunhandledrejection wrapper failed:', err);
+        }
+        if (typeof prevOnUnhandledRejection === 'function') {
+          try { return prevOnUnhandledRejection.apply(this, arguments); } catch (e) { /* ignore */ }
+        }
+        return false;
+      };
+
+    // Append script into the ad container so carbon.js uses the script's
+    // parentNode as the insertion point for the ad. Carbon's script expects
+    // to be located where the ad should appear (it typically uses
+    // script.parentNode to insert the ad markup). Using the canonical id
+    // plus placing the script in the container avoids getUrlVar null reads
+    // and ensures the ad is inserted into the intended slot.
     container.appendChild(script);
 
-    observer = new MutationObserver(() => {
-      if (container.querySelector('.carbon-wrap, #carbonads, .carbon')) {
-        console.info('[Carbon] post ad markup detected in container (PostPageClient)');
-        if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
-        window.__carbonLoaded = true;
-        observer.disconnect();
-        window.__carbonLoading = false;
-        clearTimeout(timeoutId);
-      }
-    });
-    observer.observe(container, { childList: true, subtree: true });
+      observer = new MutationObserver(() => {
+        if (container.querySelector('.carbon-wrap, #carbonads, .carbon')) {
+          console.info('[Carbon] post ad markup detected in container');
+          if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+          // remove defensive listener — Carbon finished initialization
+          try {
+            window.removeEventListener('error', carbonErrorHandler);
+            window.removeEventListener('unhandledrejection', carbonUnhandledRejectionHandler);
+            // restore previous handlers
+            try { window.onerror = prevOnError; } catch (er) {}
+            try { window.onunhandledrejection = prevOnUnhandledRejection; } catch (er) {}
+          } catch (e) {}
+          window.__carbonLoaded = true;
+          observer.disconnect();
+          window.__carbonLoading = false;
+          clearTimeout(timeoutId);
+        }
+      });
+      observer.observe(container, { childList: true, subtree: true });
 
-    timeoutId = setTimeout(() => {
-      console.warn('[Carbon] post ad did not render within timeout (PostPageClient)');
-      if (fallback) {
-        fallback.innerHTML = `<div class="inhouse-ad error">Ad not available — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
-        fallback.classList.add('carbon-fallback-error');
-      }
-      if (observer) observer.disconnect();
-      window.__carbonLoading = false;
-    }, 6000);
+      timeoutId = setTimeout(() => {
+        console.warn('[Carbon] post ad did not render within timeout');
+        if (!didTryResponsive && format !== 'responsive') {
+          didTryResponsive = true;
+          if (observer) observer.disconnect();
+          // remove defensive listener before removing script
+          try {
+            window.removeEventListener('error', carbonErrorHandler);
+            window.removeEventListener('unhandledrejection', carbonUnhandledRejectionHandler);
+            try { window.onerror = prevOnError; } catch (er) {}
+            try { window.onunhandledrejection = prevOnUnhandledRejection; } catch (er) {}
+          } catch (e) {}
+          if (script && script.parentNode) script.parentNode.removeChild(script);
+          if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+          window.__carbonLoading = false;
+          setTimeout(() => loadCarbon('responsive'), 300);
+          return;
+        }
+        if (fallback) {
+          fallback.innerHTML = `<div class="inhouse-ad error">Ad not available — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
+          fallback.classList.add('carbon-fallback-error');
+        }
+        if (observer) observer.disconnect();
+        window.__carbonLoading = false;
+      }, 6000);
+
+      // Attach cleanup to script
+      script._cleanup = () => {
+        // remove defensive listener if still attached
+        try {
+          window.removeEventListener('error', carbonErrorHandler);
+          window.removeEventListener('unhandledrejection', carbonUnhandledRejectionHandler);
+          try { window.onerror = prevOnError; } catch (er) {}
+          try { window.onunhandledrejection = prevOnUnhandledRejection; } catch (er) {}
+        } catch (e) {}
+        if (script && script.parentNode) script.parentNode.removeChild(script);
+        if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+        if (observer) observer.disconnect();
+        if (timeoutId) clearTimeout(timeoutId);
+        window.__carbonLoading = false;
+      };
+    };
+
+    io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          loadCarbon('cover');
+          if (io) io.disconnect();
+        }
+      });
+    }, { root: null, rootMargin: '0px 0px 300% 0px', threshold: 0 });
+
+    io.observe(container);
 
     return () => {
-      if (script && script.parentNode) script.parentNode.removeChild(script);
-      if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
-      if (observer) observer.disconnect();
-      if (timeoutId) clearTimeout(timeoutId);
-      window.__carbonLoading = false;
+      if (io) io.disconnect();
+      const scriptEl = document.getElementById('_carbonads_js');
+      if (scriptEl && typeof scriptEl._cleanup === 'function') scriptEl._cleanup();
+      try { if (scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl); } catch (e) {}
+      try { window.removeEventListener('error', carbonErrorHandler); window.removeEventListener('unhandledrejection', carbonUnhandledRejectionHandler); } catch (e) {}
+      // remove dynamic slot if we added it (clean SPA navigations)
+      if (createdSlot && container && container.parentNode) {
+        try { container.parentNode.removeChild(container); } catch (e) {}
+      }
     };
   }, []);
 
@@ -351,14 +512,19 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         <a href={finalUrl} target="_blank" rel="noopener noreferrer" className="link-preview-link">
           {preview.image && (
             <div className="link-preview-image">
-              <Image 
+                <Image 
                 src={preview.image} 
                 alt={preview.title || 'Link preview'} 
                 width={400}
                 height={200}
                 className="link-preview-img"
                 onError={(e) => {
-                  e.target.style.display = 'none';
+                  const el = e.currentTarget || e.target;
+                  try {
+                    if (el && el.style) el.style.display = 'none';
+                  } catch (err) {
+                    console.warn('Link preview image onError handler failed:', err);
+                  }
                 }}
                 loading="lazy"
                 unoptimized
@@ -755,7 +921,16 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 className="hero-image"
                 priority
                 onError={(e) => {
-                  e.target.src = fallbackImage;
+                  // Guard against null event targets (some browsers or React wrappers may not provide target)
+                  const el = e.currentTarget || e.target;
+                  try {
+                    if (el && typeof el.src !== 'undefined') {
+                      el.src = fallbackImage;
+                    }
+                  } catch (err) {
+                    // Defensive: if mutation fails, do nothing to avoid throwing
+                    console.warn('Hero image onError handler failed:', err);
+                  }
                 }}
                 unoptimized
               />

@@ -152,7 +152,12 @@ export default function PostPage() {
                 src={preview.image} 
                 alt={preview.title || 'Link preview'} 
                 onError={(e) => {
-                  e.target.style.display = 'none';
+                  const el = e.currentTarget || e.target;
+                  try {
+                    if (el && el.style) el.style.display = 'none';
+                  } catch (err) {
+                    console.warn('Backup link preview image onError handler failed:', err);
+                  }
                 }}
                 loading="lazy"
               />
@@ -689,7 +694,14 @@ export default function PostPage() {
                 alt={getProjectTitle(mainPost.content)}
                 className="hero-image"
                 onError={(e) => {
-                  e.target.src = fallbackImage;
+                  const el = e.currentTarget || e.target;
+                  try {
+                    if (el && typeof el.src !== 'undefined') {
+                      el.src = fallbackImage;
+                    }
+                  } catch (err) {
+                    console.warn('Backup hero image onError handler failed:', err);
+                  }
                 }}
               />
               <div className="hero-overlay"></div>

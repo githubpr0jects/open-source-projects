@@ -53,100 +53,130 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
     }
   }, [posts]);
 
-  // Load Carbon Cover ad in the homepage component (if not already loaded)
+  // Load Carbon ad in the homepage component, using IntersectionObserver and a safe fallback flow
   useEffect(() => {
     const container = document.getElementById('carbon-cover');
     if (!container) return;
 
-    // Policy: Only load the official Carbon script and only once per page.
-    if (window.__carbonLoading || document.getElementById('_carbonads_js_home')) return;
+    // If another Carbon ad already loaded on the page, skip
+    if (window.__carbonLoaded || window.__carbonLoading) return;
 
-    // Determine viewport and placement visibility per Carbon placement policy
-    const isDesktopLarge = window.innerWidth >= 1366 && window.innerHeight >= 768;
-    const isMobile = window.innerWidth < 768;
+    let io = null;
+    let didTryResponsive = false;
 
-    // For mobile, Carbon requires the ad to be visible within 3x the viewport height from the top.
-    const containerRect = container.getBoundingClientRect();
-    const containerTopFromViewport = containerRect.top; // relative to viewport top
-    const mobileVisibleWithin = window.innerHeight * 3;
+  const isScriptPresent = () => !!document.getElementById('_carbonads_js');
 
-    const shouldLoad = isDesktopLarge || (isMobile && containerTopFromViewport <= mobileVisibleWithin);
+    const loadCarbon = (format = 'cover') => {
+  // Ensure not double-loading
+  if (window.__carbonLoaded || window.__carbonLoading) return;
+  if (isScriptPresent()) return;
 
-    // If placement isn't likely visible per policy, don't load Carbon — show in-house promo instead.
-    if (!shouldLoad) {
-      console.info('[Carbon] skipping load: placement not visible per policy (HomePageClient)');
-      renderInHouseFallback(container);
-      return;
-    }
+      window.__carbonLoading = true;
 
-    // Mark carbon as loading to prevent duplicate loads during SPA navigations
-    window.__carbonLoading = true;
+      // branded fallback
+      let fallback = document.createElement('div');
+      fallback.className = 'carbon-fallback';
+      fallback.innerHTML = `<div class="inhouse-ad">Sponsored — <a href="/sponsor-us">Sponsor us</a></div>`;
+      container.appendChild(fallback);
 
-    // Add a branded in-house fallback while the remote script loads or if it fails
-    let fallback = document.createElement('div');
-    fallback.className = 'carbon-fallback';
-    fallback.innerHTML = `<div class="inhouse-ad">
-      <strong>Sponsored:</strong> Support Open Source — check out our sponsor opportunities.
-      <a href="/sponsor-us" style="margin-left:8px; text-decoration:underline;">Sponsor us</a>
-    </div>`;
-    container.appendChild(fallback);
+  const script = document.createElement('script');
+  script.async = true;
+  script.type = 'text/javascript';
+  // Use the canonical Carbon script id so the Carbon script can locate itself
+  // and safely read URL params. Using a nonstandard id caused getUrlVar to
+  // attempt to read .src of a null element.
+  script.id = '_carbonads_js';
+  script.src = `https://cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev&format=${format}`;
 
-    // Important: Per placement policy, do NOT host or modify the Carbon script. Use the exact CDN URL.
-    const script = document.createElement('script');
-    script.async = true;
-    script.type = 'text/javascript';
-    script.src = 'https://cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev&format=cover';
-    script.id = '_carbonads_js_home';
+      let observer = null;
+      let timeoutId = null;
 
-    // Track load/error and detect whether Carbon injected ad markup
-    let observer = null;
-    let timeoutId = null;
+      script.onload = () => {
+        console.info(`[Carbon] homepage ad script loaded (${format})`);
+      };
 
-    script.onload = () => {
-      console.info('[Carbon] homepage ad script loaded (HomePageClient)');
-      // Wait briefly for Carbon to inject markup; observer will remove fallback when detected.
-    };
+      script.onerror = (e) => {
+        console.warn('[Carbon] homepage ad failed to load', e);
+        if (fallback) {
+          fallback.innerHTML = `<div class="inhouse-ad error">Ad failed to load — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
+          fallback.classList.add('carbon-fallback-error');
+        }
+        window.__carbonLoading = false;
+      };
 
-    script.onerror = (e) => {
-      console.warn('[Carbon] homepage ad failed to load (HomePageClient)', e);
-      if (fallback) {
-        fallback.innerHTML = `<div class="inhouse-ad error">Ad failed to load — <a href="/sponsor-us">Sponsor us instead</a></div>`;
-        fallback.classList.add('carbon-fallback-error');
-      }
-      window.__carbonLoading = false;
-    };
-
+    // Append script into the ad container so carbon.js can insert the ad
+    // markup at the script's parentNode. This is how Carbon expects to be
+    // embedded when the ad must render inside a specific slot on the page.
     container.appendChild(script);
 
-    observer = new MutationObserver(() => {
-      if (container.querySelector('.carbon-wrap, #carbonads, .carbon')) {
-        console.info('[Carbon] homepage ad markup detected (HomePageClient)');
-        if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
-        // Mark Carbon as active for this page so other components don't load a second ad
-        window.__carbonLoaded = true;
-        observer.disconnect();
-        window.__carbonLoading = false;
-        clearTimeout(timeoutId);
-      }
-    });
-    observer.observe(container, { childList: true, subtree: true });
+      observer = new MutationObserver(() => {
+        if (container.querySelector('.carbon-wrap, #carbonads, .carbon')) {
+          console.info('[Carbon] homepage ad markup detected');
+          if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+          window.__carbonLoaded = true;
+          observer.disconnect();
+          window.__carbonLoading = false;
+          clearTimeout(timeoutId);
+        }
+      });
+      observer.observe(container, { childList: true, subtree: true });
 
-    timeoutId = setTimeout(() => {
-      console.warn('[Carbon] homepage ad did not render within timeout (HomePageClient)');
-      if (fallback) {
-        fallback.innerHTML = `<div class="inhouse-ad error">Ad not available — <a href="/sponsor-us">Sponsor us</a></div>`;
-        fallback.classList.add('carbon-fallback-error');
-      }
-      if (observer) observer.disconnect();
-      window.__carbonLoading = false;
-    }, 6000);
+      timeoutId = setTimeout(() => {
+        console.warn('[Carbon] homepage ad did not render within timeout');
+        // If cover format failed, try responsive once as a safer fallback (helps local/dev)
+        if (!didTryResponsive && format !== 'responsive') {
+          didTryResponsive = true;
+          if (observer) observer.disconnect();
+          if (script && script.parentNode) script.parentNode.removeChild(script);
+          if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+          window.__carbonLoading = false;
+          // small delay before retrying to avoid race conditions
+          setTimeout(() => loadCarbon('responsive'), 300);
+          return;
+        }
+
+        if (fallback) {
+          fallback.innerHTML = `<div class="inhouse-ad error">Ad not available — <a href=\"/sponsor-us\">Sponsor us</a></div>`;
+          fallback.classList.add('carbon-fallback-error');
+        }
+        if (observer) observer.disconnect();
+        window.__carbonLoading = false;
+      }, 6000);
+
+      // Cleanup when unmounted or retried
+      const cleanup = () => {
+        if (script && script.parentNode) script.parentNode.removeChild(script);
+        if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
+        if (observer) observer.disconnect();
+        if (timeoutId) clearTimeout(timeoutId);
+        window.__carbonLoading = false;
+      };
+
+      // Attach cleanup to script element for external callers
+      script._cleanup = cleanup;
+    };
+
+    // Use IntersectionObserver: rootMargin set so mobile visibility within 3x viewport triggers
+    io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // load cover first
+          loadCarbon('cover');
+          if (io) {
+            io.disconnect();
+          }
+        }
+      });
+    }, { root: null, rootMargin: '0px 0px 300% 0px', threshold: 0 });
+
+    io.observe(container);
 
     return () => {
-      if (script && script.parentNode) script.parentNode.removeChild(script);
-      if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
-      if (observer) observer.disconnect();
-      if (timeoutId) clearTimeout(timeoutId);
-      window.__carbonLoading = false;
+      if (io) io.disconnect();
+      // If a script was inserted and has a cleanup method, call it
+  const script = document.getElementById('_carbonads_js');
+  if (script && typeof script._cleanup === 'function') script._cleanup();
+  try { if (script && script.parentNode) script.parentNode.removeChild(script); } catch (e) {}
     };
   }, []);
 
@@ -328,7 +358,14 @@ export default function HomePageClient({ initialData, currentPage = 1 }) {
                       width={350}
                       height={200}
                       onError={(e) => {
-                        e.target.src = getFallbackImage();
+                        const el = e.currentTarget || e.target;
+                        try {
+                          if (el && typeof el.src !== 'undefined') {
+                            el.src = getFallbackImage();
+                          }
+                        } catch (err) {
+                          console.warn('Homepage image onError handler failed:', err);
+                        }
                       }}
                       unoptimized
                     />
