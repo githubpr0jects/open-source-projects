@@ -108,41 +108,71 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     // dynamically insert one at ~30% of the article height so the ad
     // appears roughly one-third down the content (or in the middle as fallback).
     let container = document.getElementById('carbon-cover-post');
-    let createdSlot = false;
+    let createdInline = false;
+    let createdFloating = false;
     if (!container) {
       const article = document.querySelector('article.project-article');
       if (article) {
+        // ensure article is a positioning context for the floating ad
+        try { article.style.position = article.style.position || 'relative'; } catch (err) {}
+
+  // create primary inline slot (in-article) at ~30%
+  const inlineSlot = document.createElement('div');
+  inlineSlot.id = 'carbon-cover-post';
+  inlineSlot.className = 'carbon-cover-post in-article-ad';
+  inlineSlot.innerHTML = `<div class="carbon-fallback"><div class="inhouse-ad">Sponsored — <a href=\"/sponsor-us\">Sponsor us</a></div></div>`;
+
+  // create secondary inline slot at ~20% for earlier exposure during reading
+  const inlineSlotEarly = document.createElement('div');
+  inlineSlotEarly.id = 'carbon-cover-post-early';
+  inlineSlotEarly.className = 'carbon-cover-post-early in-article-ad';
+  inlineSlotEarly.innerHTML = `<div class="carbon-fallback"><div class="inhouse-ad">Sponsored — <a href=\"/sponsor-us\">Sponsor us</a></div></div>`;
+
         // compute insertion point: 30% from top of article
         const articleTop = article.getBoundingClientRect().top + window.scrollY;
         const insertY = articleTop + article.offsetHeight * 0.3;
-
-        // find the first child element that starts after insertY
         let insertBeforeNode = null;
         for (const child of Array.from(article.children)) {
           const childTop = child.getBoundingClientRect().top + window.scrollY;
-          if (childTop >= insertY) {
-            insertBeforeNode = child;
-            break;
-          }
+          if (childTop >= insertY) { insertBeforeNode = child; break; }
         }
-
-        const slot = document.createElement('div');
-        slot.id = 'carbon-cover-post';
-        slot.className = 'carbon-cover-post in-article-ad';
-        // provide a minimal placeholder so layout is calculated immediately
-        slot.innerHTML = `<div class="carbon-fallback"><div class="inhouse-ad">Sponsored — <a href=\"/sponsor-us\">Sponsor us</a></div></div>`;
-
-        if (insertBeforeNode) {
-          article.insertBefore(slot, insertBeforeNode);
-        } else {
-          // fallback: append near middle or end
+        if (insertBeforeNode) article.insertBefore(inlineSlot, insertBeforeNode);
+        else {
           const midIndex = Math.floor(article.children.length / 2) || article.children.length;
-          if (article.children[midIndex]) article.insertBefore(slot, article.children[midIndex]);
-          else article.appendChild(slot);
+          if (article.children[midIndex]) article.insertBefore(inlineSlot, article.children[midIndex]);
+          else article.appendChild(inlineSlot);
         }
+        // insert the early slot near 20% position
+        const insertYearly = articleTop + article.offsetHeight * 0.2;
+        let insertBeforeNodeEarly = null;
+        for (const child of Array.from(article.children)) {
+          const childTop = child.getBoundingClientRect().top + window.scrollY;
+          if (childTop >= insertYearly) { insertBeforeNodeEarly = child; break; }
+        }
+        if (insertBeforeNodeEarly) article.insertBefore(inlineSlotEarly, insertBeforeNodeEarly);
+        else article.insertBefore(inlineSlotEarly, inlineSlot);
+        const createdEarly = true;
+        createdInline = true;
 
-        container = slot;
-        createdSlot = true;
+        // create floating desktop slot (hidden on mobile)
+        const floatSlot = document.createElement('div');
+        floatSlot.id = 'carbon-floating-post';
+        floatSlot.className = 'carbon-floating-post in-article-ad';
+        floatSlot.innerHTML = `<div class="carbon-fallback"><div class="inhouse-ad">Sponsored — <a href=\"/sponsor-us\">Sponsor us</a></div></div>`;
+        // append to article so it's positioned relative to it
+        article.appendChild(floatSlot);
+        createdFloating = true;
+
+        // choose which slot to use based on viewport (desktop -> floating, mobile -> earliest inline)
+        const isDesktop = window.innerWidth >= 900;
+        if (isDesktop) {
+          container = floatSlot;
+          try { inlineSlot.style.display = 'none'; inlineSlotEarly.style.display = 'none'; } catch (err) {}
+        } else {
+          // mobile: prefer the early slot (20%) to capture readers sooner
+          container = inlineSlotEarly || inlineSlot;
+          try { floatSlot.style.display = 'none'; } catch (err) {}
+        }
       } else {
         // No article found; abort loading here
         return;
@@ -342,10 +372,16 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       if (scriptEl && typeof scriptEl._cleanup === 'function') scriptEl._cleanup();
       try { if (scriptEl && scriptEl.parentNode) scriptEl.parentNode.removeChild(scriptEl); } catch (e) {}
       try { window.removeEventListener('error', carbonErrorHandler); window.removeEventListener('unhandledrejection', carbonUnhandledRejectionHandler); } catch (e) {}
-      // remove dynamic slot if we added it (clean SPA navigations)
-      if (createdSlot && container && container.parentNode) {
-        try { container.parentNode.removeChild(container); } catch (e) {}
-      }
+      // remove dynamic slots if we added them (clean SPA navigations)
+      try {
+        if (createdInline) {
+          const el = document.getElementById('carbon-cover-post'); if (el && el.parentNode) el.parentNode.removeChild(el);
+          const ee = document.getElementById('carbon-cover-post-early'); if (ee && ee.parentNode) ee.parentNode.removeChild(ee);
+        }
+        if (createdFloating) {
+          const fe = document.getElementById('carbon-floating-post'); if (fe && fe.parentNode) fe.parentNode.removeChild(fe);
+        }
+      } catch (e) {}
     };
   }, []);
 

@@ -398,10 +398,15 @@ html {
   margin: 2rem 0;
 }
 
-.in-article-ad .carbon-fallback,
-.in-article-ad .carbon-wrap,
-.in-article-ad #carbonads,
-.in-article-ad .carbon {
+.carbon-cover-post-early {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Only style our fallback wrapper. Do NOT target Carbon's injected elements
+   (like .carbon-wrap or #carbonads) so we don't override ad creatives' own
+   styles and colors. */
+.in-article-ad .carbon-fallback {
   width: 100%;
   max-width: 820px; /* desktop max width for large covers */
   border-radius: 12px;
@@ -413,7 +418,7 @@ html {
 
 /* Make cover creatives breathe on desktop */
 @media (min-width: 900px) {
-  .in-article-ad .carbon-wrap, .in-article-ad #carbonads {
+  .in-article-ad .carbon-fallback {
     padding: 20px;
   }
 }
@@ -421,10 +426,61 @@ html {
 /* Mobile-friendly: make ad fluid and stack nicely */
 @media (max-width: 899px) {
   .in-article-ad { margin: 1.25rem 0; }
-  .in-article-ad .carbon-fallback, .in-article-ad .carbon-wrap, .in-article-ad #carbonads {
+  .in-article-ad .carbon-fallback {
     padding: 12px;
     border-radius: 10px;
   }
+}
+
+/* Floating ad for desktop: bottom-left of article container */
+.carbon-floating-post {
+  position: absolute; /* article is relative */
+  left: 16px;
+  bottom: 16px;
+  width: 320px;
+  max-width: calc(40% - 32px);
+  z-index: 80;
+  display: block;
+}
+
+/* Hide floating on small screens */
+@media (max-width: 900px) {
+  .carbon-floating-post { display: none; }
+}
+
+/* Style only our in-house fallback ads so we don't override third-party creatives */
+.in-article-ad .carbon-fallback, .carbon-floating-post .carbon-fallback,
+.in-article-ad .inhouse-ad, .carbon-floating-post .inhouse-ad {
+  color: var(--text-primary);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+}
+
+.in-article-ad .inhouse-ad a, .carbon-floating-post .inhouse-ad a {
+  color: #58a6ff; /* visible blue on dark */
+}
+
+/* === Carbon dark-theme overrides (target only inside our ad slots) === */
+.in-article-ad :is(.carbon-wrap, #carbonads, .carbon) ,
+.carbon-floating-post :is(.carbon-wrap, #carbonads, .carbon) {
+  background: linear-gradient(180deg, rgba(16,18,23,0.85), rgba(12,14,18,0.85));
+  padding: 14px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.6) !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  color: var(--text-primary) !important;
+}
+
+.in-article-ad :is(.carbon-wrap a, #carbonads a, .carbon a),
+.carbon-floating-post :is(.carbon-wrap a, #carbonads a, .carbon a) {
+  color: #58a6ff !important; /* ensure links are visible */
+}
+
+/* Slightly dim any light backgrounds inside ad creatives to improve contrast */
+.in-article-ad :is(.carbon-wrap img, #carbonads img, .carbon img),
+.carbon-floating-post :is(.carbon-wrap img, #carbonads img, .carbon img) {
+  /* leave images alone generally, but ensure they don't overflow */
+  max-width: 100%;
+  height: auto;
 }
 
 .gradient-text {
@@ -871,7 +927,8 @@ html {
 
   #carbon-cover .carbon-wrap, #carbon-cover-post .carbon-wrap,
   #carbon-cover .carbon, #carbon-cover-post .carbon {
-    all: initial; /* reset inherited styles */
+    /* do not reset (all: initial) - allow Carbon's own stylesheet and CSS variables
+       to apply so creatives render their intended colors and layout */
     display: block;
   }
 
@@ -891,9 +948,8 @@ html {
     }
   }
 
-  /* Ensure anchor tags inside ads don't inherit site colors */
+  /* Keep anchor decoration minimal but do NOT override Carbon's color choices */
   #carbon-cover a, #carbon-cover-post a {
-    color: inherit !important;
     text-decoration: none !important;
   }
 
