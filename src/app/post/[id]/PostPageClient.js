@@ -103,18 +103,74 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     }
   }, [params.id, initialPostDetails]);
 
-  // Load Carbon Cover ad on post detail page - floating ad container
+  // Load Carbon ad - responsive placement (floating on desktop, in-article on mobile)
   useEffect(() => {
-    // Target the ad content wrapper inside the floating container
-    let container = document.querySelector('.carbon-floating-ad .ad-content-wrapper');
-    if (!container) {
-      // Fallback to main floating container
-      container = document.getElementById('carbon-cover-post-floating');
+    // Determine if mobile or desktop
+    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+
+    let container;
+
+    if (isMobile) {
+      // Mobile: Wait for first two paragraphs to render, then inject ad after them
+      const article = document.querySelector('article.project-article');
+      if (!article) {
+        console.log('[Carbon] Article not found for mobile placement');
+        return;
+      }
+
+      // Function to check and inject ad after 3 paragraphs
+      const tryInjectAd = () => {
+        const paragraphs = article.querySelectorAll('p');
+        if (paragraphs.length >= 3) {
+          // Check if ad already injected
+          if (document.getElementById('carbon-ad-mobile-container')) {
+            console.log('[Carbon] Mobile ad already injected');
+            return true;
+          }
+
+          // Get the third paragraph and create container after it
+          const thirdParagraph = paragraphs[2];
+          container = document.createElement('div');
+          container.id = 'carbon-ad-mobile-container';
+          container.className = 'carbon-ad-container-mobile';
+          
+          // Insert after third paragraph
+          thirdParagraph.parentNode?.insertBefore(container, thirdParagraph.nextSibling);
+          console.log('[Carbon] Mobile ad container injected after 3rd paragraph');
+          return true;
+        }
+        return false;
+      };
+
+      // Try immediately first
+      if (!tryInjectAd()) {
+        // If not ready yet, watch for mutations
+        console.log('[Carbon] Waiting for markdown paragraphs to render...');
+        const mutationObserver = new MutationObserver(() => {
+          if (tryInjectAd()) {
+            mutationObserver.disconnect();
+          }
+        });
+
+        mutationObserver.observe(article, { childList: true, subtree: true });
+
+        // Cleanup observer on unmount
+        return () => mutationObserver.disconnect();
+      }
+    } else {
+      // Desktop: Use floating container
+      container = document.querySelector('.carbon-floating-ad .ad-content-wrapper');
+      if (!container) {
+        container = document.getElementById('carbon-cover-post-floating');
+      }
+      if (!container) return;
     }
-    if (!container) return;
 
     // If another Carbon ad already loaded on the page, skip
     if (window.__carbonLoaded || window.__carbonLoading) return;
+    
+    // Proceed with ad loading only if container is ready
+    if (!container) return;
 
     let io = null;
     let didTryResponsive = false;
@@ -144,11 +200,11 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       let timeoutId = null;
 
       script.onload = () => {
-        console.info(`[Carbon] post ad script loaded (${format})`);
+        console.info(`[Carbon] ad script loaded (${format})`);
       };
 
       script.onerror = (e) => {
-        console.warn('[Carbon] post ad failed to load', e);
+        console.warn('[Carbon] ad failed to load', e);
         if (fallback) {
           fallback.innerHTML = `<div class="inhouse-ad error">Ad failed to load — <a href="/sponsor-us">Sponsor us</a></div>`;
           fallback.classList.add('carbon-fallback-error');
@@ -161,7 +217,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
       observer = new MutationObserver(() => {
         if (container.querySelector('.carbon-wrap, #carbonads, .carbon')) {
-          console.info('[Carbon] post ad markup detected');
+          console.info('[Carbon] ad markup detected');
           if (fallback && fallback.parentNode) fallback.parentNode.removeChild(fallback);
           window.__carbonLoaded = true;
           observer.disconnect();
@@ -172,7 +228,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       observer.observe(container, { childList: true, subtree: true });
 
       timeoutId = setTimeout(() => {
-        console.warn('[Carbon] post ad did not render within timeout');
+        console.warn('[Carbon] ad did not render within timeout');
         if (!didTryResponsive && format !== 'responsive') {
           didTryResponsive = true;
           if (observer) observer.disconnect();
@@ -202,19 +258,24 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       script._cleanup = cleanup;
     };
 
-    // Use IntersectionObserver for deferred loading
-    io = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          loadCarbon('cover');
-          if (io) {
-            io.disconnect();
+    // For desktop, use IntersectionObserver for deferred loading
+    if (!isMobile) {
+      io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            loadCarbon('cover');
+            if (io) {
+              io.disconnect();
+            }
           }
-        }
-      });
-    }, { root: null, rootMargin: '0px 0px 300% 0px', threshold: 0 });
+        });
+      }, { root: null, rootMargin: '0px 0px 300% 0px', threshold: 0 });
 
-    io.observe(container);
+      io.observe(container);
+    } else {
+      // For mobile, load immediately
+      loadCarbon('cover');
+    }
 
     return () => {
       if (io) io.disconnect();
