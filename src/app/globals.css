@@ -1042,15 +1042,72 @@ html {
       overflow: visible;
     }
 
+    /* Mobile ad container - minimal interference */
+    .carbon-ad-container-mobile {
+      width: 100%;
+      max-width: 100%;
+      margin: 1.5rem 0;
+      padding: 0;
+      display: block;
+      background: transparent;
+      border-radius: 8px;
+      overflow: visible;
+    }
+
+    /* Only override specific problem styles that break the ad */
     .carbon-ad-container-mobile #carbonads {
       width: 100% !important;
       max-width: 100% !important;
-      margin: 0 !important;
-      padding: 16px !important;
-      background: #2a2a2a !important;
-      border: 1px solid #404040 !important;
-      border-radius: 8px !important;
       display: block !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: transparent !important;
+      border: none !important;
+      line-height: normal !important;
+      font-size: 16px !important;
+      font-weight: normal !important;
+      text-align: left !important;
+      text-decoration: none !important;
+    }
+
+    /* Carbon text - remove article underlines and sizing */
+    .carbon-ad-container-mobile p,
+    .carbon-ad-container-mobile span,
+    .carbon-ad-container-mobile div {
+      text-decoration: none !important;
+      text-underline-offset: auto !important;
+      margin: revert !important;
+      padding: revert !important;
+      line-height: inherit !important;
+      font-size: inherit !important;
+      color: inherit !important;
+    }
+
+    /* Carbon links - remove article link styles */
+    .carbon-ad-container-mobile a {
+      text-decoration: none !important;
+      text-underline-offset: auto !important;
+      color: inherit !important;
+    }
+
+    /* Carbon buttons - remove article button styles */
+    .carbon-ad-container-mobile button {
+      all: revert !important;
+      padding: inherit !important;
+      margin: inherit !important;
+      border: inherit !important;
+      background: inherit !important;
+      color: inherit !important;
+      font-size: inherit !important;
+      font-weight: inherit !important;
+    }
+
+    /* Carbon images */
+    .carbon-ad-container-mobile img {
+      max-width: 100% !important;
+      height: auto !important;
+      border: none !important;
+      border-radius: 0 !important;
     }
 
     /* Make content wrapper full width on mobile */
