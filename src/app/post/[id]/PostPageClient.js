@@ -57,6 +57,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
   const [linkPreviews, setLinkPreviews] = useState({});
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
   const [selectedSponsor, setSelectedSponsor] = useState(null);
+  const [adMinimized, setAdMinimized] = useState(false);
 
   // Fetch a random active sponsor from API
   const fetchRandomSponsor = async () => {
@@ -102,10 +103,14 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     }
   }, [params.id, initialPostDetails]);
 
-  // Load Carbon Cover ad on post detail page - use static inline slot
+  // Load Carbon Cover ad on post detail page - floating ad container
   useEffect(() => {
-    // Try primary inline slot first (rendered before newsletter), fall back to footer
-    let container = document.getElementById('carbon-cover-post-inline') || document.getElementById('carbon-cover-post');
+    // Target the ad content wrapper inside the floating container
+    let container = document.querySelector('.carbon-floating-ad .ad-content-wrapper');
+    if (!container) {
+      // Fallback to main floating container
+      container = document.getElementById('carbon-cover-post-floating');
+    }
     if (!container) return;
 
     // If another Carbon ad already loaded on the page, skip
@@ -767,6 +772,22 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       <div className="grain-overlay"></div>
       <Header currentPage="post" />
 
+      {/* Floating Ad Container - Desktop: sticky bottom-left, Mobile: fixed top */}
+      <div id="carbon-cover-post-floating" className={`carbon-ad-container carbon-floating-ad ${adMinimized ? 'ad-minimized' : ''}`} aria-hidden="false">
+        {/* Ad Content */}
+        <div className="ad-content-wrapper"></div>
+        
+        {/* Ad Toggle Controls */}
+        <button 
+          className="ad-toggle-btn" 
+          onClick={() => setAdMinimized(!adMinimized)}
+          title={adMinimized ? 'Maximize ad' : 'Minimize ad'}
+          aria-label={adMinimized ? 'Maximize ad' : 'Minimize ad'}
+        >
+          <i className={`fas ${adMinimized ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+        </button>
+      </div>
+
       <main className="main">
         <div className="container">
           {/* Breadcrumb Navigation */}
@@ -918,11 +939,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 {allPosts.map((post, index) => (
                   <div key={post.id} className="content-section">
                     {index > 0 && <div className="section-divider"></div>}
-                    
-                    {/* Carbon ad before newsletter - strategic placement after 1st post for high visibility */}
-                    {index === 1 && (
-                      <div id="carbon-cover-post-inline" className="carbon-ad-container in-article-ad" aria-hidden="false"></div>
-                    )}
                     
                     {/* Newsletter signup before second post */}
                     {index === 1 && (
