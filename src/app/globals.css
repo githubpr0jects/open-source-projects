@@ -1024,19 +1024,203 @@ html {
     border-radius: 8px;
   }
 
-  /* Mobile: Fixed top ad (first viewport) */
+  /* Mobile: Hide desktop floating ad container completely on mobile */
   @media (max-width: 768px) {
     .carbon-floating-ad {
-      display: flex;
-      position: fixed;
-      top: 80px; /* Below header */
-      bottom: auto;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 95%;
-      max-width: 600px;
-      max-height: 200px;
-      z-index: 30;
+      display: none !important;
+    }
+
+    /* Make content wrapper full width on mobile */
+    .ad-content-wrapper {
+      width: 100%;
+    }
+
+    /* Mobile paragraph injected ad */
+    .carbon-mobile-ad {
+      width: 100%;
+      max-width: 100%;
+      margin: 1.5rem 0;
+      padding: 0;
+      display: block;
+      background: transparent;
+      border-radius: 8px;
+      overflow: visible;
+    }
+
+    .carbon-ads-container {
+      width: 100%;
+      max-width: 100%;
+      display: block;
+      margin: 0;
+      padding: 0;
+    }
+
+    .ad-content-wrapper-mobile {
+      width: 100%;
+      max-width: 100%;
+      display: block;
+    }
+
+    #carbonads {
+      max-width: 100% !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      display: block !important;
+    }
+
+    .carbon-mobile-ad #carbonads,
+    .carbon-mobile-ad .carbon-wrap,
+    .carbon-mobile-ad .carbon {
+      max-width: 100% !important;
+      width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    .carbon-mobile-ad #carbonads img,
+    .carbon-mobile-ad .carbon-wrap img,
+    .carbon-mobile-ad img {
+      max-width: 100% !important;
+      height: auto !important;
+      display: block;
+    }
+
+    .carbon-mobile-ad a {
+      display: block;
+      width: 100%;
+    }
+
+    /* Dark theme styling for Carbon ads on dark-mode website */
+    .carbon-mobile-ad {
+      width: 100%;
+      margin: 1.5rem 0;
+      padding: 0 !important;
+      contain: layout style;
+      line-height: normal;
+      font-size: 16px;
+      font-weight: normal;
+      text-align: left;
+      letter-spacing: normal;
+      word-spacing: normal;
+      text-decoration: none;
+      text-transform: none;
+      font-style: normal;
+    }
+
+    /* Isolate children from article cascade */
+    .carbon-mobile-ad > div {
+      all: revert;
+      width: 100%;
+      display: block;
+      margin: 0;
+      padding: 0;
+      line-height: initial;
+      font-size: initial;
+      font-weight: initial;
+      text-align: left;
+    }
+
+    /* Carbon ads dark theme card styling */
+    #carbonads {
+      width: 100% !important;
+      display: block !important;
+      margin: 0 !important;
+      padding: 16px !important;
+      background: #2a2a2a !important;
+      border: 1px solid #404040 !important;
+      border-radius: 8px !important;
+      all: revert;
+      box-sizing: border-box;
+    }
+
+    /* Carbon ads wrapper */
+    #carbonads .carbon-wrap {
+      display: grid !important;
+      gap: 12px !important;
+      all: revert;
+      box-sizing: border-box;
+    }
+
+    /* Carbon ad image styling */
+    #carbonads .carbon-img {
+      max-width: 100% !important;
+      height: auto !important;
+      display: block !important;
+      border-radius: 6px !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* Carbon ad text styling - light colors for dark theme */
+    #carbonads .carbon-text {
+      all: revert;
+      color: #e0e0e0 !important;
+      font-size: 14px !important;
+      line-height: 1.5 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    #carbonads p,
+    #carbonads .carbon-p {
+      color: #e0e0e0 !important;
+      font-size: 14px !important;
+      line-height: 1.5 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* Carbon ad links - bright blue for dark theme */
+    #carbonads a,
+    #carbonads .carbon-link {
+      color: #64b5f6 !important;
+      text-decoration: none !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+    }
+
+    #carbonads a:hover,
+    #carbonads .carbon-link:hover {
+      color: #90caf9 !important;
+      text-decoration: underline !important;
+    }
+
+    /* Carbon ad tag/label */
+    #carbonads .carbon-tag {
+      display: inline-block !important;
+      background: #1a1a1a !important;
+      color: #90caf9 !important;
+      padding: 4px 8px !important;
+      border-radius: 4px !important;
+      font-size: 12px !important;
+      margin: 0 4px 0 0 !important;
+    }
+
+    /* Carbon powered by text */
+    #carbonads .carbon-poweredby {
+      color: #999 !important;
+      font-size: 12px !important;
+      margin-top: 12px !important;
+      padding-top: 8px !important;
+      border-top: 1px solid #404040 !important;
+    }
+
+    /* Ensure all Carbon elements respect dark theme */
+    #carbonads * {
+      all: revert;
+      box-sizing: border-box;
+      background: transparent !important;
+    }
+
+    #carbonads strong {
+      color: #fff !important;
+      font-weight: 700 !important;
+    }
+
+    #carbonads em {
+      color: #e0e0e0 !important;
+      font-style: italic !important;
     }
   }
 

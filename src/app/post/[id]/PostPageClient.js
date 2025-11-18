@@ -224,6 +224,140 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     };
   }, [postDetails]);
 
+  // Inject ads between paragraphs on mobile screens
+  useEffect(() => {
+    // Check if we should run
+    const isMobile = () => {
+      if (typeof window === 'undefined') return false;
+      console.log('[Mobile Ad] Window width:', window.innerWidth);
+      return window.innerWidth <= 768;
+    };
+
+    if (!isMobile()) {
+      console.log('[Mobile Ad] Not mobile, skipping injection');
+      return;
+    }
+
+    const injectAdsBetweenParagraphs = () => {
+      console.log('[Mobile Ad] Starting injection');
+      const article = document.querySelector('article.project-article');
+      if (!article) {
+        console.warn('[Mobile Ad] Article not found');
+        return;
+      }
+
+      // Get all paragraphs in the article
+      const paragraphs = Array.from(article.querySelectorAll('p'));
+      console.log('[Mobile Ad] Found paragraphs:', paragraphs.length);
+      
+      if (paragraphs.length < 3) {
+        console.warn('[Mobile Ad] Not enough paragraphs (need 3+)');
+        return;
+      }
+
+      // Inject ad after 3rd paragraph
+      const targetParagraph = paragraphs[2];
+      if (!targetParagraph) {
+        console.warn('[Mobile Ad] Target paragraph not found');
+        return;
+      }
+
+      // Check if ad already injected
+      if (targetParagraph.nextElementSibling?.id === 'carbon-mobile-paragraph-ad') {
+        console.log('[Mobile Ad] Already injected');
+        return;
+      }
+
+      // Create ad container
+      const adContainer = document.createElement('div');
+      adContainer.id = 'carbon-mobile-paragraph-ad';
+      adContainer.className = 'carbon-ad-container carbon-mobile-ad';
+      
+      // Insert after target paragraph
+      targetParagraph.parentNode?.insertBefore(adContainer, targetParagraph.nextSibling);
+      console.log('[Mobile Ad] Container inserted');
+
+      // Load Carbon ad script
+      if (!window.__carbonMobileLoading) {
+        window.__carbonMobileLoading = true;
+        console.log('[Mobile Ad] Starting Carbon load');
+
+        // Create the #carbonads div that Carbon looks for
+        const carbonDiv = document.createElement('div');
+        carbonDiv.id = 'carbonads';
+        adContainer.appendChild(carbonDiv);
+
+        let hasRendered = false;
+
+        // Create fallback
+        let fallback = document.createElement('div');
+        fallback.className = 'carbon-fallback';
+        fallback.innerHTML = `<div class="inhouse-ad">Sponsored — <a href="/sponsor-us">Sponsor us</a></div>`;
+        carbonDiv.appendChild(fallback);
+
+        // Monitor for Carbon rendering
+        const observer = new MutationObserver(() => {
+          if (hasRendered) return;
+          
+          // Check if Carbon has rendered
+          if (carbonDiv.querySelector('.carbon-wrap') || 
+              carbonDiv.querySelector('.carbon') ||
+              carbonDiv.innerHTML.match(/<a[^>]*href=[^>]*>/)) {
+            console.info('[Carbon] mobile ad detected rendering');
+            hasRendered = true;
+            try {
+              if (fallback && fallback.parentNode) {
+                fallback.parentNode.removeChild(fallback);
+              }
+            } catch (e) {
+              console.warn('Could not remove fallback', e);
+            }
+            observer.disconnect();
+            window.__carbonMobileLoaded = true;
+            window.__carbonMobileLoading = false;
+            clearTimeout(timeoutId);
+          }
+        });
+
+        observer.observe(carbonDiv, { childList: true, subtree: true });
+
+        // Inject Carbon script at document head level for proper loading
+        const script = document.createElement('script');
+        script.async = true;
+        script.type = 'text/javascript';
+        script.src = '//cdn.carbonads.com/carbon.js?serve=CW7IL2QN&placement=wwwopensourceprojectsdev';
+        script.dataset.carbonMobileAd = 'true';
+        
+        script.onerror = () => {
+          console.warn('[Carbon] mobile script failed to load');
+          window.__carbonMobileLoading = false;
+          observer.disconnect();
+        };
+
+        script.onload = () => {
+          console.log('[Carbon] mobile script loaded');
+        };
+
+        // Append to head for global execution context
+        document.head.appendChild(script);
+        console.log('[Mobile Ad] Carbon script appended to head');
+
+        const timeoutId = setTimeout(() => {
+          if (!hasRendered) {
+            console.warn('[Carbon] mobile ad timeout, showing fallback');
+            observer.disconnect();
+            window.__carbonMobileLoading = false;
+          }
+        }, 10000);
+      }
+    };
+
+    // Wait for DOM to settle
+    const timer = setTimeout(injectAdsBetweenParagraphs, 1000);
+
+    return () => clearTimeout(timer);
+  }, [postDetails]);
+
   // In-house fallback renderer for post page
   const renderInHouseFallbackPost = (container) => {
     if (!container) return;
@@ -772,7 +906,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       <div className="grain-overlay"></div>
       <Header currentPage="post" />
 
-      {/* Floating Ad Container - Desktop: sticky bottom-left, Mobile: fixed top */}
+      {/* Floating Ad Container - Desktop only: sticky bottom-left with toggle */}
       <div id="carbon-cover-post-floating" className={`carbon-ad-container carbon-floating-ad ${adMinimized ? 'ad-minimized' : ''}`} aria-hidden="false">
         {/* Ad Content */}
         <div className="ad-content-wrapper"></div>
