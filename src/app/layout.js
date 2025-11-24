@@ -139,7 +139,7 @@ export default function RootLayout({ children }) {
         <Script
           defer
           data-domain="opensourceprojects.dev"
-          src="https://plausible.io/js/script.js"
+          src="https://analytics.cosmicstack.org/js/pa-CAhRuEPmPe5FRK8v_i0Mf.js"
           strategy="afterInteractive"
         />
       </head>
