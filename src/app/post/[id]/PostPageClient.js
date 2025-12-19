@@ -62,6 +62,38 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
   const [selectedSponsor, setSelectedSponsor] = useState(null);
   const [adMinimized, setAdMinimized] = useState(false);
+  const [dismissedSponsorBanner, setDismissedSponsorBanner] = useState(false);
+  const [bannerTopPos, setBannerTopPos] = useState(56);
+
+  // Set initial banner position and adjust on scroll
+  useEffect(() => {
+    const updateBannerPosition = () => {
+      const header = document.querySelector('.header');
+      if (header) {
+        const headerHeight = header.offsetHeight;
+        setBannerTopPos(Math.max(headerHeight, 40)); // Minimum 40px for mobile
+      }
+    };
+
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      updateBannerPosition();
+    }, 0);
+
+    // Update position on scroll
+    const scrollListener = () => updateBannerPosition();
+    window.addEventListener('scroll', scrollListener, { passive: true });
+    
+    // Also listen to window resize for responsive changes
+    const resizeListener = () => updateBannerPosition();
+    window.addEventListener('resize', resizeListener, { passive: true });
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', scrollListener);
+      window.removeEventListener('resize', resizeListener);
+    };
+  }, []);
 
   // Fetch a random active sponsor from API
   const fetchRandomSponsor = async () => {
@@ -838,6 +870,46 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     <>
       <div className="grain-overlay"></div>
       <Header currentPage="post" />
+
+      {/* Sponsor Announcement Banner - Sticky Top */}
+      {selectedSponsor && !dismissedSponsorBanner && (
+        <div className="sponsor-announcement-banner" style={{ top: `${bannerTopPos}px` }}>
+          <div className="sponsor-banner-container">
+            <div className="sponsor-banner-content">
+              <div className="sponsor-banner-icon">
+                <i className="fas fa-star"></i>
+              </div>
+              <div className="sponsor-banner-text">
+                <span className="sponsor-banner-label">Featured Sponsor</span>
+                <span className="sponsor-banner-divider">•</span>
+                <a 
+                  href={selectedSponsor.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="sponsor-banner-link"
+                >
+                  {selectedSponsor.name}: {selectedSponsor.tagline}
+                </a>
+              </div>
+              <a 
+                href={selectedSponsor.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sponsor-banner-cta"
+              >
+                Learn More <i className="fas fa-arrow-right"></i>
+              </a>
+            </div>
+            <button 
+              className="sponsor-banner-close"
+              onClick={() => setDismissedSponsorBanner(true)}
+              aria-label="Dismiss sponsor announcement"
+            >
+              <i className="fas fa-times"></i>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Floating Ad Container - Desktop only: sticky bottom-left with toggle */}
       {ENABLE_CARBON_ADS && (
