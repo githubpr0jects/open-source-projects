@@ -52,6 +52,23 @@ const sponsors = [
       { label: 'AI-Powered', icon: 'fas fa-brain', color: '#6c5ce7', bgColor: 'rgba(108, 92, 231, 0.1)' },
       { label: 'Developer Tools', icon: 'fas fa-code', color: '#fd79a8', bgColor: 'rgba(253, 121, 168, 0.1)' }
     ]
+  },
+  {
+    id: 'gotui',
+    name: 'GoTUI',
+    image: 'https://raw.githubusercontent.com/metaspartan/gotui/master/logo.png',
+    description: 'GoTUI: High-Performance Terminal UI Library for Go - Build Rich, Interactive Dashboards',
+    tagline: '3000+ FPS high-performance TUI library with 23+ widgets, TrueColor support, SSH multi-user capability, and mouse interactions. Modern fork of termui engineered for dashboards and CLIs.',
+    link: 'https://click.opensourceprojects.dev/s/gotui-sponsor',
+    repo: 'metaspartan/gotui',
+    startDate: '2025-12-19',
+    durationDays: 30,
+    tags: [
+      { label: 'Go/Golang', icon: 'fas fa-code', color: '#00ADD8', bgColor: 'rgba(0, 173, 216, 0.1)' },
+      { label: 'Terminal UI', icon: 'fas fa-terminal', color: '#2ecc71', bgColor: 'rgba(46, 204, 113, 0.1)' },
+      { label: 'High Performance', icon: 'fas fa-bolt', color: '#f39c12', bgColor: 'rgba(243, 156, 18, 0.1)' },
+      { label: 'Dashboard', icon: 'fas fa-chart-line', color: '#3498db', bgColor: 'rgba(52, 152, 219, 0.1)' }
+    ]
   }
 ];
 

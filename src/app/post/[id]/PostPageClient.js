@@ -65,8 +65,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
   // Fetch a random active sponsor from API
   const fetchRandomSponsor = async () => {
-    if (!ENABLE_CARBON_ADS) return;
-
     try {
       const response = await fetch('/api/sponsors?active=true&random=true');
       if (response.ok) {
@@ -1043,7 +1041,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               <div className="article-footer">
                
                 {/* Dynamic Sponsored Project - Above sponsor promo */}
-                {ENABLE_CARBON_ADS && selectedSponsor && (
+                {selectedSponsor && (
                   <div className="sponsored-project-section">
                     <div className="sponsored-project-header">
                       <h3>
@@ -1154,44 +1152,46 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                   </div>
                 )}
 
-                {/* Creative Sponsor Block - Full Width */}
-                <div className="sponsor-promo-block">
-                  <div className="sponsor-promo-content">
-                    <div className="sponsor-promo-icon">
-                      <i className="fas fa-rocket"></i>
-                    </div>
-                    <div className="sponsor-promo-text">
-                      <h3>Love discovering amazing projects?</h3>
-                      <p>
-                        Help us showcase more incredible open-source projects by sponsoring a featured spot. 
-                        Your project could be the next big discovery for thousands of developers.
-                      </p>
-                      <div className="sponsor-promo-features">
-                        <span className="promo-feature">
-                          <i className="fas fa-chart-line"></i>
-                          Premium visibility
-                        </span>
-                        <span className="promo-feature">
-                          <i className="fas fa-users"></i>
-                          Developer audience
-                        </span>
-                        <span className="promo-feature">
-                          <i className="fas fa-chart-line"></i>
-                          Boost engagement
-                        </span>
+                {/* Creative Sponsor Block - Only show when no active sponsor */}
+                {!selectedSponsor && (
+                  <div className="sponsor-promo-block">
+                    <div className="sponsor-promo-content">
+                      <div className="sponsor-promo-icon">
+                        <i className="fas fa-rocket"></i>
+                      </div>
+                      <div className="sponsor-promo-text">
+                        <h3>Love discovering amazing projects?</h3>
+                        <p>
+                          Help us showcase more incredible open-source projects by sponsoring a featured spot. 
+                          Your project could be the next big discovery for thousands of developers.
+                        </p>
+                        <div className="sponsor-promo-features">
+                          <span className="promo-feature">
+                            <i className="fas fa-chart-line"></i>
+                            Premium visibility
+                          </span>
+                          <span className="promo-feature">
+                            <i className="fas fa-users"></i>
+                            Developer audience
+                          </span>
+                          <span className="promo-feature">
+                            <i className="fas fa-chart-line"></i>
+                            Boost engagement
+                          </span>
+                        </div>
+                      </div>
+                      <div className="sponsor-promo-cta">
+                        <Link href="/sponsor-us" className="sponsor-promo-button">
+                          <span>Sponsor a Spot</span>
+                          <i className="fas fa-arrow-right"></i>
+                        </Link>
+                        {/* <div className="sponsor-promo-price">
+                          Starting at <strong>$99/week</strong>
+                        </div> */}
                       </div>
                     </div>
-                    <div className="sponsor-promo-cta">
-                      <Link href="/sponsor-us" className="sponsor-promo-button">
-                        <span>Sponsor a Spot</span>
-                        <i className="fas fa-arrow-right"></i>
-                      </Link>
-                      {/* <div className="sponsor-promo-price">
-                        Starting at <strong>$99/week</strong>
-                      </div> */}
-                    </div>
                   </div>
-                </div>
+                )}
                 
                 {/* Two Column Content */}
                 <div className="article-footer-content">
