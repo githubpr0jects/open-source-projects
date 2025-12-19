@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { getSponsorImpressions, incrementImpressions } from '@/lib/impressions';
 
 // Centralized sponsors configuration - Single source of truth
 const sponsors = [
@@ -110,10 +111,16 @@ export async function GET(request) {
       filteredSponsors = [filteredSponsors[randomIndex]];
     }
 
+    // Add impressions to each sponsor
+    const sponsorsWithImpressions = filteredSponsors.map(sponsor => ({
+      ...sponsor,
+      impressions: getSponsorImpressions(sponsor.id)
+    }));
+
     return NextResponse.json({
       success: true,
-      sponsors: filteredSponsors,
-      total: filteredSponsors.length,
+      sponsors: sponsorsWithImpressions,
+      total: sponsorsWithImpressions.length,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -174,6 +181,57 @@ export async function POST(request) {
       { 
         success: false, 
         error: 'Failed to add sponsor',
+        details: error.message 
+      },
+      { status: 500 }
+    );
+  }
+}
+// PUT /api/sponsors/:id/impression - Increment sponsor impressions
+export async function PUT(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const sponsorId = searchParams.get('id');
+
+    if (!sponsorId) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Sponsor ID is required' 
+        },
+        { status: 400 }
+      );
+    }
+
+    // Find sponsor to verify it exists
+    const sponsor = sponsors.find(s => s.id === sponsorId);
+    if (!sponsor) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Sponsor not found' 
+        },
+        { status: 404 }
+      );
+    }
+
+    // Increment impressions in file
+    const newCount = incrementImpressions(sponsorId);
+
+    return NextResponse.json({
+      success: true,
+      message: 'Impression recorded',
+      sponsor: {
+        id: sponsor.id,
+        name: sponsor.name,
+        impressions: newCount
+      }
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { 
+        success: false, 
+        error: 'Failed to record impression',
         details: error.message 
       },
       { status: 500 }

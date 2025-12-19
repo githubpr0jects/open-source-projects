@@ -102,7 +102,15 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       if (response.ok) {
         const data = await response.json();
         if (data.sponsors && data.sponsors.length > 0) {
-          setSelectedSponsor(data.sponsors[0]);
+          const sponsor = data.sponsors[0];
+          setSelectedSponsor(sponsor);
+          
+          // Record impression
+          try {
+            await fetch(`/api/sponsors?id=${sponsor.id}`, { method: 'PUT' });
+          } catch (err) {
+            console.warn('Failed to record sponsor impression:', err);
+          }
         }
       }
     } catch (error) {
