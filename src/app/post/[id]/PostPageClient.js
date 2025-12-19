@@ -9,6 +9,10 @@ import Footer from '../../components/Footer';
 import BookmarkButton from '../../components/BookmarkButton';
 import NewsletterForm from '../../components/NewsletterForm';
 
+// ===== FEATURE FLAGS =====
+const ENABLE_CARBON_ADS = false;  // Set to true to enable Carbon ads and sponsor placeholder
+// ========================
+
 const fallbackImage = '/images/open-source-logo-830x460.jpg';
 
 const getHeroImage = (post) => {
@@ -61,6 +65,8 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
   // Fetch a random active sponsor from API
   const fetchRandomSponsor = async () => {
+    if (!ENABLE_CARBON_ADS) return;
+
     try {
       const response = await fetch('/api/sponsors?active=true&random=true');
       if (response.ok) {
@@ -105,6 +111,9 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
   // Load Carbon ad - responsive placement (floating on desktop, in-article on mobile)
   useEffect(() => {
+    // Skip if Carbon ads are disabled
+    if (!ENABLE_CARBON_ADS) return;
+
     // Determine if mobile or desktop
     const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
 
@@ -1032,7 +1041,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               <div className="article-footer">
                
                 {/* Dynamic Sponsored Project - Above sponsor promo */}
-                {selectedSponsor && (
+                {ENABLE_CARBON_ADS && selectedSponsor && (
                   <div className="sponsored-project-section">
                     <div className="sponsored-project-header">
                       <h3>
