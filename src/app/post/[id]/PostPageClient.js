@@ -842,20 +842,22 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       <Header currentPage="post" />
 
       {/* Floating Ad Container - Desktop only: sticky bottom-left with toggle */}
-      <div id="carbon-cover-post-floating" className={`carbon-ad-container carbon-floating-ad ${adMinimized ? 'ad-minimized' : ''}`} aria-hidden="false">
-        {/* Ad Content */}
-        <div className="ad-content-wrapper"></div>
-        
-        {/* Ad Toggle Controls */}
-        <button 
-          className="ad-toggle-btn" 
-          onClick={() => setAdMinimized(!adMinimized)}
-          title={adMinimized ? 'Maximize ad' : 'Minimize ad'}
-          aria-label={adMinimized ? 'Maximize ad' : 'Minimize ad'}
-        >
-          <i className={`fas ${adMinimized ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
-        </button>
-      </div>
+      {ENABLE_CARBON_ADS && (
+        <div id="carbon-cover-post-floating" className={`carbon-ad-container carbon-floating-ad ${adMinimized ? 'ad-minimized' : ''}`} aria-hidden="false">
+          {/* Ad Content */}
+          <div className="ad-content-wrapper"></div>
+          
+          {/* Ad Toggle Controls */}
+          <button 
+            className="ad-toggle-btn" 
+            onClick={() => setAdMinimized(!adMinimized)}
+            title={adMinimized ? 'Maximize ad' : 'Minimize ad'}
+            aria-label={adMinimized ? 'Maximize ad' : 'Minimize ad'}
+          >
+            <i className={`fas ${adMinimized ? 'fa-chevron-up' : 'fa-chevron-down'}`}></i>
+          </button>
+        </div>
+      )}
 
       <main className="main">
         <div className="container">
