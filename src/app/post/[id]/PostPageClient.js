@@ -880,7 +880,8 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 <i className="fas fa-star"></i>
               </div>
               <div className="sponsor-banner-text">
-                <span className="sponsor-banner-label">Featured Sponsor</span>
+                <span className="sponsor-banner-label sponsor-label-desktop">Featured Sponsor</span>
+                <span className="sponsor-banner-label sponsor-label-mobile">Sponsor</span>
                 <span className="sponsor-banner-divider">•</span>
                 <a 
                   href={selectedSponsor.link}
@@ -897,7 +898,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 rel="noopener noreferrer"
                 className="sponsor-banner-cta"
               >
-                Learn More <i className="fas fa-arrow-right"></i>
+                <span className="cta-text">Learn More</span> <i className="fas fa-arrow-right"></i>
               </a>
             </div>
             <button 

@@ -3302,7 +3302,7 @@ html {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: 11px;
   color: white;
   flex: 1;
   min-width: 0;
@@ -3317,6 +3317,14 @@ html {
   white-space: nowrap;
 }
 
+.sponsor-label-desktop {
+  display: inline;
+}
+
+.sponsor-label-mobile {
+  display: none;
+}
+
 .sponsor-banner-divider {
   opacity: 0.5;
 }
@@ -3329,7 +3337,7 @@ html {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .sponsor-banner-link:hover {
@@ -3392,36 +3400,57 @@ html {
     top: 50px;
   }
 
+  .sponsor-label-desktop {
+    display: none;
+  }
+
+  .sponsor-label-mobile {
+    display: inline;
+    font-size: 7px;
+  }
+
   .sponsor-banner-container {
-    padding: 6px 12px;
+    padding: 5px 10px;
     flex-direction: row;
     align-items: center;
-    gap: 8px;
-    min-height: 36px;
+    gap: 6px;
+    min-height: 32px;
   }
 
   .sponsor-banner-content {
     width: auto;
-    gap: 6px;
+    gap: 5px;
+  }
+
+  .sponsor-banner-icon {
+    font-size: 12px;
   }
 
   .sponsor-banner-text {
-    gap: 4px;
-    font-size: 11px;
+    gap: 3px;
+    font-size: 9px;
   }
 
   .sponsor-banner-link {
-    font-size: 11px;
+    font-size: 9px;
   }
 
   .sponsor-banner-cta {
-    padding: 4px 8px;
-    font-size: 10px;
+    padding: 3px 6px;
+    font-size: 8px;
+  }
+
+  .sponsor-banner-cta .cta-text {
+    display: none;
+  }
+
+  .sponsor-banner-cta i {
+    font-size: 8px;
   }
 
   .sponsor-banner-close {
-    width: 22px;
-    height: 22px;
-    font-size: 11px;
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
   }
 }
