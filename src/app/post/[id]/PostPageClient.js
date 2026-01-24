@@ -979,10 +979,23 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
             </div>
 
             <div className="project-meta">
-              <span className="project-badge">
-                <i className={mainPost.github_repo ? "fab fa-github" : "fas fa-comment-alt"}></i>
-                {getSourceLabel(mainPost)}
-              </span>
+              {/* GitHub Repo badge - Made clickable to link to repository (same URL as "View on GitHub" button) */}
+              {mainPost.github_repo ? (
+                <a 
+                  href={mainPost.github_repo + '?utm_source=opensourceprojects.dev&ref=opensourceprojects.dev'} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="project-badge"
+                >
+                  <i className="fab fa-github"></i>
+                  {getSourceLabel(mainPost)}
+                </a>
+              ) : (
+                <span className="project-badge">
+                  <i className="fas fa-comment-alt"></i>
+                  {getSourceLabel(mainPost)}
+                </span>
+              )}
               <time className="project-date" dateTime={mainPost.date}>
                 <i className="fas fa-calendar"></i>
                 {formatDate(mainPost.date)}
@@ -1555,6 +1568,8 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           align-items: center;
           gap: 0.375rem;
           box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+          /*no underline, overlines or strikethrough on the anchor link*/
+          text-decoration: none;
         }
 
         .project-date {
