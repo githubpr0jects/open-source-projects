@@ -2,11 +2,11 @@ import { useState } from 'react';
 import styles from './NewsletterForm.module.css';
 import { trackNewsletterSubscription } from '../utils/analytics';
 
-export default function NewsletterForm({ 
-  source = 'unknown', 
-  postId = null, 
+export default function NewsletterForm({
+  source = 'unknown',
+  postId = null,
   postTitle = null,
-  compact = false 
+  compact = false
 }) {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -33,10 +33,10 @@ export default function NewsletterForm({
       if (response.ok) {
         setMessage(data.message);
         setIsSuccess(true);
-        
+
         // Track successful newsletter subscription in Google Analytics
         trackNewsletterSubscription(source, email, postId, postTitle);
-        
+
         setEmail(''); // Clear input on success
       } else {
         setMessage(data.message || 'Something went wrong.');
@@ -64,9 +64,15 @@ export default function NewsletterForm({
           required
           disabled={isLoading}
         />
-        <button type="submit" className={styles.button} disabled={isLoading}>
-          {isLoading ? 'Subscribing...' : 'Subscribe'}
-        </button>
+        <div className={styles.submitContainer}>
+          <button type="submit" className={styles.button} disabled={isLoading}>
+            {isLoading ? '...' : 'Join'}
+          </button>
+        </div>
+        <div className={styles.socialProof}>
+          <span className={styles.glowingDot}></span>
+          10k+ developers already joined
+        </div>
       </form>
       {message && (
         <p className={`${styles.message} ${isSuccess ? styles.success : styles.error}`}>
