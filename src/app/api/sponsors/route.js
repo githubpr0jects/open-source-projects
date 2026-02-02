@@ -70,6 +70,23 @@ const sponsors = [
       { label: 'High Performance', icon: 'fas fa-bolt', color: '#f39c12', bgColor: 'rgba(243, 156, 18, 0.1)' },
       { label: 'Dashboard', icon: 'fas fa-chart-line', color: '#3498db', bgColor: 'rgba(52, 152, 219, 0.1)' }
     ]
+  },
+  {
+    id: 'vibe-music',
+    name: 'Vibe Music',
+    image: 'https://opengraph.githubassets.com/1/vibe-music/vibe-music-web',
+    description: 'Vibe Music: Open-Source Cloud-Based Music Player with BYOM Model',
+    tagline: 'Futuristic, open-source music player with a "bring-your-own-music" philosophy. Features a stunning glassmorphic UI, Vibe AI recommendations, and native Archive.org support for a private, decentralized listening experience.',
+    link: 'https://click.opensourceprojects.dev/s/vibe-music-sponsor',
+    repo: 'vibe-music/vibe-music-web',
+    startDate: '2026-02-02',
+    durationDays: 30,
+    tags: [
+      { label: 'Cloud Music', icon: 'fas fa-cloud', color: '#3498db', bgColor: 'rgba(52, 152, 219, 0.1)' },
+      { label: 'Open Source', icon: 'fas fa-code-branch', color: '#2ecc71', bgColor: 'rgba(46, 204, 113, 0.1)' },
+      { label: 'Privacy', icon: 'fas fa-shield-alt', color: '#e74c3c', bgColor: 'rgba(231, 76, 60, 0.1)' },
+      { label: 'AI Powered', icon: 'fas fa-brain', color: '#f39c12', bgColor: 'rgba(243, 156, 18, 0.1)' }
+    ]
   }
 ];
 
