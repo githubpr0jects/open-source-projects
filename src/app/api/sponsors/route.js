@@ -80,7 +80,7 @@ const sponsors = [
     link: 'https://click.opensourceprojects.dev/s/vibe-music-sponsor',
     repo: 'vibe-music/vibe-music-web',
     startDate: '2026-02-02',
-    durationDays: 30,
+    durationDays: 2,
     tags: [
       { label: 'Cloud Music', icon: 'fas fa-cloud', color: '#3498db', bgColor: 'rgba(52, 152, 219, 0.1)' },
       { label: 'Open Source', icon: 'fas fa-code-branch', color: '#2ecc71', bgColor: 'rgba(46, 204, 113, 0.1)' },
@@ -142,10 +142,10 @@ export async function GET(request) {
     });
   } catch (error) {
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to fetch sponsors',
-        details: error.message 
+        details: error.message
       },
       { status: 500 }
     );
@@ -156,15 +156,15 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const newSponsor = await request.json();
-    
+
     // Validate required fields
     const requiredFields = ['id', 'name', 'image', 'description', 'tagline', 'link', 'repo', 'startDate'];
     for (const field of requiredFields) {
       if (!newSponsor[field]) {
         return NextResponse.json(
-          { 
-            success: false, 
-            error: `Missing required field: ${field}` 
+          {
+            success: false,
+            error: `Missing required field: ${field}`
           },
           { status: 400 }
         );
@@ -174,9 +174,9 @@ export async function POST(request) {
     // Check if sponsor ID already exists
     if (sponsors.find(sponsor => sponsor.id === newSponsor.id)) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Sponsor with this ID already exists' 
+        {
+          success: false,
+          error: 'Sponsor with this ID already exists'
         },
         { status: 409 }
       );
@@ -195,10 +195,10 @@ export async function POST(request) {
     });
   } catch (error) {
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to add sponsor',
-        details: error.message 
+        details: error.message
       },
       { status: 500 }
     );
@@ -212,9 +212,9 @@ export async function PUT(request) {
 
     if (!sponsorId) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Sponsor ID is required' 
+        {
+          success: false,
+          error: 'Sponsor ID is required'
         },
         { status: 400 }
       );
@@ -224,9 +224,9 @@ export async function PUT(request) {
     const sponsor = sponsors.find(s => s.id === sponsorId);
     if (!sponsor) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Sponsor not found' 
+        {
+          success: false,
+          error: 'Sponsor not found'
         },
         { status: 404 }
       );
@@ -246,10 +246,10 @@ export async function PUT(request) {
     });
   } catch (error) {
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Failed to record impression',
-        details: error.message 
+        details: error.message
       },
       { status: 500 }
     );
