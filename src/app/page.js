@@ -615,14 +615,12 @@ function HomePageContent() {
             {/* Carbon Cover ad - homepage only. The script will inject the ad markup here. */}
             {/* carbon ad container moved to HomePageClient */}
             {posts.map((post, index) => {
-              // Dynamic sponsor placement - reserve positions 2, 3, and 4 for sponsors
-              const sponsorAtPosition2 = index === 1 && activeSponsors[0];
-              const sponsorAtPosition3 = index === 2 && activeSponsors[1];
-              const sponsorAtPosition4 = index === 3 && activeSponsors[2];
-              const currentSponsor = sponsorAtPosition2 ? activeSponsors[0] : 
-                                    (sponsorAtPosition3 ? activeSponsors[1] : 
-                                    (sponsorAtPosition4 ? activeSponsors[2] : null));
-              
+              // Dynamic sponsor placement - reserve consecutive positions starting from index 1 for all active sponsors
+              const currentSponsorIndex = index - 1;
+              const currentSponsor = currentSponsorIndex >= 0 && currentSponsorIndex < activeSponsors.length 
+                ? activeSponsors[currentSponsorIndex] 
+                : null;
+
               // Show sponsor us card after all active sponsors
               const shouldShowSponsorUs = index === (1 + activeSponsors.length);
               

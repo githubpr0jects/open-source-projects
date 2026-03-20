@@ -4,6 +4,91 @@ import { getSponsorImpressions, incrementImpressions } from '@/lib/impressions';
 // Centralized sponsors configuration - Single source of truth
 const sponsors = [
   {
+    id: 'open-fdd',
+    name: 'Open-FDD',
+    image: 'https://opengraph.githubassets.com/1/bbartling/open-fdd',
+    description: 'Open-FDD: Fault Detection Diagnostics (FDD) for HVAC datasets',
+    tagline: 'An open-source AFDD Platform for creating AI and data models to perform Fault Detection Diagnostics on HVAC datasets.',
+    link: 'https://click.opensourceprojects.dev/s/open-fdd-sponsor',
+    repo: 'bbartling/open-fdd',
+    startDate: '2026-03-20',
+    durationDays: 30,
+    tags: [
+      { label: 'HVAC Diagnostics', icon: 'fas fa-thermometer-half', color: '#ff6b35', bgColor: 'rgba(255, 107, 53, 0.1)' },
+      { label: 'Fault Detection', icon: 'fas fa-exclamation-triangle', color: '#4CAF50', bgColor: 'rgba(76, 175, 80, 0.1)' },
+      { label: 'Data Modeling', icon: 'fas fa-database', color: '#2196F3', bgColor: 'rgba(33, 150, 243, 0.1)' },
+      { label: 'Open Source', icon: 'fas fa-code-branch', color: '#9C27B0', bgColor: 'rgba(156, 39, 176, 0.1)' }
+    ]
+  }, f
+  {
+    id: 'contextrie',
+    name: 'Contextrie',
+    image: 'https://opengraph.githubassets.com/1/feuersteiner/contextrie',
+    description: 'Contextrie: Context management for LLM multi-agent workflows',
+    tagline: 'Contextrie curates what each agent sees so tasks stay sharp from step one to step one thousand.',
+    link: 'https://click.opensourceprojects.dev/s/contextrie-sponsor',
+    repo: 'feuersteiner/contextrie',
+    startDate: '2026-03-20',
+    durationDays: 30,
+    tags: [
+      { label: 'LLM Agents', icon: 'fas fa-robot', color: '#ff6b35', bgColor: 'rgba(255, 107, 53, 0.1)' },
+      { label: 'Context Management', icon: 'fas fa-brain', color: '#4CAF50', bgColor: 'rgba(76, 175, 80, 0.1)' },
+      { label: 'Workflows', icon: 'fas fa-project-diagram', color: '#2196F3', bgColor: 'rgba(33, 150, 243, 0.1)' },
+      { label: 'Open Source', icon: 'fas fa-code-branch', color: '#9C27B0', bgColor: 'rgba(156, 39, 176, 0.1)' }
+    ]
+  },
+  {
+    id: 'openscribe',
+    name: 'OpenScribe',
+    image: 'https://opengraph.githubassets.com/1/Open-scribe/OpenScribe',
+    description: 'OpenScribe: Open-source AI scribe for automated structured clinical notes',
+    tagline: 'Record patient encounters and generate structured clinical notes automatically. Keep full control over data, workflows, and patient privacy with no vendor lock-in.',
+    link: 'https://click.opensourceprojects.dev/s/OpenScribe-sponsor',
+    repo: 'Open-scribe/OpenScribe',
+    startDate: '2026-03-20',
+    durationDays: 30,
+    tags: [
+      { label: 'AI Scribe', icon: 'fas fa-notes-medical', color: '#ff6b35', bgColor: 'rgba(255, 107, 53, 0.1)' },
+      { label: 'Privacy', icon: 'fas fa-shield-alt', color: '#4CAF50', bgColor: 'rgba(76, 175, 80, 0.1)' },
+      { label: 'Clinical Notes', icon: 'fas fa-file-medical', color: '#2196F3', bgColor: 'rgba(33, 150, 243, 0.1)' },
+      { label: 'Open Source', icon: 'fas fa-code-branch', color: '#9C27B0', bgColor: 'rgba(156, 39, 176, 0.1)' }
+    ]
+  },
+  {
+    id: 'stenoai',
+    name: 'StenoAI',
+    image: 'https://opengraph.githubassets.com/1/ruzin/stenoai',
+    description: 'StenoAI: Privacy focused AI-powered meeting intelligence',
+    tagline: 'Leverage locally hosted Small Language Models for meeting intelligence and structured clinical notes, keeping your data entirely private.',
+    link: 'https://click.opensourceprojects.dev/s/stenoai-sponsor',
+    repo: 'ruzin/stenoai',
+    startDate: '2026-03-20',
+    durationDays: 30,
+    tags: [
+      { label: 'Meeting Intelligence', icon: 'fas fa-microphone-alt', color: '#ff6b35', bgColor: 'rgba(255, 107, 53, 0.1)' },
+      { label: 'Privacy', icon: 'fas fa-shield-alt', color: '#4CAF50', bgColor: 'rgba(76, 175, 80, 0.1)' },
+      { label: 'Local Models', icon: 'fas fa-laptop-code', color: '#2196F3', bgColor: 'rgba(33, 150, 243, 0.1)' },
+      { label: 'Open Source', icon: 'fas fa-code-branch', color: '#9C27B0', bgColor: 'rgba(156, 39, 176, 0.1)' }
+    ]
+  },
+  {
+    id: 'ava',
+    name: 'AVA',
+    image: 'https://opengraph.githubassets.com/1/hkjarral/AVA-AI-Voice-Agent-for-Asterisk',
+    description: 'AVA: Open-source AI Voice Agent for Asterisk and FreePBX',
+    tagline: 'Seamlessly integrate LLM-powered conversational AI agents into your Asterisk or FreePBX infrastructure using Audiosocket and RTP technology.',
+    link: 'https://click.opensourceprojects.dev/s/ava-sponsor',
+    repo: 'hkjarral/AVA-AI-Voice-Agent-for-Asterisk',
+    startDate: '2026-03-20',
+    durationDays: 30,
+    tags: [
+      { label: 'Voice AI', icon: 'fas fa-microphone', color: '#ff6b35', bgColor: 'rgba(255, 107, 53, 0.1)' },
+      { label: 'Asterisk/FreePBX', icon: 'fas fa-phone-alt', color: '#4CAF50', bgColor: 'rgba(76, 175, 80, 0.1)' },
+      { label: 'LLM Agents', icon: 'fas fa-brain', color: '#2196F3', bgColor: 'rgba(33, 150, 243, 0.1)' },
+      { label: 'Open Source', icon: 'fas fa-code-branch', color: '#9C27B0', bgColor: 'rgba(156, 39, 176, 0.1)' }
+    ]
+  },
+  {
     id: 'bytebot',
     name: 'Bytebot',
     image: 'https://opengraph.githubassets.com/1/bytebot-ai/bytebot',
