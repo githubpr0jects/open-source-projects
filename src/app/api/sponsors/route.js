@@ -19,7 +19,7 @@ const sponsors = [
       { label: 'Data Modeling', icon: 'fas fa-database', color: '#2196F3', bgColor: 'rgba(33, 150, 243, 0.1)' },
       { label: 'Open Source', icon: 'fas fa-code-branch', color: '#9C27B0', bgColor: 'rgba(156, 39, 176, 0.1)' }
     ]
-  }, f
+  },
   {
     id: 'contextrie',
     name: 'Contextrie',
