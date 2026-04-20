@@ -4,6 +4,23 @@ import { getSponsorImpressions, incrementImpressions } from '@/lib/impressions';
 // Centralized sponsors configuration - Single source of truth
 const sponsors = [
   {
+    id: 'void-box',
+    name: 'VoidBox',
+    image: 'https://opengraph.githubassets.com/1/the-void-ia/void-box',
+    description: 'VoidBox: Composable agent runtime with enforced isolation boundaries',
+    tagline: 'VoidBox provides hardware-isolated execution boundaries for AI agents, allowing you to run untrusted code and tools safely inside micro-VMs.',
+    link: 'https://click.opensourceprojects.dev/s/voidbox-sponsor',
+    repo: 'the-void-ia/void-box',
+    startDate: '2026-04-20',
+    durationDays: 7,
+    tags: [
+      { label: 'Agent Runtime', icon: 'fas fa-microchip', color: '#ff6b35', bgColor: 'rgba(255, 107, 53, 0.1)' },
+      { label: 'Sandbox', icon: 'fas fa-shield-alt', color: '#4CAF50', bgColor: 'rgba(76, 175, 80, 0.1)' },
+      { label: 'Isolation', icon: 'fas fa-server', color: '#2196F3', bgColor: 'rgba(33, 150, 243, 0.1)' },
+      { label: 'Open Source', icon: 'fas fa-code-branch', color: '#9C27B0', bgColor: 'rgba(156, 39, 176, 0.1)' }
+    ]
+  },
+  {
     id: 'open-fdd',
     name: 'Open-FDD',
     image: 'https://opengraph.githubassets.com/1/bbartling/open-fdd',

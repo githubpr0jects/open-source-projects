@@ -50,6 +50,8 @@ function SponsorUs() {
   // Helper function to get sponsor icon
   const getSponsorIcon = (sponsorId) => {
     switch (sponsorId) {
+      case 'void-box':
+        return 'fas fa-box-open';
       case 'droidrun':
         return 'fas fa-mobile-alt';
       case 'hyprnote':
