@@ -189,6 +189,23 @@ const sponsors = [
       { label: 'Privacy', icon: 'fas fa-shield-alt', color: '#e74c3c', bgColor: 'rgba(231, 76, 60, 0.1)' },
       { label: 'AI Powered', icon: 'fas fa-brain', color: '#f39c12', bgColor: 'rgba(243, 156, 18, 0.1)' }
     ]
+  },
+  {
+    id: 'mercury-agent',
+    name: 'Mercury Agent',
+    image: 'https://opengraph.githubassets.com/1/cosmicstack-labs/mercury-agent',
+    description: 'Mercury Agent: Soul-driven AI agent with permission-hardened tools and multi-channel access',
+    tagline: 'Soul-driven AI agent with permission-hardened tools, token budgets, and multi-channel access. Runs 24/7 from CLI or Telegram.',
+    link: 'https://click.opensourceprojects.dev/s/mercury-agent-sponsor',
+    repo: 'cosmicstack-labs/mercury-agent',
+    startDate: '2026-05-12',
+    durationDays: 30,
+    tags: [
+      { label: 'AI Agent', icon: 'fas fa-robot', color: '#3498db', bgColor: 'rgba(52, 152, 219, 0.1)' },
+      { label: 'Automation', icon: 'fas fa-cogs', color: '#2ecc71', bgColor: 'rgba(46, 204, 113, 0.1)' },
+      { label: 'Security', icon: 'fas fa-shield-alt', color: '#e74c3c', bgColor: 'rgba(231, 76, 60, 0.1)' },
+      { label: 'Open Source', icon: 'fas fa-code-branch', color: '#f39c12', bgColor: 'rgba(243, 156, 18, 0.1)' }
+    ]
   }
 ];
 
