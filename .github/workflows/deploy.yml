@@ -25,25 +25,24 @@ jobs:
       - name: Build Next.js application
         run: npm run build
 
-      - name: Deploy to server via SCP
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: ${{ secrets.SERVER_PORT }}
-          source: ".next/,public/,package.json,package-lock.json,next.config.mjs,next.config.js"
-          target: "/home/cosmic-linux-2/osp-frontend"
-          overwrite: true
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
 
-      - name: Install dependencies and restart PM2
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          password: ${{ secrets.SERVER_PASSWORD }}
-          port: ${{ secrets.SERVER_PORT }}
-          script: |
-            cd /home/cosmic-linux-2/osp-frontend
-            npm ci --omit=dev
-            pm2 restart osp-frontend
+      - name: Deploy to server
+        env:
+          SSHPASS: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          tar -czf deploy.tar.gz .next/ public/ package.json package-lock.json next.config.mjs next.config.js
+          sshpass -e scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -P ${{ secrets.SERVER_PORT }} deploy.tar.gz ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/home/cosmic-linux-2/osp-frontend/deploy.tar.gz
+
+      - name: Extract and restart PM2
+        env:
+          SSHPASS: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          sshpass -e ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} << 'EOF'
+          cd /home/cosmic-linux-2/osp-frontend
+          tar -xzf deploy.tar.gz
+          rm deploy.tar.gz
+          npm ci --omit=dev
+          pm2 restart osp-frontend
+          EOF
