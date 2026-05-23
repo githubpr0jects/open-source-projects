@@ -40,9 +40,11 @@ jobs:
           SSHPASS: ${{ secrets.SERVER_PASSWORD }}
         run: |
           sshpass -e ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} << 'EOF'
+          source .bashrc
           cd /home/cosmic-linux-2/osp-frontend
           tar -xzf deploy.tar.gz
           rm deploy.tar.gz
+          whoami
           npm ci --omit=dev
           pm2 restart osp-frontend
           EOF
