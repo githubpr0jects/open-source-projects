@@ -1,26 +1,32 @@
 .newsletterForm {
   margin-top: 2rem;
-  padding: 2rem;
-  background: #16213E;
-  border: 1px solid var(--gray-alpha-200);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  text-align: center;
+  padding: 1.5rem;
+  background: var(--background);
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  box-shadow: none;
+  text-align: left;
 }
 
 @media (prefers-color-scheme: dark) {
   .newsletterForm {
-    background: #16213E;
+    background: var(--background);
   }
 }
 
 .newsletterForm h4 {
-  font-size: 1.8rem;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 1.65rem;
+  line-height: 1.05;
+  letter-spacing: -0.055em;
   margin-bottom: 0.5rem;
 }
 
 .newsletterForm p {
-  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.55;
   margin-bottom: 1.5rem;
 }
 
@@ -44,13 +50,14 @@
   width: 100%;
   height: 48px;
   padding: 0 16px;
-  border-radius: 8px;
-  border: 2px solid #60a5fa;
+  border-radius: 0;
+  border: 1px solid var(--rule);
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-mono);
   font-size: 16px;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+  transition: border-color 0.2s, background-color 0.2s;
+  box-shadow: none;
 }
 
 @media (min-width: 640px) {
@@ -62,8 +69,9 @@
 
 .input:focus {
   outline: none;
-  border-color: var(--button-primary-hover);
-  box-shadow: 0 0 0 3px var(--button-secondary-hover);
+  border-color: var(--ink);
+  background: var(--surface);
+  box-shadow: none;
 }
 
 .submitContainer {
@@ -75,28 +83,30 @@
 .button {
   height: 40px;
   padding: 0 24px;
-  border-radius: 20px;
-  border: none;
-  background: #22c55e;
-  color: white;
+  border-radius: 0;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--background);
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 700;
-  transition: all 0.3s ease;
-  box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  transition: background-color 0.2s, color 0.2s;
+  box-shadow: none;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.12em;
   white-space: nowrap;
 }
 
 .button:hover {
-  background: #16a34a;
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
-  transform: translateY(-1px);
+  background: var(--background);
+  color: var(--ink);
+  box-shadow: none;
+  transform: none;
 }
 
 .button:disabled {
-  background: #166534;
+  background: var(--muted-foreground);
   cursor: not-allowed;
   box-shadow: none;
 }
@@ -107,8 +117,11 @@
   justify-content: center;
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: #94a3b8;
-  font-weight: 600;
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   width: 100%;
   margin-top: 0.5rem;
 }
@@ -116,24 +129,24 @@
 .glowingDot {
   width: 8px;
   height: 8px;
-  background-color: #22c55e;
-  border-radius: 50%;
+  background-color: var(--ink);
+  border-radius: 0;
   display: inline-block;
-  box-shadow: 0 0 8px #22c55e;
+  box-shadow: none;
   animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+    opacity: 1;
   }
 
   70% {
-    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+    opacity: 0.35;
   }
 
   100% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    opacity: 1;
   }
 }
 
@@ -144,17 +157,17 @@
 }
 
 .success {
-  color: #1a532a;
-  background-color: rgba(40, 167, 69, 0.2);
+  color: var(--ink);
+  background-color: var(--surface);
   padding: 0.3rem 0.75rem;
-  border-radius: 6px;
-  border: 1px solid #28a745;
+  border-radius: 0;
+  border: 1px solid var(--rule);
 }
 
 .error {
-  color: #8b1a2a;
-  background-color: rgba(220, 53, 69, 0.2);
+  color: var(--ink);
+  background-color: var(--surface);
   padding: 0.3rem 0.75rem;
-  border-radius: 6px;
-  border: 1px solid #dc3545;
+  border-radius: 0;
+  border: 1px solid var(--rule);
 }

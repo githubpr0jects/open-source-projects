@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -231,11 +230,6 @@ function HomePageContent() {
     updateURL({ page }, true); // true = scroll to top for pagination
   };
 
-  // Function to get fallback image
-  const getFallbackImage = () => {
-    return '/images/open-source-logo-830x460.jpg';
-  };
-
   // Format large numbers into short form (k, m, b)
   const formatImpressions = (num) => {
     const n = Number(num) || 0;
@@ -243,6 +237,49 @@ function HomePageContent() {
     if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'm';
     if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
     return String(n);
+  };
+
+  const formatFullNumber = (num) => {
+    const n = Number(num) || 0;
+    return n.toLocaleString('en-US');
+  };
+
+  const formatShortDate = (date) => {
+    return new Date(date)
+      .toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })
+      .replace(',', '')
+      .toUpperCase();
+  };
+
+  const getProjectLanguage = (post) => {
+    const content = post.content.toLowerCase();
+    const repo = (post.github_repo || '').toLowerCase();
+    const text = `${content} ${repo}`;
+
+    if (text.includes('python') || text.endsWith('.py')) return 'Python';
+    if (text.includes('typescript') || text.includes('tsx')) return 'TypeScript';
+    if (text.includes('javascript') || text.includes('node') || text.includes('react')) return 'JavaScript';
+    if (text.includes('rust')) return 'Rust';
+    if (text.includes('go ') || text.includes('golang')) return 'Go';
+    if (text.includes('swift')) return 'Swift';
+    if (text.includes('kotlin')) return 'Kotlin';
+    return 'Open Source';
+  };
+
+  const getProjectTopic = (post) => {
+    const content = post.content.toLowerCase();
+    if (content.includes('automation') || content.includes('automate')) return 'Automation';
+    if (content.includes('api') || content.includes('swagger')) return 'API';
+    if (content.includes('ui') || content.includes('interface')) return 'UI';
+    if (content.includes('terminal') || content.includes('cli')) return 'CLI';
+    if (content.includes('database') || content.includes('sql')) return 'Database';
+    if (content.includes('ai') || content.includes('llm')) return 'AI';
+    return 'Project';
+  };
+
+  const getProjectStars = (post) => {
+    const stars = post.stars ?? post.github_stars ?? post.stargazers_count ?? post.star_count;
+    return stars !== undefined && stars !== null ? `${formatImpressions(stars)}★` : 'OSS';
   };
 
   // Function to get clean project title without URLs
@@ -316,6 +353,20 @@ function HomePageContent() {
     
     return tags;
   };
+
+  const getBentoClass = (index) => {
+    const pattern = ['bento-xl', 'bento-tall', 'bento-md', 'bento-wide', 'bento-sm', 'bento-lg', 'bento-md', 'bento-wide'];
+    return pattern[index % pattern.length];
+  };
+
+  const generateFolio = () => {
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F'];
+    const num = Math.floor(Math.random() * 9000) + 1000;
+    const letter = letters[Math.floor(Math.random() * letters.length)];
+    return `Folio ${num}-${letter}`;
+  };
+
+  const [folioRef] = useState(generateFolio);
 
   const renderPaginationButtons = () => {
     if (!pagination) return null;
@@ -452,164 +503,124 @@ function HomePageContent() {
       <main className="main">
         <section className="hero">
           <div className="hero-content">
+            <div className="issue-line">
+              <span className="issue-badge">Issue latest</span>
+              <span>Friday · 26 June 2026 · Edition A</span>
+            </div>
             <h1 className="hero-title">
-              Discover Amazing
-              <span className="gradient-text">&nbsp;Open-source Projects</span>
+              <span>Discover Amazing</span><br />
+              <span className="gradient-text">Open Source</span><br />
+              <span>Projects</span>
             </h1>
             <p className="hero-description">
               Curating the best open-source projects, hidden gems, and innovative tools that are shaping the future of development.
             </p>
-            <div className="hero-stats">
-              <div className="stat">
-                <span className="stat-number">{pagination?.total_items || 0}</span>
-                <span className="stat-label">Projects Featured</span>
-              </div>
-              <div className="stat">
-                <span className="stat-number">∞</span>
-                <span className="stat-label">Possibilities</span>
-              </div>
-              <div className="stat">
-                  <span className="stat-number">100%</span>
-                  <span className="stat-label">Open Source</span>
-                </div>
-              </div>
-              <div className="newsletter-container">
-                <NewsletterForm source="home_page" />
-              </div>
+            <div className="newsletter-container">
+              <NewsletterForm source="home_page" />
             </div>
+          </div>
           <div className="hero-visual">
-            <div className="code-window">
-              <div className="window-header">
-                <div className="window-controls">
-                  <span className="control close"></span>
-                  <span className="control minimize"></span>
-                  <span className="control maximize"></span>
-                </div>
-                <span className="window-title">open-source-projects.json</span>
+            <div className="press-run-card">
+              <div className="press-run-label">Press run</div>
+              <div className="press-stat">
+                <span className="press-stat-number">{pagination?.total_items || 0}</span>
+                <span className="press-stat-label">Projects in the index</span>
               </div>
-              <div className="code-content">
-                <pre><code>{`{
-  "mission": "showcase_amazing_projects",
-  "focus": ["innovation", "quality", "community"],
-  "hidden_gems": true,
-  "trending": true,
-  "status": "actively_curated"
-}`}</code></pre>
+              <div className="press-stat">
+                <span className="press-stat-number">∞</span>
+                <span className="press-stat-label">Possibilities</span>
+              </div>
+              <div className="press-stat">
+                <span className="press-stat-number">100%</span>
+                <span className="press-stat-label">Open Source</span>
               </div>
             </div>
+            <div className="press-run-update">Updated 04:12 UTC · auto</div>
           </div>
         </section>
 
         <section className="projects-section">
           <div className="section-header">
-            <h2 className="section-title">Featured Projects</h2>
-            <p className="section-description">
-              Hand-picked open-source projects that are making waves in the developer community
-            </p>
-          </div>
-
-          {/* Filter Controls */}
-          <div className="filters-container">
-            <div className="filters-wrapper">
-              <div className="search-wrapper">
-                <form onSubmit={handleSearch} className="search-form">
-                  <div className="search-input-container">
-                    <i className="fas fa-search search-icon"></i>
-                    <input
-                      type="text"
-                      placeholder="Search projects..."
-                      value={searchQuery}
-                      onChange={handleSearchInputChange}
-                      className="search-input"
-                    />
-                    {searchQuery && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSearchQuery('');
-                          setAppliedSearchQuery('');
-                          updateURL({ search: '', page: 1 });
-                        }}
-                        className="clear-search-btn"
-                        aria-label="Clear search"
-                      >
-                        <i className="fas fa-times"></i>
-                      </button>
-                    )}
-                  </div>
-                  <button type="submit" className="search-btn">
-                    Search
-                  </button>
-                </form>
-              </div>
-
-              <div className="sort-wrapper">
-                <label className="sort-label">
-                  <i className="fas fa-sort sort-icon"></i>
-                  Sort by:
-                </label>
-                <div className="sort-buttons">
-                  <button
-                    type="button"
-                    onClick={() => handleSortApply('latest')}
-                    className={`sort-btn ${sortOrder === 'latest' ? 'active' : ''}`}
-                  >
-                    Latest
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSortApply('oldest')}
-                    className={`sort-btn ${sortOrder === 'oldest' ? 'active' : ''}`}
-                  >
-                    Oldest
-                  </button>
-                    <button
-                      type="button"
-                      onClick={() => handleSortApply('views')}
-                      className={`sort-btn trending ${sortOrder === 'views' ? 'active' : ''}`}
-                    >
-                      <i className="fas fa-chart-line"></i>
-                      <span style={{marginLeft: '6px'}}>Trending</span>
-                    </button>
-                </div>
-              </div>
-
-              {(appliedSearchQuery || sortOrder !== 'latest') && (
-                <div className="filters-actions">
-                  <button
-                    onClick={clearFilters}
-                    className="clear-filters-btn"
-                  >
-                    <i className="fas fa-times-circle"></i>
-                    Clear Filters
-                  </button>
-                  <div className="active-filters">
-                    {appliedSearchQuery && (
-                      <span className="filter-tag">
-                        {"Search: \"" + appliedSearchQuery + "\""}
-                      </span>
-                    )}
-                    {sortOrder !== 'latest' && (
-                      <span className="filter-tag">
-                        Sort: {sortOrder === 'oldest' ? 'Oldest' : (sortOrder === 'views' ? 'Trending' : 'Latest')}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
+            <div className="section-header-left">
+              <div className="section-label-mono">Section II</div>
+              <h2 className="section-title">Featured this week</h2>
+              <p className="section-description">
+                Hand-picked open source projects that are making waves in the developer community.
+              </p>
             </div>
-
-            {/* Results count - only show when filters are applied */}
-            {pagination && (appliedSearchQuery || sortOrder !== 'latest') && (
-              <div className="results-info">
-                <p className="results-count">
-                  {appliedSearchQuery ? 'Found' : 'Showing'} {pagination.total_items} project{pagination.total_items !== 1 ? 's' : ''}
-                  {appliedSearchQuery && ` for "${appliedSearchQuery}"`}
-                  {pagination.total_pages > 1 && ` (Page ${pagination.current_page} of ${pagination.total_pages})`}
-                </p>
-              </div>
-            )}
+            <div className="section-header-right label-mono">
+              Pp. 02 — {String(Math.max(2, Math.min(99, pagination?.total_items || 8)))}<br />
+              {folioRef}
+            </div>
           </div>
+
+          <div className="editorial-filter-bar">
+            <div className="filter-bar-left">
+              <span className="label-mono filter-bar-label">find</span>
+              <span className="filter-prompt font-mono">$</span>
+              <form onSubmit={handleSearch} className="editorial-search-form">
+                <input
+                  type="text"
+                  placeholder="grep title, author, language, tag…"
+                  value={searchQuery}
+                  onChange={handleSearchInputChange}
+                  className="editorial-search-input"
+                />
+              </form>
+            </div>
+            <div className="filter-bar-right">
+              <span className="label-mono filter-bar-label">sort</span>
+              <div className="editorial-sort-buttons">
+                <button
+                  type="button"
+                  onClick={() => handleSortApply('latest')}
+                  className={`editorial-sort-btn ${sortOrder === 'latest' ? 'active' : ''}`}
+                >
+                  Latest
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSortApply('oldest')}
+                  className={`editorial-sort-btn ${sortOrder === 'oldest' ? 'active' : ''}`}
+                >
+                  Oldest
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSortApply('views')}
+                  className={`editorial-sort-btn ${sortOrder === 'views' ? 'active' : ''}`}
+                >
+                  Trending
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {(appliedSearchQuery || sortOrder !== 'latest') && (
+            <div className="editorial-active-filters">
+              {appliedSearchQuery && (
+                <span className="editorial-filter-tag">
+                  {"Search: \"" + appliedSearchQuery + "\""}
+                </span>
+              )}
+              {sortOrder !== 'latest' && (
+                <span className="editorial-filter-tag">
+                  Sort: {sortOrder === 'oldest' ? 'Oldest' : 'Trending'}
+                </span>
+              )}
+              <button onClick={clearFilters} className="editorial-clear-btn">
+                Clear filters
+              </button>
+            </div>
+          )}
+
+          {pagination && (appliedSearchQuery || sortOrder !== 'latest') && (
+            <div className="editorial-results-info">
+              {appliedSearchQuery ? 'Found' : 'Showing'} {pagination.total_items} project{pagination.total_items !== 1 ? 's' : ''}
+              {appliedSearchQuery && ` for "${appliedSearchQuery}"`}
+              {pagination.total_pages > 1 && ` — Page ${pagination.current_page} of ${pagination.total_pages}`}
+            </div>
+          )}
 
           <div className="projects-grid">
             {/* Carbon Cover ad - homepage only. The script will inject the ad markup here. */}
@@ -630,48 +641,7 @@ function HomePageContent() {
               return (
                 <React.Fragment key={`post-${post.id}-${index}`}>
                   {currentSponsor && (
-                    <article key={`sponsor-${currentSponsor.id}`} className="project-card sponsor-card" style={{animationDelay: `${(index % 6) * 0.1}s`}}>
-                      {/* Dynamic Sponsored Project Image */}
-                      <div className="card-image">
-                        <Image 
-                          src={currentSponsor.image}
-                          alt={currentSponsor.description}
-                          width={400}
-                          height={200}
-                          unoptimized
-                        />
-                        <a
-                          className="image-link-overlay"
-                          href={currentSponsor.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={currentSponsor.description}
-                        />
-                        <div className="card-image-overlay">
-                          <div className="project-tags">
-                            {currentSponsor.tags.slice(0, 2).map((tag, tagIndex) => (
-                              <span 
-                                key={tagIndex} 
-                                className="project-tag"
-                                style={{
-                                  color: tag.color,
-                                  backgroundColor: tag.bgColor
-                                }}
-                              >
-                                <i className={tag.icon}></i>
-                                <span>{tag.label}</span>
-                              </span>
-                            ))}
-                          </div>
-                          <div className="sponsored-badge">
-                            <span className="sponsor-tag">
-                              <i className="fas fa-star"></i>
-                              <span>SPONSORED</span>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
+                    <article key={`sponsor-${currentSponsor.id}`} className={`project-card sponsor-card ${getBentoClass(index)}`} style={{animationDelay: `${(index % 6) * 0.1}s`}}>
                       <div className="card-header">
                         <div className="card-meta">
                           <span className="card-category sponsor-category">Sponsored Project</span>
@@ -740,30 +710,7 @@ function HomePageContent() {
                   )}
 
                   {shouldShowSponsorUs && (
-                    <article key="sponsor-us-card" className="project-card sponsor-card" style={{animationDelay: `${(index % 6) * 0.1}s`}}>
-                      {/* Sponsor Us Card Image */}
-                      <div className="card-image sponsor-image">
-                        <Image 
-                          src="/images/sponsor.jpg"
-                          alt="Sponsor This Spot - Showcase Your Project"
-                          width={400}
-                          height={200}
-                          unoptimized
-                        />
-                        <Link href="/sponsor-us" className="image-link-overlay" aria-label="Sponsor This Spot - Showcase Your Project" />
-                        <div className="card-image-overlay sponsor-overlay">
-                          <div className="sponsor-badge">
-                            <span className="sponsor-tag">
-                              <i className="fas fa-star"></i>
-                              <span>Sponsored Spot</span>
-                            </span>
-                          </div>
-                          <div className="sponsor-cta">
-                            <i className="fas fa-rocket"></i>
-                          </div>
-                        </div>
-                      </div>
-
+                    <article key="sponsor-us-card" className={`project-card sponsor-card ${getBentoClass(index)}`} style={{animationDelay: `${(index % 6) * 0.1}s`}}>
                       <div className="card-header">
                         <div className="card-meta">
                           <span className="card-category sponsor-category">Sponsorship</span>
@@ -798,44 +745,52 @@ function HomePageContent() {
                     </article>
                   )}
                   
-                  <article key={post.id} className="project-card" style={{animationDelay: `${((index + (currentSponsor ? 1 : 0) + (shouldShowSponsorUs ? 1 : 0)) % 6) * 0.1}s`}}>
-                    {/* Project Image */}
-                    <div className="card-image">
-                      <Image 
-                        src={post.github_card_image || getFallbackImage()} 
-                        alt={getProjectTitle(post.content)}
-                        width={400}
-                        height={200}
-                        onError={(e) => {
-                          const el = e.currentTarget || e.target;
-                          try {
-                            if (el && typeof el.src !== 'undefined') {
-                              el.src = getFallbackImage();
-                            }
-                          } catch (err) {
-                            console.warn('Home page card image onError handler failed:', err);
-                          }
-                        }}
-                        unoptimized
-                      />
-                      <Link href={`/post/${post.conversation_id}`} className="image-link-overlay" aria-label={getProjectTitle(post.content)} />
-                      <div className="card-image-overlay">
-                        <div className="project-tags">
-                          {projectTags.slice(0, 2).map((tag, tagIndex) => (
-                            <span 
-                              key={tagIndex} 
-                              className="project-tag"
-                              style={{
-                                color: tag.color,
-                                backgroundColor: tag.bgColor
-                              }}
-                            >
-                              <i className={tag.icon}></i>
-                              <span>{tag.label}</span>
-                            </span>
-                          ))}
+                  <article key={post.id} className={`project-card postcard-card ${getBentoClass(index + activeSponsors.length + 1)}`} style={{animationDelay: `${((index + (currentSponsor ? 1 : 0) + (shouldShowSponsorUs ? 1 : 0)) % 6) * 0.1}s`}}>
+                    <div className="postcard-topline">
+                      <div className="postcard-tags">
+                        <span className={`postcard-tag boxed ${index % 2 === 0 ? 'tilt-up' : 'tilt-down'}`}>{getProjectTopic(post)}</span>
+                        <span className="postcard-tag plain">{getProjectLanguage(post)}</span>
+                      </div>
+                      <div className="postcard-top-count" title={`${post.view_count || 0} views`}>
+                        № {formatImpressions(post.view_count || 0)}
+                      </div>
+                    </div>
+
+                    <div className="card-content postcard-content">
+                      <h3 className="card-title postcard-title">
+                        <Link href={`/post/${post.conversation_id}`}>
+                          {getProjectTitle(post.content)}
+                        </Link>
+                      </h3>
+                      <p className="card-excerpt postcard-excerpt">
+                        By @{post.username} — {getProjectTitle(post.content)}
+                      </p>
+                    </div>
+
+                    <div className="card-footer postcard-footer">
+                      <div className="postcard-footer-copy">
+                        {post.github_repo && (
+                          <a
+                            href={post.github_repo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="postcard-repo-link"
+                          >
+                            <span aria-hidden="true">↳</span>
+                            <span>{repoName}</span>
+                          </a>
+                        )}
+                        <div className="postcard-meta-line">
+                          <span>@{post.username}</span>
+                          <span>·</span>
+                          <span>{getProjectStars(post)}</span>
+                          <span>·</span>
+                          <time dateTime={post.date}>{formatShortDate(post.date)}</time>
                         </div>
-                        <div className="bookmark-container">
+                      </div>
+
+                      <div className="postcard-actions">
+                        <div className="bookmark-container text-bookmark postcard-bookmark">
                           <BookmarkButton 
                             post={post} 
                             size="normal" 
@@ -848,82 +803,11 @@ function HomePageContent() {
                             }}
                           />
                         </div>
-                      </div>
-                    </div>
-
-                    <div className="card-header">
-                      <div className="card-meta">
-                          <span className="card-category">Open Source</span>
-                        <time className="card-date" dateTime={post.date}>
-                          {new Date(post.date).toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                          })}
-                        </time>
-                          {/* Impressions (view_count) */}
-                          {post.view_count !== undefined && (
-                            <span className="card-impressions" title={`${post.view_count} impressions`} style={{marginLeft: '8px'}}>
-                              <i className="fas fa-chart-line" aria-hidden="true"></i>
-                              <span className="impressions-label">Impressions</span>
-                              <span className="impressions-value">&nbsp;{formatImpressions(post.view_count)}</span>
-                            </span>
-                          )}
-                      </div>
-                    </div>
-
-                    <div className="card-content">
-                      <h3 className="card-title">
-                        <Link href={`/post/${post.conversation_id}`}>
-                          {getProjectTitle(post.content)}
-                        </Link>
-                      </h3>
-                      <p className="card-excerpt">
-                        By @{post.username} • {getProjectTitle(post.content)}
-                      </p>
-                      
-                      {/* Repository Information */}
-                      {post.github_repo && (
-                        <div className="repo-info">
-                          <a
-                            href={post.github_repo}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="repo-link"
-                          >
-                            <i className="fab fa-github"></i>
-                            <span>{repoName}</span>
-                            <i className="fas fa-external-link-alt"></i>
-                          </a>
+                        <div className="postcard-impressions-stamp" title={`${post.view_count || 0} impressions`}>
+                          <span>Impressions</span>
+                          <strong>{formatFullNumber(post.view_count || 0)}</strong>
                         </div>
-                      )}
-                    </div>
-
-                    <div className="card-footer">
-                      <div className="card-links">
-                        {/* Additional tags if more than 2 */}
-                        {projectTags.length > 2 && (
-                          <div className="additional-tags">
-                            {projectTags.slice(2).map((tag, tagIndex) => (
-                              <span 
-                                key={tagIndex} 
-                                className="project-tag small"
-                                style={{
-                                  color: tag.color,
-                                  backgroundColor: tag.bgColor
-                                }}
-                              >
-                                <i className={tag.icon}></i>
-                                <span>{tag.label}</span>
-                              </span>
-                            ))}
-                          </div>
-                        )}
                       </div>
-                      <Link href={`/post/${post.conversation_id}`} className="read-more">
-                        <span>Learn More</span>
-                        <i className="fas fa-arrow-right"></i>
-                      </Link>
                     </div>
                   </article>
                 </React.Fragment>
