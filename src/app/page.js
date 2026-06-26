@@ -711,19 +711,22 @@ function HomePageContent() {
 
                   {shouldShowSponsorUs && (
                     <article key="sponsor-us-card" className={`project-card sponsor-card ${getBentoClass(index)}`} style={{animationDelay: `${(index % 6) * 0.1}s`}}>
-                      <div className="card-header">
-                        <div className="card-meta">
-                          <span className="card-category sponsor-category">Sponsorship</span>
-                          <span className="sponsor-availability">Available Now</span>
-                        </div>
-                      </div>
-
-                      <div className="card-content">
-                        <h3 className="card-title sponsor-title">
+                      <div className="sponsor-placeholder-top">
+                        <Link href="/sponsor-us" className="sponsor-placeholder-image" aria-label="Sponsor this spot">
+                          <img src="/images/sponsor.jpg" alt="Sponsor your project here" loading="lazy" />
+                        </Link>
+                        <h3 className="card-title sponsor-title sponsor-placeholder-title">
                           <Link href="/sponsor-us">
                             Showcase Your Project Here
                           </Link>
+                          <span className="sponsor-placeholder-meta">
+                            <span className="card-category sponsor-category">Sponsorship</span>
+                            <span className="sponsor-availability">Available Now</span>
+                          </span>
                         </h3>
+                      </div>
+
+                      <div className="card-content">
                         <p className="card-excerpt sponsor-excerpt">
                           Claim this premium spot to showcase your project to thousands of developers. Get maximum visibility for your open-source work.
                         </p>

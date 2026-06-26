@@ -407,9 +407,10 @@ function SponsorUs() {
             <h2>Ready to Showcase Your Project?</h2>
             <p>Fill out the form below to get started with your sponsorship enquiry. We&apos;ll get back to you within 24 hours.</p>
             
-            {/* Sponsor Enquiry Form */}
-            <div className="sponsor-form-container">
-              <form onSubmit={handleSubmit} className="sponsor-form">
+            <div className="contact-layout">
+              {/* Sponsor Enquiry Form */}
+              <div className="sponsor-form-container">
+                <form onSubmit={handleSubmit} className="sponsor-form">
                 <div className="form-grid">
                   <div className="form-group">
                     <label htmlFor="name">Full Name *</label>
@@ -513,29 +514,26 @@ function SponsorUs() {
                     </>
                   )}
                 </button>
-              </form>
-            </div>
-            
-            <div className="contact-divider">
-              <span>OR</span>
-            </div>
-            
-            <div className="contact-methods">
-              <a href="mailto:sponsors@opensourceprojects.dev" className="contact-method">
-                <i className="fas fa-envelope"></i>
-                <div>
-                  <strong>Email Us</strong>
-                  <span>sponsors@opensourceprojects.dev</span>
-                </div>
-              </a>
+                </form>
+              </div>
               
-              <a href="#" className="contact-method">
-                <i className="fab fa-twitter"></i>
-                <div>
-                  <strong>Twitter DM</strong>
-                  <span>@githubprojects</span>
-                </div>
-              </a>
+              <aside className="contact-methods" aria-label="Direct contact options">
+                <div className="contact-methods-heading">Contact Us</div>
+                <a href="mailto:sponsors@opensourceprojects.dev" className="contact-method">
+                  <i className="fas fa-envelope"></i>
+                  <div>
+                    <strong>Email Us</strong>
+                    <span>sponsors@opensourceprojects.dev</span>
+                  </div>
+                </a>
+                
+                <a href="#" className="contact-method">
+                  <i className="fab fa-twitter"></i>
+                  <div>
+                    <strong>Twitter DM</strong>
+                    <span>@githubprojects</span>
+                  </div>
+                </a>
               
               {/* <a href="#" className="contact-method">
                 <i className="fab fa-discord"></i>
@@ -544,6 +542,7 @@ function SponsorUs() {
                   <span>Join our community</span>
                 </div>
               </a> */}
+              </aside>
             </div>
             
             <div className="contact-cta">

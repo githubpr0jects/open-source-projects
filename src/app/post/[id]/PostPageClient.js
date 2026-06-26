@@ -64,6 +64,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
   const [adMinimized, setAdMinimized] = useState(false);
   const [dismissedSponsorBanner, setDismissedSponsorBanner] = useState(false);
   const [bannerTopPos, setBannerTopPos] = useState(56);
+  const [copiedCodeId, setCopiedCodeId] = useState(null);
 
   // Set initial banner position and adjust on scroll
   useEffect(() => {
@@ -636,6 +637,43 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     });
   };
 
+  const getNodeText = (node) => {
+    if (node === null || node === undefined) return '';
+    if (typeof node === 'string' || typeof node === 'number') return String(node);
+    if (Array.isArray(node)) return node.map(getNodeText).join('');
+    if (node.props?.children) return getNodeText(node.props.children);
+    return '';
+  };
+
+  const copyCode = async (code, id) => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopiedCodeId(id);
+      setTimeout(() => setCopiedCodeId((current) => current === id ? null : current), 1600);
+    } catch (error) {
+      console.error('Failed to copy code:', error);
+    }
+  };
+
+  const CopyableCodeBlock = ({ id, code, className = 'code-block', children }) => {
+    const isCopied = copiedCodeId === id;
+
+    return (
+      <div className="copyable-code-block">
+        <button
+          type="button"
+          className="copy-code-btn"
+          onClick={() => copyCode(code, id)}
+          aria-label={isCopied ? 'Code copied' : 'Copy code'}
+          title={isCopied ? 'Copied' : 'Copy code'}
+        >
+          <i className={`fas ${isCopied ? 'fa-check' : 'fa-copy'}`} aria-hidden="true"></i>
+        </button>
+        <pre className={className}>{children}</pre>
+      </div>
+    );
+  };
+
   const formatContent = (content) => {
     // Split content into paragraphs and format them
     const paragraphs = content.split('\n').filter(p => p.trim() !== '');
@@ -644,9 +682,9 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
       // Check if it's a code block
       if (paragraph.includes('```') || paragraph.match(/^[\s]*[{}\[\]()]/)) {
         return (
-          <pre key={index} className="code-block">
+          <CopyableCodeBlock key={index} id={`legacy-${index}-${paragraph.length}`} code={paragraph} className="code-block">
             <code>{makeLinksClickable(paragraph)}</code>
-          </pre>
+          </CopyableCodeBlock>
         );
       }
       
@@ -759,7 +797,15 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 inline ? 
                   <code className="markdown-inline-code">{children}</code> : 
                   <code className="markdown-code-block">{children}</code>,
-              pre: ({ children }) => <pre className="markdown-pre">{children}</pre>,
+              pre: ({ children }) => {
+                const code = getNodeText(children).replace(/\n$/, '');
+                const id = `markdown-${code.length}-${code.slice(0, 24)}`;
+                return (
+                  <CopyableCodeBlock id={id} code={code} className="markdown-pre">
+                    {children}
+                  </CopyableCodeBlock>
+                );
+              },
               a: ({ href, children }) => (
                 <a 
                   href={href} 
@@ -940,16 +986,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
       <main className="main">
         <div className="container">
-          {/* Breadcrumb Navigation */}
-          <nav className="breadcrumb">
-            <Link href="/" className="breadcrumb-link">
-              <i className="fas fa-home"></i>
-              <span>Home</span>
-            </Link>
-            <span className="breadcrumb-separator">/</span>
-            <span className="breadcrumb-current">Project Details</span>
-          </nav>
-
           {/* Project Hero Section */}
           <div className="project-hero">
             {/* Hero Image */}
@@ -996,40 +1032,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               )}
             </div>
             
-            <div className="project-header">
-              <h1 className="project-title">{getProjectTitle(mainPost.content)}</h1>
-            </div>
-            
-            {/* Tags */}
-            {extractTags(mainPost.content).length > 0 && (
-              <div className="project-tags">
-                <span className="tags-label">
-                  <i className="fas fa-tags"></i>
-                  Tags:
-                </span>
-                <div className="tags-list">
-                  {extractTags(mainPost.content).map((tag, index) => (
-                    <span key={index} className="tag">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            
-            <div className="project-author">
-              <div className="author-info">
-                <div className="author-avatar">
-                  <i className="fas fa-user"></i>
-                </div>
-                <div className="author-details">
-                  <span className="author-name">@{mainPost.username}</span>
-                  <span className="author-label">
-                    {mainPost.github_repo ? 'Post Author' : 'Content Creator'}
-                  </span>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Project Content */}
@@ -1041,16 +1043,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                     <i className="fas fa-file-alt"></i>
                     Project Description
                   </h2>
-                  <div className="article-meta">
-                    <span className="meta-item">
-                      <i className="fas fa-comments"></i>
-                      {postDetails.length} {postDetails.length === 1 ? 'Post' : 'Posts'}
-                    </span>
-                    <span className="meta-item">
-                      <i className="fas fa-hashtag"></i>
-                      ID: {params.id}
-                    </span>
-                  </div>
                 </div>
                 
                 {/* Action buttons in Article Header */}
