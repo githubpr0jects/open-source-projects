@@ -736,6 +736,14 @@ function HomePageContent() {
                               <i className="fas fa-chart-line"></i>
                               <span>Prime Visibility</span>
                             </div>
+                          <div className="sponsor-feature">
+                              <i className="fas fa-bullhorn"></i>
+                              <span>Developer Reach</span>
+                            </div>
+                          <div className="sponsor-feature">
+                              <i className="fas fa-bolt"></i>
+                              <span>Fast Setup</span>
+                            </div>
                         </div>
                       </div>
 

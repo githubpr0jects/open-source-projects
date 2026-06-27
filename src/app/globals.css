@@ -653,8 +653,7 @@ body::selection,
 
 .sponsor-card {
   background: color-mix(in srgb, var(--surface) 72%, var(--background)) !important;
-  outline: 2px solid var(--ink);
-  outline-offset: -8px;
+  outline: 0 !important;
 }
 
 .sponsor-card:hover {
@@ -4376,6 +4375,33 @@ html {
 
 .projects-grid > .project-card:last-child:nth-child(odd) {
   grid-column: span 12 !important;
+  border-top: 0 !important;
+  border-bottom: 1px solid var(--ink) !important;
+  border-left: 0 !important;
+  border-right: 0 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  position: relative !important;
+}
+
+.projects-grid > .project-card:last-child:nth-child(odd)::before,
+.projects-grid > .project-card:last-child:nth-child(odd)::after {
+  content: '' !important;
+  display: block !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  width: 1px !important;
+  height: 25px !important;
+  background: var(--ink) !important;
+  pointer-events: none !important;
+}
+
+.projects-grid > .project-card:last-child:nth-child(odd)::before {
+  left: 0 !important;
+}
+
+.projects-grid > .project-card:last-child:nth-child(odd)::after {
+  right: 0 !important;
 }
 
 .project-card .card-image {
@@ -5409,7 +5435,30 @@ html {
 }
 
 .project-card.sponsor-card .sponsor-features {
+  display: flex !important;
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-start !important;
+  gap: 0.65rem !important;
   margin-top: 1rem !important;
+}
+
+.project-card.sponsor-card .sponsor-footer {
+  justify-content: flex-end !important;
+  border-top: 0 !important;
+  padding-top: 1.1rem !important;
+}
+
+.project-card.sponsor-card .sponsor-cta-button {
+  width: auto !important;
+  min-height: 46px !important;
+  padding: 0.72rem 2.1rem !important;
+  border-radius: 14px !important;
+  transform: rotate(-4deg) !important;
+}
+
+.project-card.sponsor-card .sponsor-cta-button:hover {
+  transform: rotate(-4deg) translateY(-2px) !important;
 }
 
 .project-card.sponsor-card .sponsor-placeholder-top {
@@ -5481,6 +5530,7 @@ html {
   align-items: center !important;
   gap: 0.45rem !important;
   width: auto !important;
+  max-width: fit-content !important;
   padding: 0.48rem 0.7rem !important;
   background: var(--background) !important;
   color: var(--ink) !important;
@@ -5602,7 +5652,7 @@ html {
   position: relative !important;
   background: var(--background) !important;
   border: 0 !important;
-  border-radius: 0 !important;
+  border-radius: 18px !important;
   box-shadow: 0 22px 46px -18px rgba(0, 0, 0, 0.22) !important;
   padding: clamp(1rem, 2vw, 1.5rem) !important;
   margin-top: 2.5rem !important;
@@ -5640,7 +5690,7 @@ html {
   position: relative !important;
   background: var(--background) !important;
   border: 0 !important;
-  border-radius: 0 !important;
+  border-radius: 18px !important;
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.1) !important;
   padding: clamp(1.25rem, 2.5vw, 2rem) !important;
 }
@@ -5675,11 +5725,12 @@ html {
 
 .container .hero-image-container {
   border: 0 !important;
-  border-radius: 0 !important;
+  border-radius: 16px !important;
   box-shadow: none !important;
   margin-bottom: 1.15rem !important;
   max-height: 400px !important;
   background: var(--background) !important;
+  overflow: hidden !important;
 }
 
 .container .hero-image {
@@ -5687,6 +5738,7 @@ html {
   object-fit: contain !important;
   filter: none !important;
   background: var(--background) !important;
+  border-radius: inherit !important;
 }
 
 .container .project-meta,
@@ -5754,6 +5806,74 @@ html {
   line-height: 1.65 !important;
 }
 
+.container .post-text-size-controls {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 1px !important;
+  border: 1px solid var(--ink) !important;
+  background: var(--ink) !important;
+  box-shadow: none !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+.container .post-text-size-button {
+  height: 38px !important;
+  min-width: 40px !important;
+  padding: 0 0.65rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--background) !important;
+  color: var(--ink) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.82rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.04em !important;
+  cursor: pointer !important;
+}
+
+.container .post-text-size-button:first-child {
+  border-top-left-radius: 11px !important;
+  border-bottom-left-radius: 11px !important;
+}
+
+.container .post-text-size-button:last-child {
+  border-top-right-radius: 11px !important;
+  border-bottom-right-radius: 11px !important;
+}
+
+.container .post-text-size-button:hover:not(:disabled) {
+  background: var(--ink) !important;
+  color: var(--background) !important;
+}
+
+.container .post-text-size-button:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.45 !important;
+}
+
+.container .post-reader-content .markdown-paragraph,
+.container .post-reader-content .content-paragraph,
+.container .post-reader-content .markdown-list-item,
+.container .post-reader-content .markdown-blockquote,
+.container .post-reader-content .post-content p,
+.container .post-reader-content .post-content li,
+.container .post-reader-content .post-content blockquote {
+  font-size: calc(1rem * var(--post-text-scale, 1)) !important;
+}
+
+.container .post-reader-content .markdown-pre,
+.container .post-reader-content .markdown-code-block,
+.container .post-reader-content .code-block {
+  font-size: 0.9rem !important;
+}
+
+.container .post-reader-content .markdown-inline-code,
+.container .post-reader-content code:not(.markdown-code-block) {
+  font-size: 0.88rem !important;
+}
+
 .container .project-badge,
 .container .project-date,
 .container .project-impressions,
@@ -5771,7 +5891,7 @@ html {
 .container .tag {
   background: transparent !important;
   border: 1px solid var(--ink) !important;
-  border-radius: 0 !important;
+  border-radius: 999px !important;
   box-shadow: none !important;
 }
 
@@ -5786,7 +5906,7 @@ html {
 .container .author-avatar {
   background: var(--ink) !important;
   color: var(--background) !important;
-  border-radius: 0 !important;
+  border-radius: 12px !important;
 }
 
 .container .article-content a,
@@ -5806,7 +5926,7 @@ html {
   background: transparent !important;
   color: var(--ink) !important;
   border: 1px solid var(--ink) !important;
-  border-radius: 0 !important;
+  border-radius: 12px !important;
   box-shadow: none !important;
   padding-top: 0 !important;
   padding-bottom: 0 !important;
@@ -5832,7 +5952,7 @@ html {
   min-height: 40px !important;
   padding: 0 !important;
   border: 1px solid var(--ink) !important;
-  border-radius: 0 !important;
+  border-radius: 12px !important;
   background: transparent !important;
   color: var(--ink) !important;
   box-shadow: none !important;
@@ -5873,7 +5993,7 @@ html {
   background: var(--surface) !important;
   color: var(--ink) !important;
   border: 1px solid var(--rule) !important;
-  border-radius: 0 !important;
+  border-radius: 8px !important;
   font-family: var(--font-mono) !important;
   font-size: 0.88em !important;
   padding: 0.12em 0.32em !important;
@@ -5882,6 +6002,7 @@ html {
 .container .copyable-code-block {
   position: relative !important;
   margin: 1.5rem 0 !important;
+  border-radius: 14px !important;
 }
 
 .container .copyable-code-block .markdown-pre,
@@ -5926,7 +6047,7 @@ html {
   background: var(--surface) !important;
   color: var(--ink) !important;
   border: 1px solid var(--rule) !important;
-  border-radius: 0 !important;
+  border-radius: 14px !important;
   box-shadow: none !important;
 }
 
@@ -6040,6 +6161,23 @@ html {
   border-radius: 999px !important;
 }
 
+.container .newsletter-inline-box,
+.container .sponsored-project-card {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+}
+
+.container .sponsored-project-image,
+.container .sponsored-image {
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+
+.container .sponsored-badge,
+.container .promo-feature {
+  border-radius: 999px !important;
+}
+
 @media (max-width: 768px) {
   .container > .project-hero,
   .container > .project-content {
@@ -6060,7 +6198,7 @@ html {
   background: var(--background) !important;
   color: var(--ink) !important;
   border-color: var(--rule) !important;
-  border-radius: 0 !important;
+  border-radius: 16px !important;
   box-shadow: none !important;
 }
 
@@ -6082,7 +6220,7 @@ html {
   height: 44px !important;
   background: var(--ink) !important;
   color: var(--background) !important;
-  border-radius: 0 !important;
+  border-radius: 12px !important;
   box-shadow: none !important;
   animation: none !important;
   font-size: 1rem !important;
@@ -6112,7 +6250,7 @@ html {
   background: var(--ink) !important;
   color: var(--background) !important;
   border: 1px solid var(--ink) !important;
-  border-radius: 0 !important;
+  border-radius: 999px !important;
   box-shadow: none !important;
   font-family: var(--font-mono) !important;
   font-size: 0.78rem !important;
@@ -6141,14 +6279,14 @@ html {
 .container .stat-card {
   background: var(--surface) !important;
   border: 1px solid var(--rule) !important;
-  border-radius: 0 !important;
+  border-radius: 14px !important;
   box-shadow: none !important;
 }
 
 .container .contributor-avatar {
   background: var(--ink) !important;
   color: var(--background) !important;
-  border-radius: 0 !important;
+  border-radius: 12px !important;
 }
 
 .container .stat-value {
@@ -6179,7 +6317,7 @@ html {
   background: var(--background) !important;
   color: var(--ink) !important;
   border: 1px solid var(--rule) !important;
-  border-radius: 0 !important;
+  border-radius: 16px !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
 }
@@ -6194,7 +6332,7 @@ html {
   background: transparent !important;
   color: var(--ink) !important;
   border: 1px solid var(--ink) !important;
-  border-radius: 0 !important;
+  border-radius: 999px !important;
   box-shadow: none !important;
   font-family: var(--font-mono) !important;
   font-size: 0.72rem !important;

@@ -14,6 +14,8 @@ const ENABLE_CARBON_ADS = false;  // Set to true to enable Carbon ads and sponso
 // ========================
 
 const fallbackImage = '/images/open-source-logo-830x460.jpg';
+const POST_TEXT_SCALES = [0.92, 1, 1.1, 1.2];
+const DEFAULT_POST_TEXT_SCALE = 1;
 
 const getHeroImage = (post) => {
   return post.github_card_image || fallbackImage;
@@ -65,6 +67,28 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
   const [dismissedSponsorBanner, setDismissedSponsorBanner] = useState(false);
   const [bannerTopPos, setBannerTopPos] = useState(56);
   const [copiedCodeId, setCopiedCodeId] = useState(null);
+  const [postTextScale, setPostTextScale] = useState(DEFAULT_POST_TEXT_SCALE);
+
+  useEffect(() => {
+    try {
+      const savedScale = Number(localStorage.getItem('postTextScale'));
+      if (POST_TEXT_SCALES.includes(savedScale)) {
+        setPostTextScale(savedScale);
+      }
+    } catch {}
+  }, []);
+
+  const updatePostTextScale = (nextScale) => {
+    setPostTextScale(nextScale);
+    try { localStorage.setItem('postTextScale', String(nextScale)); } catch {}
+  };
+
+  const changePostTextScale = (direction) => {
+    const currentIndex = POST_TEXT_SCALES.indexOf(postTextScale);
+    const safeIndex = currentIndex === -1 ? POST_TEXT_SCALES.indexOf(DEFAULT_POST_TEXT_SCALE) : currentIndex;
+    const nextIndex = Math.min(Math.max(safeIndex + direction, 0), POST_TEXT_SCALES.length - 1);
+    updatePostTextScale(POST_TEXT_SCALES[nextIndex]);
+  };
 
   // Set initial banner position and adjust on scroll
   useEffect(() => {
@@ -919,6 +943,9 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
   const mainPost = postDetails[0];
   const allPosts = combineAllContent(postDetails);
+  const postTextScaleIndex = POST_TEXT_SCALES.indexOf(postTextScale);
+  const canDecreasePostText = postTextScaleIndex > 0;
+  const canIncreasePostText = postTextScaleIndex < POST_TEXT_SCALES.length - 1;
 
   return (
     <>
@@ -1048,6 +1075,38 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 {/* Action buttons in Article Header */}
                 <div className="article-header-right">
                   <div className="article-actions">
+                    <div className="post-text-size-controls" aria-label="Post text size controls">
+                      <button
+                        type="button"
+                        className="post-text-size-button"
+                        onClick={() => changePostTextScale(-1)}
+                        disabled={!canDecreasePostText}
+                        aria-label="Decrease post text size"
+                        title="Decrease post text size"
+                      >
+                        A-
+                      </button>
+                      <button
+                        type="button"
+                        className="post-text-size-button post-text-size-reset"
+                        onClick={() => updatePostTextScale(DEFAULT_POST_TEXT_SCALE)}
+                        disabled={postTextScale === DEFAULT_POST_TEXT_SCALE}
+                        aria-label="Reset post text size"
+                        title="Reset post text size"
+                      >
+                        A
+                      </button>
+                      <button
+                        type="button"
+                        className="post-text-size-button"
+                        onClick={() => changePostTextScale(1)}
+                        disabled={!canIncreasePostText}
+                        aria-label="Increase post text size"
+                        title="Increase post text size"
+                      >
+                        A+
+                      </button>
+                    </div>
                     <BookmarkButton 
                       post={mainPost} 
                       size="normal" 
@@ -1104,7 +1163,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                       </div>
                     )}
                     
-                    <div className="section-content">
+                    <div className="section-content post-reader-content" style={{ '--post-text-scale': postTextScale }}>
                       {renderPostContent(post)}
                     </div>
                   </div>
