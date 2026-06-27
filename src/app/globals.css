@@ -48,21 +48,24 @@
 
 /* ===== Paper & Ink editorial theme override ===== */
 :root {
-  --background: #f5f3ee;
-  --foreground: #2d2d2d;
-  --surface: #e8e4dd;
-  --surface-soft: #efebe3;
-  --ink: #0d0d0d;
-  --ink-soft: #333333;
-  --rule: #2d2d2d;
-  --rule-soft: #8a857b;
-  --muted: #e8e4dd;
-  --muted-foreground: #68635b;
+  --background: #F2F8FC;
+  --foreground: #000000;
+  --surface: #e3eef5;
+  --surface-soft: #f8fcff;
+  --ink: #000000;
+  --ink-soft: #2b2b2b;
+  --highlight: #000000;
+  --highlight-bg: #000000;
+  --highlight-text: #F2F8FC;
+  --rule: #000000;
+  --rule-soft: rgba(0, 0, 0, 0.45);
+  --muted: #e3eef5;
+  --muted-foreground: rgba(0, 0, 0, 0.68);
 
-  --primary: var(--ink);
+  --primary: var(--highlight);
   --primary-dark: #000000;
   --secondary: var(--surface);
-  --accent: #8a6f35;
+  --accent: var(--highlight);
   --github: var(--ink);
 
   --bg-primary: var(--background);
@@ -72,7 +75,7 @@
   --bg-card-hover: var(--surface);
 
   --text-primary: var(--ink);
-  --text-secondary: rgba(45, 45, 45, 0.76);
+  --text-secondary: rgba(0, 0, 0, 0.76);
   --text-muted: var(--muted-foreground);
   --border: var(--rule);
   --border-hover: var(--ink);
@@ -90,17 +93,19 @@
 
 .dark {
   --background: #24221f;
-  --foreground: #ede7dc;
+  --foreground: #F2F8FC;
   --surface: #302d28;
   --surface-soft: #2a2824;
-  --ink: #f7efe2;
-  --ink-soft: #ded5c7;
-  --rule: #ded5c7;
+  --ink: #F2F8FC;
+  --ink-soft: rgba(242, 248, 252, 0.82);
+  --rule: #F2F8FC;
   --rule-soft: #82796d;
   --muted: #302d28;
-  --muted-foreground: #b9b0a2;
+  --muted-foreground: rgba(242, 248, 252, 0.68);
   --accent: #d1b46a;
-  --text-secondary: rgba(237, 231, 220, 0.76);
+  --highlight-bg: #F2F8FC;
+  --highlight-text: #24221f;
+  --text-secondary: rgba(242, 248, 252, 0.76);
 }
 
 html,
@@ -181,7 +186,7 @@ body::selection,
   font-size: clamp(1.3rem, 2.4vw, 2.35rem) !important;
   font-weight: 700 !important;
   letter-spacing: -0.055em;
-  line-height: 1;
+  line-height: 1.3;
 }
 
 .brand-link span {
@@ -221,8 +226,8 @@ body::selection,
 .nav-link:hover,
 .nav-link.active,
 .theme-toggle:hover {
-  background: var(--ink) !important;
-  color: var(--background) !important;
+  background: var(--highlight-bg) !important;
+  color: var(--highlight-text) !important;
 }
 
 .hero {
@@ -4584,13 +4589,16 @@ html {
 }
 
 .hero-title .gradient-text {
-  display: inline;
-  background: var(--ink) !important;
-  color: var(--background) !important;
-  -webkit-text-fill-color: var(--background) !important;
+  display: inline-block;
+  background: var(--highlight-bg) !important;
+  color: var(--highlight-text) !important;
+  -webkit-text-fill-color: var(--highlight-text) !important;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
-  padding: 0.02em 0.12em 0.04em;
+  padding: 0.08em 0.1em 0.12em;
+  font-size: 0.92em;
+  line-height: 1;
+  vertical-align: baseline;
   font-style: normal;
 }
 
@@ -5113,9 +5121,9 @@ html {
 }
 
 .editorial-sort-btn.active {
-  background: var(--ink);
-  color: var(--background);
-  border-color: var(--ink);
+  background: var(--highlight-bg);
+  color: var(--highlight-text);
+  border-color: var(--highlight-bg);
   z-index: 1;
   position: relative;
 }
@@ -5418,7 +5426,7 @@ html {
   aspect-ratio: 16 / 9;
   margin: 0 !important;
   overflow: hidden !important;
-  border-radius: 12px !important;
+  border-radius: 18px !important;
   background: var(--background) !important;
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1) !important;
   text-decoration: none !important;
@@ -5432,6 +5440,7 @@ html {
   filter: none !important;
   opacity: 1 !important;
   mix-blend-mode: normal !important;
+  border-radius: inherit !important;
 }
 
 .project-card.sponsor-card .sponsor-placeholder-title {
@@ -5453,7 +5462,12 @@ html {
 .project-card.sponsor-card .sponsor-placeholder-meta .sponsor-availability {
   background: var(--ink) !important;
   color: var(--background) !important;
+  -webkit-text-fill-color: var(--background) !important;
   border: 1px solid var(--ink) !important;
+}
+
+.project-card.sponsor-card .sponsor-placeholder-meta .sponsor-category {
+  -webkit-text-fill-color: currentColor !important;
 }
 
 @media (max-width: 640px) {
@@ -6331,7 +6345,7 @@ html {
 
 .sponsor-page .hero-image {
   border: 1px solid var(--rule) !important;
-  border-radius: 0 !important;
+  border-radius: 18px !important;
   box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.08) !important;
 }
 

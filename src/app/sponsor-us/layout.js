@@ -7,7 +7,7 @@ export const metadata = {
     description: 'Showcase your project to thousands of developers. Get premium visibility on our platform.',
     images: [
       {
-        url: 'https://opensourceprojects.dev/images/sponsor.jpg',
+        url: 'https://opensourceprojects.dev/images/sponsor.png',
         width: 1200,
         height: 630,
         alt: 'Sponsor Open Source Projects',

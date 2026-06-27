@@ -142,7 +142,7 @@ function SponsorUs() {
             
             <div className="sponsor-hero-image">
               <Image
-                src="/images/sponsor.jpg"
+                src="/images/sponsor.png"
                 alt="Sponsor Your Open Source Project"
                 width={600}
                 height={400}

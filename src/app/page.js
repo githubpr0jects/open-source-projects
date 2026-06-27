@@ -713,7 +713,7 @@ function HomePageContent() {
                     <article key="sponsor-us-card" className={`project-card sponsor-card ${getBentoClass(index)}`} style={{animationDelay: `${(index % 6) * 0.1}s`}}>
                       <div className="sponsor-placeholder-top">
                         <Link href="/sponsor-us" className="sponsor-placeholder-image" aria-label="Sponsor this spot">
-                          <img src="/images/sponsor.jpg" alt="Sponsor your project here" loading="lazy" />
+                          <img src="/images/sponsor.png" alt="Sponsor your project here" loading="lazy" />
                         </Link>
                         <h3 className="card-title sponsor-title sponsor-placeholder-title">
                           <Link href="/sponsor-us">
