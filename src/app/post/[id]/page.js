@@ -1,7 +1,8 @@
-import { unstable_noStore as noStore } from 'next/cache';
 import PostPageClient from './PostPageClient';
+import { notFound } from 'next/navigation';
 
 const fallbackImage = '/images/open-source-logo-830x460.jpg';
+const SITE_URL = 'https://www.opensourceprojects.dev';
 
 const getHeroImage = (post) => {
   return post.github_card_image || fallbackImage;
@@ -35,11 +36,8 @@ const cleanContentForDescription = (content) => {
 // Server-side function to fetch post details
 async function fetchPostDetails(id) {
   try {
-    // Always fetch fresh data first to check for markdown_content
-    noStore(); // Ensure this function doesn't get cached
-    
     const response = await fetch(`https://lb2-twitter-api.opensourceprojects.dev/threads/${id}`, {
-      cache: 'no-store' // Always get fresh data
+      next: { revalidate: 3600 } // Revalidate every hour instead of no-store
     });
     
     if (!response.ok) {
@@ -57,12 +55,9 @@ async function fetchPostDetails(id) {
     
     if (hasMarkdownContent) {
       console.log(`✅ Markdown content found for post ${id} - content will be cached`);
-      // For posts with markdown_content, we can cache the result
-      // But we already have fresh data, so return it
       return data;
     } else {
       console.log(`❌ No substantial markdown content for post ${id} - serving fresh uncached data`);
-      // For posts without markdown_content, always serve fresh data
       return data;
     }
   } catch (error) {
@@ -73,7 +68,6 @@ async function fetchPostDetails(id) {
 
 // Generate metadata for SEO and social sharing
 export async function generateMetadata({ params }) {
-  noStore(); // Ensure metadata generation is not cached
   const resolvedParams = await params;
   const postDetails = await fetchPostDetails(resolvedParams.id);
   
@@ -81,6 +75,10 @@ export async function generateMetadata({ params }) {
     return {
       title: 'Project Not Found | Open-source Projects',
       description: 'The project you are looking for could not be found.',
+      robots: {
+        index: false,
+        follow: true,
+      },
       openGraph: {
         title: 'Project Not Found | Open-source Projects',
         description: 'The project you are looking for could not be found.',
@@ -115,14 +113,12 @@ export async function generateMetadata({ params }) {
     ...tags
   ].join(', ');
 
-  // Get the current URL
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://opensourceprojects.dev';
-  const currentUrl = `${baseUrl}/post/${resolvedParams.id}`;
+  const currentUrl = `${SITE_URL}/post/${resolvedParams.id}`;
   
   // Ensure absolute URL for images
   const absoluteImageUrl = heroImage.startsWith('http') 
     ? heroImage 
-    : `${baseUrl}${heroImage}`;
+    : `${SITE_URL}${heroImage}`;
 
   return {
     title: `${title} | Open-source Projects`,
@@ -147,6 +143,7 @@ export async function generateMetadata({ params }) {
       locale: 'en_US',
       type: 'article',
       publishedTime: mainPost.date,
+      modifiedTime: postDetails[postDetails.length - 1]?.date || mainPost.date,
       authors: [`@${mainPost.username}`],
       tags: tags,
       section: 'Technology',
@@ -159,7 +156,7 @@ export async function generateMetadata({ params }) {
       description,
       images: [absoluteImageUrl],
       creator: `@${mainPost.username}`,
-      site: '@opensourceprojects', // Update with your Twitter handle
+      site: '@opensourceprojects',
     },
     
     // Additional metadata for better SEO
@@ -177,21 +174,20 @@ export async function generateMetadata({ params }) {
     
     // Schema.org structured data
     other: {
-      // Article schema
       'article:author': `@${mainPost.username}`,
       'article:published_time': mainPost.date,
+      'article:modified_time': postDetails[postDetails.length - 1]?.date || mainPost.date,
       'article:section': 'Technology',
       'article:tag': tags.join(','),
-      
-      // Additional meta tags
       'og:updated_time': postDetails[postDetails.length - 1]?.date || mainPost.date,
+      'twitter:label1': 'Written by',
+      'twitter:data1': `@${mainPost.username}`,
+      'twitter:label2': 'Reading time',
+      'twitter:data2': `${Math.max(1, Math.round((cleanContent.split(/\s+/).length || 100) / 200))} min read`,
+      'twitter:image:alt': title,
       'theme-color': '#000000',
       'msapplication-TileColor': '#000000',
-      
-      // LinkedIn specific
       'linkedin:owner': 'Open-source Projects',
-      
-      // WhatsApp and Telegram sharing
       'og:type': 'article',
       'og:site_name': 'Open-source Projects',
     },
@@ -207,7 +203,7 @@ export async function generateMetadata({ params }) {
     referrer: 'origin-when-cross-origin',
     
     // Language and locale
-    metadataBase: new URL(baseUrl),
+    metadataBase: new URL(SITE_URL),
   };
 }
 
@@ -219,11 +215,100 @@ export async function generateViewport() {
   };
 }
 
+// Prerender the most recent post pages at build time so Googlebot gets static HTML
+export async function generateStaticParams() {
+  try {
+    const response = await fetch('https://lb2-twitter-api.opensourceprojects.dev/threads?type=github&page=1', {
+      next: { revalidate: 86400 }
+    });
+    if (!response.ok) return [];
+    const data = await response.json();
+    const threads = data?.threads || [];
+    return threads.map(post => ({
+      id: String(post.conversation_id),
+    }));
+  } catch (error) {
+    console.error('Failed to generate static params:', error);
+    return [];
+  }
+}
+
 export default async function PostPage({ params }) {
-  noStore(); // Ensure the page is not cached at the component level
   const resolvedParams = await params;
   const postDetails = await fetchPostDetails(resolvedParams.id);
   
-  // Pass the data to the client component
-  return <PostPageClient postDetails={postDetails} params={resolvedParams} />;
+  // Return a real 404 (not a soft 404 with HTTP 200) when the post doesn't exist
+  if (!postDetails || postDetails.length === 0) {
+    notFound();
+  }
+
+  const mainPost = postDetails[0];
+  const title = getProjectTitle(mainPost.content);
+  const heroImage = getHeroImage(mainPost);
+  const absoluteImageUrl = heroImage.startsWith('http') ? heroImage : `${SITE_URL}${heroImage}`;
+  const currentUrl = `${SITE_URL}/post/${resolvedParams.id}`;
+  const modifiedDate = postDetails[postDetails.length - 1]?.date || mainPost.date;
+  const tags = extractTags(mainPost.content);
+
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    image: [absoluteImageUrl],
+    datePublished: mainPost.date,
+    dateModified: modifiedDate,
+    author: {
+      '@type': 'Person',
+      name: `@${mainPost.username}`,
+      url: `https://www.opensourceprojects.dev`,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Open-source Projects',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://www.opensourceprojects.dev/images/open-source-logo-830x460.jpg',
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': currentUrl,
+    },
+    articleSection: 'Technology',
+    keywords: tags.join(', '),
+  };
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://www.opensourceprojects.dev/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: title,
+        item: currentUrl,
+      },
+    ],
+  };
+   
+  // Pass the data to the client component, with JSON-LD structured data for rich results
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <PostPageClient postDetails={postDetails} params={resolvedParams} />
+    </>
+  );
 }

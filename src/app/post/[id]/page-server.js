@@ -93,7 +93,7 @@ export async function generateMetadata({ params }) {
   ].join(', ');
 
   // Get the current URL
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://opensourceprojects.dev';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.opensourceprojects.dev';
   const currentUrl = `${baseUrl}/post/${params.id}`;
   
   // Ensure absolute URL for images

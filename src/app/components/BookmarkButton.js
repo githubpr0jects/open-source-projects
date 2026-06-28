@@ -15,7 +15,7 @@ export default function BookmarkButton({ post, className = '', size = 'normal', 
     // Track bookmark event in Google Analytics
     const action = wasAdded ? 'bookmark_added' : 'bookmark_removed';
     const postTitle = post.content ? post.content.split('\n')[0].slice(0, 100) : 'Unknown Project';
-    const postUrl = post.github_repo || `https://opensourceprojects.dev/post/${post.conversation_id}`;
+    const postUrl = post.github_repo || `https://www.opensourceprojects.dev/post/${post.conversation_id}`;
     
     trackBookmark(action, post.id || post.conversation_id, postTitle, postUrl);
     

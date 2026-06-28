@@ -59,8 +59,8 @@ export async function GET() {
   <channel>
     <title>Open Source Projects - Latest Discoveries</title>
     <description>Discover the best open-source projects from GitHub. Curated collection of trending repositories, hidden gems, and amazing developer tools.</description>
-    <link>https://opensourceprojects.dev</link>
-    <atom:link href="https://opensourceprojects.dev/rss" rel="self" type="application/rss+xml" />
+    <link>https://www.opensourceprojects.dev</link>
+    <atom:link href="https://www.opensourceprojects.dev/rss" rel="self" type="application/rss+xml" />
     <language>en-US</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <managingEditor>hello@opensourceprojects.dev (Open Source Projects)</managingEditor>
@@ -68,18 +68,18 @@ export async function GET() {
     <generator>Open Source Projects RSS Generator</generator>
     <ttl>300</ttl>
     <image>
-      <url>https://opensourceprojects.dev/images/open-source-logo-830x460.jpg</url>
+      <url>https://www.opensourceprojects.dev/images/open-source-logo-830x460.jpg</url>
       <title>Open Source Projects - Latest Discoveries</title>
-      <link>https://opensourceprojects.dev</link>
+      <link>https://www.opensourceprojects.dev</link>
       <width>144</width>
       <height>144</height>
       <description>Discover the best open-source projects from GitHub</description>
     </image>
     <item>
       <title>RSS Feed Temporarily Unavailable</title>
-      <description><![CDATA[The RSS feed is temporarily unavailable due to API issues. Please visit <a href="https://opensourceprojects.dev">opensourceprojects.dev</a> to see the latest open-source projects.]]></description>
-      <link>https://opensourceprojects.dev</link>
-      <guid isPermaLink="true">https://opensourceprojects.dev/rss-unavailable</guid>
+      <description><![CDATA[The RSS feed is temporarily unavailable due to API issues. Please visit <a href="https://www.opensourceprojects.dev">opensourceprojects.dev</a> to see the latest open-source projects.]]></description>
+      <link>https://www.opensourceprojects.dev</link>
+      <guid isPermaLink="true">https://www.opensourceprojects.dev/rss-unavailable</guid>
       <pubDate>${new Date().toUTCString()}</pubDate>
     </item>
   </channel>
@@ -114,12 +114,12 @@ export async function GET() {
   <channel>
     <title>Open Source Projects - Error</title>
     <description>Error generating RSS feed: ${error.message}</description>
-    <link>https://opensourceprojects.dev</link>
+    <link>https://www.opensourceprojects.dev</link>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <item>
       <title>RSS Feed Error</title>
       <description>Unable to generate RSS feed at this time. Error: ${error.message}. Please try again later.</description>
-      <link>https://opensourceprojects.dev</link>
+      <link>https://www.opensourceprojects.dev</link>
       <pubDate>${new Date().toUTCString()}</pubDate>
     </item>
   </channel>
@@ -135,7 +135,7 @@ export async function GET() {
 }
 
 function generateRSSXML(projects) {
-  const siteUrl = 'https://opensourceprojects.dev';
+  const siteUrl = 'https://www.opensourceprojects.dev';
   const feedTitle = 'Open Source Projects - Latest Discoveries';
   const feedDescription = 'Discover the best open-source projects from GitHub. Curated collection of trending repositories, hidden gems, and amazing developer tools.';
   

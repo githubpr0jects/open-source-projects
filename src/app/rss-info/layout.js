@@ -19,7 +19,7 @@ export const metadata = {
     title: 'RSS Feed Information | Open-source Projects',
     description: 'Subscribe to our RSS and Atom feeds to stay updated with the latest open-source project discoveries. Get instant notifications when new projects are featured.',
     type: 'website',
-    url: 'https://opensourceprojects.dev/rss-info',
+    url: 'https://www.opensourceprojects.dev/rss-info',
   },
   
   // Twitter Card metadata

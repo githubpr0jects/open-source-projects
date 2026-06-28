@@ -38,7 +38,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="footer-bottom">
-        <p>© 2025 Open-source Projects. Built with <i className="fas fa-heart"></i> for the community.</p>
+        <p>&copy; {new Date().getFullYear()} Open-source Projects. Built with <i className="fas fa-heart"></i> for the community.</p>
       </div>
     </footer>
   );

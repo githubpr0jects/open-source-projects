@@ -52,26 +52,26 @@ export async function GET() {
     const errorAtom = `<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Open Source Projects - Latest Discoveries</title>
-  <link href="https://opensourceprojects.dev"/>
-  <link rel="self" href="https://opensourceprojects.dev/feed.xml"/>
+  <link href="https://www.opensourceprojects.dev"/>
+  <link rel="self" href="https://www.opensourceprojects.dev/feed.xml"/>
   <updated>${new Date().toISOString()}</updated>
-  <id>https://opensourceprojects.dev/</id>
+  <id>https://www.opensourceprojects.dev/</id>
   <subtitle>Discover the best open-source projects from GitHub. Curated collection of trending repositories, hidden gems, and amazing developer tools.</subtitle>
-  <generator uri="https://opensourceprojects.dev" version="1.0">Open Source Projects</generator>
+  <generator uri="https://www.opensourceprojects.dev" version="1.0">Open Source Projects</generator>
   <rights>© ${new Date().getFullYear()} Open Source Projects</rights>
-  <icon>https://opensourceprojects.dev/images/open-source-projects-favicon.png</icon>
-  <logo>https://opensourceprojects.dev/images/open-source-logo-830x460.jpg</logo>
+  <icon>https://www.opensourceprojects.dev/images/open-source-projects-favicon.png</icon>
+  <logo>https://www.opensourceprojects.dev/images/open-source-logo-830x460.jpg</logo>
   <entry>
     <title>Feed Temporarily Unavailable</title>
-    <link href="https://opensourceprojects.dev"/>
-    <id>https://opensourceprojects.dev/feed-unavailable</id>
+    <link href="https://www.opensourceprojects.dev"/>
+    <id>https://www.opensourceprojects.dev/feed-unavailable</id>
     <updated>${new Date().toISOString()}</updated>
     <author>
       <name>Open Source Projects</name>
       <email>hello@opensourceprojects.dev</email>
     </author>
     <summary type="text">The Atom feed is temporarily unavailable due to API issues. Please visit opensourceprojects.dev to see the latest open-source projects.</summary>
-    <content type="html"><![CDATA[The Atom feed is temporarily unavailable due to API issues (${error.message}). Please visit <a href="https://opensourceprojects.dev">opensourceprojects.dev</a> to see the latest open-source projects.]]></content>
+    <content type="html"><![CDATA[The Atom feed is temporarily unavailable due to API issues (${error.message}). Please visit <a href="https://www.opensourceprojects.dev">opensourceprojects.dev</a> to see the latest open-source projects.]]></content>
   </entry>
 </feed>`;
 
@@ -86,7 +86,7 @@ export async function GET() {
 }
 
 function generateAtomXML(projects) {
-  const siteUrl = 'https://opensourceprojects.dev';
+  const siteUrl = 'https://www.opensourceprojects.dev';
   const feedTitle = 'Open Source Projects - Latest Discoveries';
   const feedDescription = 'Discover the best open-source projects from GitHub. Curated collection of trending repositories, hidden gems, and amazing developer tools.';
   

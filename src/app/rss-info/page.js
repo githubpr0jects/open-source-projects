@@ -67,7 +67,7 @@ export default function RSSInfoPage() {
               </button>
             </div>
             <div className="feed-url">
-              <code>{typeof window !== 'undefined' ? window.location.origin : 'https://opensourceprojects.dev'}/rss</code>
+              <code>{typeof window !== 'undefined' ? window.location.origin : 'https://www.opensourceprojects.dev'}/rss</code>
             </div>
           </div>
 
@@ -98,7 +98,7 @@ export default function RSSInfoPage() {
               </button>
             </div>
             <div className="feed-url">
-              <code>{typeof window !== 'undefined' ? window.location.origin : 'https://opensourceprojects.dev'}/feed.xml</code>
+              <code>{typeof window !== 'undefined' ? window.location.origin : 'https://www.opensourceprojects.dev'}/feed.xml</code>
             </div>
           </div>
         </div>

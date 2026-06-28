@@ -1,5 +1,7 @@
 import HomePageClient from './HomePageClient';
 
+const SITE_URL = 'https://www.opensourceprojects.dev';
+
 // Generate metadata specifically for the home page
 export const metadata = {
   title: 'Discover the Best Open Source Projects | Open-source Projects',
@@ -23,11 +25,11 @@ export const metadata = {
   openGraph: {
     title: 'Discover the Best Open Source Projects',
     description: 'Explore our curated collection of the best open-source projects from GitHub. Find trending repositories, hidden gems, and amazing developer tools.',
-    url: 'https://opensourceprojects.dev',
+    url: SITE_URL,
     siteName: 'Open-source Projects',
     images: [
       {
-        url: 'https://opensourceprojects.dev/images/open-source-logo-830x460.jpg',
+        url: `${SITE_URL}/images/open-source-logo-830x460.jpg`,
         width: 1200,
         height: 630,
         alt: 'Open-source Projects - Discover the Best Open Source Projects',
@@ -43,7 +45,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Discover the Best Open Source Projects',
     description: 'Explore our curated collection of the best open-source projects from GitHub. Find trending repositories and hidden gems.',
-    images: ['https://opensourceprojects.dev/images/open-source-logo-830x460.jpg'],
+    images: [`${SITE_URL}/images/open-source-logo-830x460.jpg`],
     creator: '@opensourceprojects',
     site: '@opensourceprojects',
   },
@@ -59,80 +61,17 @@ export const metadata = {
   
   // Canonical URL
   alternates: {
-    canonical: 'https://opensourceprojects.dev',
+    canonical: SITE_URL,
   },
   
-  // JSON-LD structured data for better SEO
-  additionalMetaTags: [
-    {
-      name: 'application-name',
-      content: 'Open-source Projects'
-    },
-    {
-      name: 'apple-mobile-web-app-capable',
-      content: 'yes'
-    },
-    {
-      name: 'apple-mobile-web-app-status-bar-style',
-      content: 'default'
-    },
-    {
-      name: 'apple-mobile-web-app-title',
-      content: 'Open-source Projects'
-    },
-    {
-      name: 'format-detection',
-      content: 'telephone=no'
-    },
-    {
-      name: 'mobile-web-app-capable',
-      content: 'yes'
-    },
-    {
-      name: 'msapplication-TileColor',
-      content: '#000000'
-    },
-    {
-      name: 'msapplication-tap-highlight',
-      content: 'no'
-    },
-    {
-      name: 'theme-color',
-      content: '#000000'
-    }
-  ]
-};
-
-// Generate viewport for the home page
-export const viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 5,
-  userScalable: true,
+  // App specific metadata
+  applicationName: 'Open-source Projects',
+  generator: 'Next.js',
+  referrer: 'origin-when-cross-origin',
 };
 
 // Server component for the home page
 export default async function HomePage({ searchParams }) {
-  // Extract page from search params
-  const page = searchParams?.page ? parseInt(searchParams.page) : 1;
-  
-  // Fetch initial data server-side for better SEO
-  let initialData = null;
-  try {
-    const url = page === 1 
-      ? 'https://lb2-twitter-api.opensourceprojects.dev/threads?type=github'
-      : `https://lb2-twitter-api.opensourceprojects.dev/threads?type=github&page=${page}`;
-    
-    const response = await fetch(url, {
-      next: { revalidate: 300 } // Revalidate every 5 minutes
-    });
-    
-    if (response.ok) {
-      initialData = await response.json();
-    }
-  } catch (error) {
-    console.error('Failed to fetch initial data:', error);
-  }
-  
-  return <HomePageClient initialData={initialData} currentPage={page} />;
+  const { HomePageContent } = await import('./page-client');
+  return <HomePageContent />;
 }

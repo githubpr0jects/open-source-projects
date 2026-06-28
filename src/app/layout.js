@@ -29,13 +29,13 @@ export const metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://opensourceprojects.dev',
+    url: 'https://www.opensourceprojects.dev',
     siteName: 'Open-source Projects',
     title: 'Open-source Projects | Discover the Best Open Source Projects',
     description: 'Discover and explore the best open-source projects from GitHub. Find hidden gems, trending repositories, and amazing developer tools in our curated collection.',
     images: [
       {
-        url: 'https://opensourceprojects.dev/images/open-source-logo-830x460.jpg',
+        url: 'https://www.opensourceprojects.dev/images/open-source-logo-830x460.jpg',
         width: 1200,
         height: 630,
         alt: 'Open-source Projects - Discover the Best Open Source Projects',
@@ -49,7 +49,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Open-source Projects | Discover the Best Open Source Projects',
     description: 'Discover and explore the best open-source projects from GitHub. Find hidden gems, trending repositories, and amazing developer tools.',
-    images: ['https://opensourceprojects.dev/images/open-source-logo-830x460.jpg'],
+    images: ['https://www.opensourceprojects.dev/images/open-source-logo-830x460.jpg'],
     creator: '@opensourceprojects',
     site: '@opensourceprojects',
   },
@@ -73,7 +73,7 @@ export const metadata = {
   referrer: 'origin-when-cross-origin',
   
   // Language and locale
-  metadataBase: new URL('https://opensourceprojects.dev'),
+  metadataBase: new URL('https://www.opensourceprojects.dev'),
 }
 
 // Viewport configuration
@@ -101,22 +101,63 @@ const themeInitScript = `
 `;
 
 export default function RootLayout({ children }) {
+  const organizationSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Open-source Projects',
+    url: 'https://www.opensourceprojects.dev',
+    logo: 'https://www.opensourceprojects.dev/images/open-source-logo-830x460.jpg',
+    description: 'Discover and explore the best open-source projects from GitHub. Find hidden gems, trending repositories, and amazing developer tools.',
+    sameAs: [
+      'https://github.com/githubpr0jects',
+      'https://twitter.com/githubprojects',
+      'https://instagram.com/githubprojects',
+      'https://threads.net/@githubprojects',
+      'https://bsky.app/profile/githubprojects.bsky.social',
+    ],
+  };
+
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Open-source Projects',
+    url: 'https://www.opensourceprojects.dev',
+    description: 'Discover and explore the best open-source projects from GitHub.',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://www.opensourceprojects.dev/?search={search_term_string}',
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <html lang="en">
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+        />
         {/* RSS Feed Discovery */}
         <link 
           rel="alternate" 
           type="application/rss+xml" 
           title="Open Source Projects RSS Feed" 
-          href="https://opensourceprojects.dev/rss" 
+          href="https://www.opensourceprojects.dev/rss" 
         />
         <link 
           rel="alternate" 
           type="application/atom+xml" 
           title="Open Source Projects Atom Feed" 
-          href="https://opensourceprojects.dev/feed.xml" 
+          href="https://www.opensourceprojects.dev/feed.xml" 
         />
         
         {/* Font Awesome - Complete Kit */}

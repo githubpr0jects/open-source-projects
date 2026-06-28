@@ -19,7 +19,7 @@ export const metadata = {
     title: 'Newsletter Signup | Open-source Projects',
     description: 'Join our newsletter to stay updated with the latest open-source projects, news, and insights. Get curated content delivered directly to your inbox.',
     type: 'website',
-    url: 'https://opensourceprojects.dev/newsletter',
+    url: 'https://www.opensourceprojects.dev/newsletter',
   },
   
   // Twitter Card metadata
