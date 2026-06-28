@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
@@ -65,7 +65,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
   const [selectedSponsor, setSelectedSponsor] = useState(null);
   const [adMinimized, setAdMinimized] = useState(false);
   const [dismissedSponsorBanner, setDismissedSponsorBanner] = useState(false);
-  const [bannerTopPos, setBannerTopPos] = useState(56);
+  const sponsorBannerRef = useRef(null);
   const [copiedCodeId, setCopiedCodeId] = useState(null);
   const [postTextScale, setPostTextScale] = useState(DEFAULT_POST_TEXT_SCALE);
 
@@ -90,35 +90,47 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     updatePostTextScale(POST_TEXT_SCALES[nextIndex]);
   };
 
-  // Set initial banner position and adjust on scroll
+  // Observe header height and set CSS variable for sponsor banner positioning
   useEffect(() => {
-    const updateBannerPosition = () => {
-      const header = document.querySelector('.header');
-      if (header) {
-        const headerHeight = header.offsetHeight;
-        setBannerTopPos(Math.max(headerHeight, 40)); // Minimum 40px for mobile
-      }
+    const header = document.querySelector('.header');
+    if (!header) return;
+
+    const updateHeight = () => {
+      const height = header.offsetHeight;
+      document.documentElement.style.setProperty('--header-height', `${height}px`);
     };
 
-    // Small delay to ensure DOM is ready
-    const timer = setTimeout(() => {
-      updateBannerPosition();
-    }, 0);
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(header);
+    return () => observer.disconnect();
+  }, []);
 
-    // Update position on scroll
-    const scrollListener = () => updateBannerPosition();
-    window.addEventListener('scroll', scrollListener, { passive: true });
-    
-    // Also listen to window resize for responsive changes
-    const resizeListener = () => updateBannerPosition();
-    window.addEventListener('resize', resizeListener, { passive: true });
+  useEffect(() => {
+    const banner = sponsorBannerRef.current;
+
+    if (!banner || !selectedSponsor || dismissedSponsorBanner) {
+      document.body.classList.remove('sponsor-banner-visible');
+      document.documentElement.style.removeProperty('--sponsor-banner-height');
+      return;
+    }
+
+    document.body.classList.add('sponsor-banner-visible');
+
+    const updateHeight = () => {
+      document.documentElement.style.setProperty('--sponsor-banner-height', `${banner.offsetHeight}px`);
+    };
+
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(banner);
 
     return () => {
-      clearTimeout(timer);
-      window.removeEventListener('scroll', scrollListener);
-      window.removeEventListener('resize', resizeListener);
+      observer.disconnect();
+      document.body.classList.remove('sponsor-banner-visible');
+      document.documentElement.style.removeProperty('--sponsor-banner-height');
     };
-  }, []);
+  }, [selectedSponsor, dismissedSponsorBanner]);
 
   // Fetch a random active sponsor from API
   const fetchRandomSponsor = async () => {
@@ -950,11 +962,10 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
   return (
     <>
       <div className="grain-overlay"></div>
-      <Header currentPage="post" />
 
-      {/* Sponsor Announcement Banner - Sticky Top */}
+      {/* Sponsor Announcement Banner */}
       {selectedSponsor && !dismissedSponsorBanner && (
-        <div className="sponsor-announcement-banner" style={{ top: `${bannerTopPos}px` }}>
+        <div className="sponsor-announcement-banner" ref={sponsorBannerRef}>
           <div className="sponsor-banner-container">
             <div className="sponsor-banner-content">
               <div className="sponsor-banner-icon">
@@ -992,6 +1003,8 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           </div>
         </div>
       )}
+
+      <Header currentPage="post" />
 
       {/* Floating Ad Container - Desktop only: sticky bottom-left with toggle */}
       {ENABLE_CARBON_ADS && (
@@ -1187,34 +1200,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                     </div>
                     
                     <div className="sponsored-project-card">
-                      <div className="sponsored-project-image">
-                        <Image 
-                          src={selectedSponsor.image}
-                          alt={selectedSponsor.description}
-                          width={600}
-                          height={300}
-                          unoptimized
-                          className="sponsored-image"
-                        />
-                        <div className="sponsored-image-overlay">
-                          <div className="sponsored-project-tags">
-                            {selectedSponsor.tags.map((tag, index) => (
-                              <span 
-                                key={index} 
-                                className="sponsored-tag"
-                                style={{
-                                  backgroundColor: tag.bgColor || 'rgba(255, 255, 255, 0.9)',
-                                  color: tag.color || '#333'
-                                }}
-                              >
-                                <i className={tag.icon}></i>
-                                {tag.label}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                      
                       <div className="sponsored-project-content">
                         <div className="sponsored-project-header-content">
                           <h4 className="sponsored-project-title">
@@ -1237,28 +1222,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                         <p className="sponsored-project-description">
                           {selectedSponsor.tagline}
                         </p>
-                        
-                        <div className="sponsored-project-features">
-                          {selectedSponsor.tags.slice(3).map((tag, index) => (
-                            <div key={index} className="sponsored-feature">
-                              <i className={tag.icon}></i>
-                              <span>{tag.label}</span>
-                            </div>
-                          ))}
-                          {selectedSponsor.tags.length < 4 && (
-                            <>
-                              <div className="sponsored-feature">
-                                <i className="fas fa-star"></i>
-                                <span>Premium Quality</span>
-                              </div>
-                              <div className="sponsored-feature">
-                                <i className="fas fa-shield-alt"></i>
-                                <span>Trusted by Developers</span>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                        
+
                         <div className="sponsored-project-actions">
                           <a 
                             href={selectedSponsor.link}
@@ -1266,17 +1230,8 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                             rel="noopener noreferrer"
                             className="sponsored-cta-primary"
                           >
-                            <span>Explore {selectedSponsor.name}</span>
+                            <span>Visit Sponsor</span>
                             <i className="fas fa-arrow-right"></i>
-                          </a>
-                          <a 
-                            href={selectedSponsor.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="sponsored-cta-secondary"
-                          >
-                            <i className="fab fa-github"></i>
-                            <span>View Source</span>
                           </a>
                         </div>
                       </div>
@@ -1521,7 +1476,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         /* Optimized main content */
         .main {
           min-height: 100vh;
-          padding: calc(80px + 1.5rem) 0 1.5rem 0; /* Add fixed header height + original padding */
+          padding: calc(var(--header-height, 80px) + 1.5rem) 0 1.5rem 0;
           position: relative;
           z-index: 2;
         }
@@ -2805,7 +2760,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           }
 
           .main {
-            padding: calc(70px + 1rem) 0 1rem 0; /* Adjust for mobile header height */
+            padding: calc(var(--header-height, 70px) + 1rem) 0 1rem 0;
           }
 
           .project-hero {
@@ -2883,7 +2838,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           }
 
           .main {
-            padding: calc(60px + 0.75rem) 0 0.75rem 0; /* Adjust for smaller mobile header */
+            padding: calc(var(--header-height, 60px) + 0.75rem) 0 0.75rem 0;
           }
 
           .project-hero {
@@ -3539,187 +3494,94 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
         /* Sponsored Project Section Styles */
         .sponsored-project-section {
-          background: linear-gradient(135deg, 
-            rgba(255, 107, 53, 0.08) 0%, 
-            rgba(13, 17, 23, 0.95) 20%, 
-            rgba(13, 17, 23, 0.95) 100%);
-          border: 2px solid rgba(255, 107, 53, 0.3);
-          border-radius: 16px;
+          background: var(--background, #0d1117);
+          border: 1px solid var(--rule, #30363d);
+          border-radius: 0;
           margin: 2rem 0;
-          padding: 1.5rem;
+          padding: 1.25rem;
           position: relative;
-          overflow: hidden;
-        }
-
-        .sponsored-project-section::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 3px;
-          background: linear-gradient(90deg, #ff6b35, #f7931e, #ff6b35);
-          animation: sponsor-border-flow 3s ease-in-out infinite;
-        }
-
-        @keyframes sponsor-border-flow {
-          0%, 100% { 
-            background-position: 0% 50%;
-          }
-          50% { 
-            background-position: 100% 50%;
-          }
         }
 
         .sponsored-project-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 1.5rem;
+          margin-bottom: 1rem;
+          padding-bottom: 0.75rem;
+          border-bottom: 1px solid var(--rule, #30363d);
         }
 
         .sponsored-project-header h3 {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-          color: #f0f6fc;
-          font-size: 1.25rem;
+          gap: 0.5rem;
+          color: var(--foreground, #f0f6fc);
+          font-family: var(--font-mono, monospace);
+          font-size: 0.8rem;
           font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.12em;
           margin: 0;
         }
 
         .sponsored-project-header h3 i {
-          color: #ff6b35;
-          font-size: 1.1rem;
+          color: var(--foreground, #f0f6fc);
+          font-size: 0.85rem;
         }
 
         .sponsored-badge {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          background: linear-gradient(135deg, #ff6b35, #f7931e);
-          color: white;
-          padding: 0.5rem 1rem;
-          border-radius: 20px;
-          font-size: 0.75rem;
+          gap: 0.35rem;
+          background: transparent;
+          color: var(--muted-foreground, #8b949e);
+          padding: 0;
+          border-radius: 0;
+          font-family: var(--font-mono, monospace);
+          font-size: 0.65rem;
           font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 1px;
-          box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
-          animation: sponsor-pulse 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes sponsor-pulse {
-          0% { 
-            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
-            transform: scale(1);
-          }
-          100% { 
-            box-shadow: 0 6px 25px rgba(255, 107, 53, 0.6);
-            transform: scale(1.05);
-          }
+          letter-spacing: 0.12em;
         }
 
         .sponsored-badge i {
-          font-size: 0.7rem;
+          display: none;
         }
 
         .sponsored-project-card {
-          display: grid;
-          grid-template-columns: 1fr 2fr;
-          gap: 1.5rem;
-          align-items: start;
-        }
-
-        .sponsored-project-image {
-          position: relative;
-          border-radius: 12px;
-          overflow: hidden;
-          background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-
-        .sponsored-image {
-          width: 100%;
-          height: auto;
-          display: block;
-          transition: transform 0.3s ease;
-        }
-
-        .sponsored-project-card:hover .sponsored-image {
-          transform: scale(1.05);
-        }
-
-        .sponsored-image-overlay {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: linear-gradient(
-            to top,
-            rgba(255, 107, 53, 0.8) 0%,
-            transparent 100%
-          );
-          padding: 1rem;
-        }
-
-        .sponsored-project-tags {
           display: flex;
-          gap: 0.5rem;
-          flex-wrap: wrap;
-          max-width: 100%;
-        }
-
-        .sponsored-tag {
-          display: flex;
-          align-items: center;
-          gap: 0.375rem;
-          background: rgba(255, 255, 255, 0.9);
-          color: #333;
-          padding: 0.375rem 0.75rem;
-          border-radius: 16px;
-          font-size: 0.75rem;
-          font-weight: 600;
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          white-space: nowrap;
-          transition: all 0.2s ease;
-        }
-
-        .sponsored-tag:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .sponsored-tag i {
-          font-size: 0.7rem;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 1rem;
         }
 
         .sponsored-project-content {
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          gap: 0.75rem;
+          min-width: 0;
         }
 
         .sponsored-project-header-content {
-          border-bottom: 1px solid rgba(255, 107, 53, 0.2);
-          padding-bottom: 1rem;
+          border-bottom: 0;
+          padding-bottom: 0;
         }
 
         .sponsored-project-title {
-          margin: 0 0 0.5rem 0;
-          font-size: 1.1rem;
+          margin: 0 0 0.35rem 0;
+          font-size: 1rem;
           font-weight: 700;
           line-height: 1.3;
         }
 
         .sponsored-project-title a {
-          color: #f0f6fc;
+          color: var(--foreground, #f0f6fc);
           text-decoration: none;
-          transition: color 0.3s ease;
+          transition: opacity 0.2s ease;
         }
 
         .sponsored-project-title a:hover {
-          color: #ff6b35;
+          opacity: 0.75;
         }
 
         .sponsored-project-meta {
@@ -3731,92 +3593,52 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         .sponsored-repo {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          color: #8b949e;
-          font-size: 0.875rem;
-          font-family: 'SF Mono', 'Monaco', monospace;
+          gap: 0.35rem;
+          color: var(--muted-foreground, #8b949e);
+          font-family: var(--font-mono, monospace);
+          font-size: 0.75rem;
         }
 
         .sponsored-repo i {
-          color: #ff6b35;
+          color: currentColor;
         }
 
         .sponsored-project-description {
-          color: #8b949e;
+          color: var(--muted-foreground, #8b949e);
           line-height: 1.6;
-          font-size: 0.95rem;
+          font-size: 0.9rem;
           margin: 0;
-        }
-
-        .sponsored-project-features {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 0.75rem;
-        }
-
-        .sponsored-feature {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          color: #8b949e;
-          font-size: 0.875rem;
-        }
-
-        .sponsored-feature i {
-          color: #ff6b35;
-          font-size: 1rem;
-          width: 16px;
-          text-align: center;
         }
 
         .sponsored-project-actions {
           display: flex;
-          gap: 1rem;
-          margin-top: 0.5rem;
+          gap: 0.75rem;
+          margin-top: 0;
+          flex-shrink: 0;
         }
 
         .sponsored-cta-primary {
-          display: flex;
+          display: inline-flex;
           align-items: center;
-          gap: 0.5rem;
-          background: linear-gradient(135deg, #ff6b35, #f7931e);
-          color: white;
+          gap: 0.4rem;
+          background: transparent;
+          color: var(--foreground, #f0f6fc);
           text-decoration: none;
-          padding: 0.75rem 1.25rem;
-          border-radius: 8px;
+          padding: 0.55rem 0.85rem;
+          border: 1px solid var(--rule, #30363d);
+          border-radius: 0;
+          font-family: var(--font-mono, monospace);
           font-weight: 600;
-          font-size: 0.9rem;
-          transition: all 0.3s ease;
-          flex: 1;
+          font-size: 0.75rem;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          transition: all 0.2s ease;
           justify-content: center;
         }
 
         .sponsored-cta-primary:hover {
-          background: linear-gradient(135deg, #e55a2b, #e67e1a);
-          transform: translateY(-2px);
-          box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
-        }
-
-        .sponsored-cta-secondary {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: rgba(255, 107, 53, 0.1);
-          color: #ff6b35;
-          text-decoration: none;
-          padding: 0.75rem 1.25rem;
-          border-radius: 8px;
-          border: 1px solid rgba(255, 107, 53, 0.3);
-          font-weight: 600;
-          font-size: 0.9rem;
-          transition: all 0.3s ease;
-          justify-content: center;
-        }
-
-        .sponsored-cta-secondary:hover {
-          background: rgba(255, 107, 53, 0.2);
-          border-color: rgba(255, 107, 53, 0.5);
-          transform: translateY(-2px);
+          background: var(--foreground, #f0f6fc);
+          color: var(--background, #0d1117);
         }
 
         @media screen and (max-width: 480px) {
@@ -4073,21 +3895,20 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           .sponsored-project-header {
             flex-direction: column;
             align-items: flex-start;
-            gap: 0.75rem;
+            gap: 0.5rem;
             margin-bottom: 1rem;
           }
 
           .sponsored-project-header h3 {
-            font-size: 1rem;
+            font-size: 0.75rem;
           }
 
           .sponsored-badge {
-            padding: 0.375rem 0.75rem;
             font-size: 0.65rem;
           }
 
           .sponsored-project-card {
-            grid-template-columns: 1fr;
+            flex-direction: column;
             gap: 1rem;
           }
 
@@ -4099,24 +3920,14 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
             font-size: 0.875rem;
           }
 
-          .sponsored-project-features {
-            grid-template-columns: 1fr;
-            gap: 0.5rem;
-          }
-
-          .sponsored-feature {
-            font-size: 0.8rem;
-          }
-
           .sponsored-project-actions {
-            flex-direction: column;
-            gap: 0.75rem;
+            width: 100%;
           }
 
-          .sponsored-cta-primary,
-          .sponsored-cta-secondary {
-            padding: 0.625rem 1rem;
-            font-size: 0.85rem;
+          .sponsored-cta-primary {
+            width: 100%;
+            padding: 0.65rem 1rem;
+            font-size: 0.75rem;
           }
         }
       `}</style>

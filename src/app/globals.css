@@ -949,11 +949,17 @@ body::selection,
 }
 
 .sponsor-announcement-banner {
-  top: 59px !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1001 !important;
   background: var(--ink) !important;
   color: var(--background) !important;
   border-bottom: 1px solid var(--rule) !important;
   box-shadow: none !important;
+}
+
+body.sponsor-banner-visible .header {
+  top: var(--sponsor-banner-height, 40px) !important;
 }
 
 .sponsor-banner-link,
@@ -1072,7 +1078,7 @@ body::selection,
   }
 
   .sponsor-announcement-banner {
-    top: 103px !important;
+    top: 0 !important;
   }
 }
 
@@ -4265,22 +4271,17 @@ html {
 }
 /* ===== Sponsor Announcement Banner ===== */
 .sponsor-announcement-banner {
-  position: fixed;
-  top: 50px;
+  position: sticky;
+  top: 0;
   left: 0;
   right: 0;
-  z-index: 999;
+  z-index: 1001;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   animation: slideDown 0.3s ease-out;
   height: auto;
-}
-
-/* Add margin-top to main content when banner is present */
-.main {
-  margin-top: 40px;
 }
 
 @keyframes slideDown {
@@ -4428,7 +4429,7 @@ html {
 /* Responsive */
 @media (max-width: 768px) {
   .sponsor-announcement-banner {
-    top: 50px;
+    top: 0;
   }
 
   .sponsor-label-desktop {

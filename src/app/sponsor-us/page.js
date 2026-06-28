@@ -25,7 +25,7 @@ function SponsorUs() {
   const fetchSponsors = async () => {
     try {
       setSponsorsLoading(true);
-      const response = await fetch('/api/sponsors');
+      const response = await fetch('/api/sponsors?active=false');
       if (response.ok) {
         const data = await response.json();
         // Sort sponsors by start date (most recent first)
