@@ -3498,7 +3498,8 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           border: 1px solid var(--rule, #30363d);
           border-radius: 0;
           margin: 2rem 0;
-          padding: 1.25rem;
+          padding: clamp(1.5rem, 3vw, 2.25rem);
+          padding-left: clamp(2rem, 4vw, 3rem);
           position: relative;
         }
 
@@ -3552,14 +3553,15 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           display: flex;
           align-items: flex-start;
           justify-content: space-between;
-          gap: 1rem;
+          gap: clamp(1.25rem, 3vw, 2rem);
         }
 
         .sponsored-project-content {
           display: flex;
           flex-direction: column;
-          gap: 0.75rem;
+          gap: 1rem;
           min-width: 0;
+          padding: 0.25rem;
         }
 
         .sponsored-project-header-content {
@@ -3568,7 +3570,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
         }
 
         .sponsored-project-title {
-          margin: 0 0 0.35rem 0;
+          margin: 0 0 0.65rem 0;
           font-size: 1rem;
           font-weight: 700;
           line-height: 1.3;
@@ -3607,7 +3609,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           color: var(--muted-foreground, #8b949e);
           line-height: 1.6;
           font-size: 0.9rem;
-          margin: 0;
+          margin: 0.25rem 0 0;
         }
 
         .sponsored-project-actions {
@@ -3626,7 +3628,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           text-decoration: none;
           padding: 0.55rem 0.85rem;
           border: 1px solid var(--rule, #30363d);
-          border-radius: 0;
+          border-radius: 999px;
           font-family: var(--font-mono, monospace);
           font-weight: 600;
           font-size: 0.75rem;
@@ -3888,7 +3890,8 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
           /* Sponsored project mobile styles */
           .sponsored-project-section {
-            padding: 1rem;
+            padding: 1.25rem;
+            padding-left: 1.5rem;
             margin: 1.5rem 0;
           }
 
@@ -3909,7 +3912,13 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
           .sponsored-project-card {
             flex-direction: column;
-            gap: 1rem;
+            gap: 1.25rem;
+            padding: 1.25rem;
+          }
+
+          .sponsored-project-content {
+            padding: 0;
+            width: 100%;
           }
 
           .sponsored-project-title {
@@ -3926,6 +3935,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
           .sponsored-cta-primary {
             width: 100%;
+            box-sizing: border-box;
             padding: 0.65rem 1rem;
             font-size: 0.75rem;
           }
