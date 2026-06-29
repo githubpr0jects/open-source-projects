@@ -880,6 +880,12 @@ body::selection,
   text-transform: uppercase;
 }
 
+.footer-version {
+  margin-top: 0.4rem;
+  color: var(--text-muted) !important;
+  font-size: 10px;
+}
+
 .project-hero,
 .project-content,
 .rss-info-container,

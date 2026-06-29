@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { FRONTEND_VERSION } from '../version';
 
 export default function Footer() {
   return (
@@ -39,6 +40,7 @@ export default function Footer() {
       </div>
       <div className="footer-bottom">
         <p>&copy; {new Date().getFullYear()} Open-source Projects. Built with <i className="fas fa-heart"></i> for the community.</p>
+        <p className="footer-version">Frontend {FRONTEND_VERSION}</p>
       </div>
     </footer>
   );
