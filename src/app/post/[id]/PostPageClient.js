@@ -68,7 +68,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
   const sponsorBannerRef = useRef(null);
   const [copiedCodeId, setCopiedCodeId] = useState(null);
   const [postTextScale, setPostTextScale] = useState(DEFAULT_POST_TEXT_SCALE);
-  const [relatedPosts, setRelatedPosts] = useState([]);
 
   useEffect(() => {
     try {
@@ -161,49 +160,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
   useEffect(() => {
     fetchRandomSponsor();
   }, []);
-
-  // Fetch related posts for internal linking (recent posts excluding current)
-  useEffect(() => {
-    if (!postDetails || postDetails.length === 0) return;
-
-    const fetchRelatedPosts = async () => {
-      try {
-        const currentTags = extractTags(postDetails[0].content);
-        const currentAuthor = postDetails[0].username;
-
-        // Fetch recent posts and filter out the current one
-        const response = await fetch('https://lb2-twitter-api.opensourceprojects.dev/threads?type=github&page=1');
-        if (!response.ok) return;
-        const data = await response.json();
-        const allThreads = data.threads || [];
-
-        const currentId = postDetails[0].conversation_id || params.id;
-        let candidates = allThreads.filter(p => p.conversation_id !== currentId);
-
-        // Score by shared tags or same author
-        const scored = candidates.map(p => {
-          let score = 0;
-          const pTags = extractTags(p.content);
-          const sharedTags = currentTags.filter(t => pTags.includes(t));
-          score += sharedTags.length * 3;
-          if (p.username === currentAuthor) score += 2;
-          return { post: p, score };
-        });
-
-        // Sort: highest score first, then by date
-        scored.sort((a, b) => {
-          if (b.score !== a.score) return b.score - a.score;
-          return new Date(b.post.date) - new Date(a.post.date);
-        });
-
-        setRelatedPosts(scored.slice(0, 4).map(s => s.post));
-      } catch (err) {
-        // Silently fail — related posts are non-critical
-      }
-    };
-
-    fetchRelatedPosts();
-  }, [postDetails, params.id]);
 
   useEffect(() => {
     if (!initialPostDetails) {
@@ -1070,13 +1026,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
       <main className="main">
         <div className="container">
-          {/* Breadcrumbs */}
-          <nav className="breadcrumb" aria-label="Breadcrumb">
-            <Link href="/" className="breadcrumb-link">Home</Link>
-            <span className="breadcrumb-separator">/</span>
-            <span className="breadcrumb-current">{getProjectTitle(mainPost.content)}</span>
-          </nav>
-
           {/* Project Hero Section */}
           <div className="project-hero">
             {/* Hero Image */}
@@ -1104,9 +1053,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               />
               <div className="hero-overlay"></div>
             </div>
-
-            {/* H1 — primary heading for SEO */}
-            <h1 className="project-title">{getProjectTitle(mainPost.content)}</h1>
 
             <div className="project-meta">
               <span className="project-badge">
@@ -1380,44 +1326,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               </div>
             </article>
           </div>
-
-          {/* Related Projects — internal linking for SEO */}
-          {relatedPosts.length > 0 && (
-            <section className="related-posts-section">
-              <h2 className="related-posts-heading">
-                <i className="fas fa-layer-group"></i>
-                More Open Source Projects
-              </h2>
-              <div className="related-posts-grid">
-                {relatedPosts.map((post) => {
-                  const repoName = post.github_repo ? post.github_repo.match(/github\.com\/([^\/]+\/[^\/]+)/)?.[1] : null;
-                  return (
-                    <Link
-                      key={post.conversation_id}
-                      href={`/post/${post.conversation_id}`}
-                      className="related-post-card"
-                    >
-                      <div className="related-post-tags">
-                        <span className="related-post-tag">{post.github_repo ? 'GitHub' : 'Opinion'}</span>
-                      </div>
-                      <h3 className="related-post-title">{getProjectTitle(post.content)}</h3>
-                      <div className="related-post-meta">
-                        <span>@{post.username}</span>
-                        <span>&middot;</span>
-                        <time dateTime={post.date}>{new Date(post.date).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}</time>
-                      </div>
-                      {repoName && (
-                        <div className="related-post-repo">
-                          <i className="fab fa-github"></i>
-                          <span>{repoName}</span>
-                        </div>
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
-            </section>
-          )}
 
           {/* Navigation */}
           <div className="project-navigation">
@@ -1938,104 +1846,6 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           padding: 1.5rem;
           flex-wrap: wrap;
           gap: 1rem;
-        }
-
-        /* Related Posts Section */
-        .related-posts-section {
-          margin: 2.5rem 0 1.5rem;
-        }
-
-        .related-posts-heading {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #f0f6fc;
-          margin-bottom: 1.25rem;
-          display: flex;
-          align-items: center;
-          gap: 0.6rem;
-        }
-
-        .related-posts-heading i {
-          color: #6366f1;
-        }
-
-        .related-posts-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-          gap: 1rem;
-        }
-
-        .related-post-card {
-          display: flex;
-          flex-direction: column;
-          gap: 0.5rem;
-          background: rgba(13, 17, 23, 0.6);
-          backdrop-filter: blur(15px);
-          border: 1px solid #30363d;
-          border-radius: 12px;
-          padding: 1.25rem;
-          text-decoration: none;
-          color: inherit;
-          transition: all 0.3s ease;
-        }
-
-        .related-post-card:hover {
-          border-color: #6366f1;
-          transform: translateY(-3px);
-          box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
-        }
-
-        .related-post-tags {
-          display: flex;
-          gap: 0.4rem;
-        }
-
-        .related-post-tag {
-          font-size: 0.7rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          color: #8b949e;
-          background: rgba(139, 148, 158, 0.1);
-          padding: 0.2rem 0.5rem;
-          border-radius: 4px;
-        }
-
-        .related-post-title {
-          font-size: 1rem;
-          font-weight: 600;
-          color: #f0f6fc;
-          line-height: 1.4;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-        }
-
-        .related-post-meta {
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
-          font-size: 0.8rem;
-          color: #8b949e;
-        }
-
-        .related-post-repo {
-          display: flex;
-          align-items: center;
-          gap: 0.4rem;
-          font-size: 0.8rem;
-          color: #8b949e;
-        }
-
-        .related-post-repo i {
-          font-size: 0.85rem;
-        }
-
-        @media (max-width: 768px) {
-          .related-posts-grid {
-            grid-template-columns: 1fr;
-          }
         }
 
         .btn {
