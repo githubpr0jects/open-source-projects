@@ -762,9 +762,6 @@ export function HomePageContent() {
                         <span className={`postcard-tag boxed ${index % 2 === 0 ? 'tilt-up' : 'tilt-down'}`}>{getProjectTopic(post)}</span>
                         <span className="postcard-tag plain">{getProjectLanguage(post)}</span>
                       </div>
-                      <div className="postcard-top-count" title={`${post.view_count || 0} views`}>
-                        № {formatImpressions(post.view_count || 0)}
-                      </div>
                     </div>
 
                     <div className="card-content postcard-content">

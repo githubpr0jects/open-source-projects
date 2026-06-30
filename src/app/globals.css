@@ -5473,15 +5473,6 @@ html {
   color: var(--muted-foreground);
 }
 
-.postcard-top-count {
-  color: var(--muted-foreground);
-  font-family: var(--font-mono);
-  font-size: clamp(0.62rem, 0.95vw, 0.78rem);
-  letter-spacing: 0.18em;
-  line-height: 1;
-  white-space: nowrap;
-}
-
 .project-card.postcard-card .postcard-content {
   flex: 1;
   margin: 0 !important;
@@ -7208,10 +7199,6 @@ html {
 
   .postcard-tag.boxed {
     padding: 0.35rem 0.5rem !important;
-  }
-
-  .postcard-top-count {
-    font-size: 0.62rem !important;
   }
 
   .postcard-impressions-stamp {
