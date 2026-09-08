@@ -14,7 +14,8 @@ function SponsorUs() {
     website: '',
     bidding_amount: '',
     description: '',
-    source: 'sponsor-page'
+    source: 'sponsor-page',
+    package: 'custom'
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
@@ -94,7 +95,8 @@ function SponsorUs() {
           website: '',
           bidding_amount: '',
           description: '',
-          source: 'sponsor-page'
+          source: 'sponsor-page',
+          package: 'custom'
         });
       } else {
         setSubmitStatus('error');
@@ -336,7 +338,7 @@ function SponsorUs() {
               <button 
                 className="package-cta"
                 onClick={() => {
-                  setFormData(prev => ({ ...prev, bidding_amount: '99' }));
+                  setFormData(prev => ({ ...prev, bidding_amount: '99', package: '99' }));
                   document.querySelector('.sponsor-form-container').scrollIntoView({ behavior: 'smooth' });
                 }}
               >
@@ -364,7 +366,7 @@ function SponsorUs() {
               <button 
                 className="package-cta primary"
                 onClick={() => {
-                  setFormData(prev => ({ ...prev, bidding_amount: '249' }));
+                  setFormData(prev => ({ ...prev, bidding_amount: '249', package: '249' }));
                   document.querySelector('.sponsor-form-container').scrollIntoView({ behavior: 'smooth' });
                 }}
               >
@@ -391,7 +393,7 @@ function SponsorUs() {
               <button 
                 className="package-cta"
                 onClick={() => {
-                  setFormData(prev => ({ ...prev, bidding_amount: '' }));
+                  setFormData(prev => ({ ...prev, bidding_amount: '', package: 'custom' }));
                   document.querySelector('.sponsor-form-container').scrollIntoView({ behavior: 'smooth' });
                 }}
               >
