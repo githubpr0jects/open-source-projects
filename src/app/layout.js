@@ -206,9 +206,6 @@ export default function RootLayout({ children }) {
         </Script>
       </head>
       <body>{children}</body>
-      <a href="https://gitads.cosmicstack.org/v1/ad-redirect?placement=b11e4693-32f6-4673-b3a1-29d412a97f59" target="_blank">
-        <img src="https://gitads.cosmicstack.org/v1/ad-serve?placement=b11e4693-32f6-4673-b3a1-29d412a97f59" alt="Advertisement" />
-      </a>
     </html>
   )
 }
