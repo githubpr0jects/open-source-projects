@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
+import { sponsorLinkFrom } from '../../utils/sponsorLink';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import BookmarkButton from '../../components/BookmarkButton';
@@ -155,7 +156,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
           // PUT /api/sponsors?id={slug} is proxied by src/app/api/sponsors/route.js
           // to the backend's /api/sponsored-links/{slug}/view endpoint.
           try {
-            await fetch(`/api/sponsors?id=${encodeURIComponent(sponsor.id)}`, { method: 'PUT' });
+            await fetch(`/api/sponsors?id=${encodeURIComponent(sponsor.id)}&placement=${encodeURIComponent(params.id || '')}`, { method: 'PUT' });
           } catch (err) {
             console.warn('Failed to record sponsor impression:', err);
           }
@@ -987,7 +988,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 <span className="sponsor-banner-label sponsor-label-mobile">Sponsor</span>
                 <span className="sponsor-banner-divider">•</span>
                 <a 
-                  href={selectedSponsor.link}
+                  href={sponsorLinkFrom(selectedSponsor.link, params.id)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="sponsor-banner-link"
@@ -996,7 +997,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                 </a>
               </div>
               <a 
-                href={selectedSponsor.link}
+                href={sponsorLinkFrom(selectedSponsor.link, params.id)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="sponsor-banner-cta"
@@ -1188,7 +1189,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                             <div className="sponsored-project-header-content">
                               <h4 className="sponsored-project-title">
                                 <a 
-                                  href={selectedSponsor.link}
+                                  href={sponsorLinkFrom(selectedSponsor.link, params.id)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                 >
@@ -1209,7 +1210,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
 
                             <div className="sponsored-project-actions">
                               <a 
-                                href={selectedSponsor.link}
+                                href={sponsorLinkFrom(selectedSponsor.link, params.id)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="sponsored-cta-primary"
@@ -1221,7 +1222,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
                           </div>
                           {selectedSponsor.image && (
                             <a
-                              href={selectedSponsor.link}
+                              href={sponsorLinkFrom(selectedSponsor.link, params.id)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="sponsored-project-media"

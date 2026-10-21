@@ -49,8 +49,19 @@ export async function PUT(request) {
 
     // Increment views on the sponsored_links tracking entry (in-house analytics).
     // The sponsorId is the slug used as the sponsored_links key.
-    const res = await fetch(`${BACKEND_URL}/api/sponsored-links/${encodeURIComponent(sponsorId)}/view`, {
+    // Forward the viewer's context so the sponsor analytics page can break
+    // impressions down by device, country and the page the card was shown on.
+    const placement = searchParams.get('placement') || '';
+    const viewerHeaders = {};
+    const userAgent = request.headers.get('user-agent');
+    const clientIp = (request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || '').split(',')[0].trim();
+    const country = request.headers.get('x-vercel-ip-country') || request.headers.get('cf-ipcountry');
+    if (userAgent) viewerHeaders['x-osp-user-agent'] = userAgent;
+    if (clientIp) viewerHeaders['x-osp-client-ip'] = clientIp;
+    if (country) viewerHeaders['x-osp-country'] = country;
+    const res = await fetch(`${BACKEND_URL}/api/sponsored-links/${encodeURIComponent(sponsorId)}/view?placement=${encodeURIComponent(placement)}`, {
       method: 'PUT',
+      headers: viewerHeaders,
     });
 
     if (!res.ok) {

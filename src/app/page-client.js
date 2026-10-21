@@ -7,6 +7,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import BookmarkButton from './components/BookmarkButton';
 import NewsletterForm from './components/NewsletterForm';
+import { sponsorLinkFrom } from './utils/sponsorLink';
 
 export function HomePageContent() {
   const [posts, setPosts] = useState([]);
@@ -33,7 +34,7 @@ export function HomePageContent() {
         // Record an impression (view) for each sponsor card shown
         sponsors.forEach(sponsor => {
           if (sponsor.id) {
-            fetch(`/api/sponsors?id=${encodeURIComponent(sponsor.id)}`, { method: 'PUT' }).catch(() => {});
+            fetch(`/api/sponsors?id=${encodeURIComponent(sponsor.id)}&placement=home`, { method: 'PUT' }).catch(() => {});
           }
         });
       }
@@ -659,7 +660,7 @@ export function HomePageContent() {
 
                         {currentSponsor.image && (
                           <a
-                            href={currentSponsor.link}
+                            href={sponsorLinkFrom(currentSponsor.link, 'home')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="sponsor-card-image"
@@ -678,7 +679,7 @@ export function HomePageContent() {
                       <div className="card-content">
                         <h3 className="card-title">
                           <a 
-                            href={currentSponsor.link}
+                            href={sponsorLinkFrom(currentSponsor.link, 'home')}
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{textDecoration: 'none', color: 'inherit'}}
@@ -692,7 +693,7 @@ export function HomePageContent() {
                         
                         <div className="repo-info">
                           <a
-                            href={currentSponsor.link}
+                            href={sponsorLinkFrom(currentSponsor.link, 'home')}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="repo-link"
@@ -723,7 +724,7 @@ export function HomePageContent() {
                           </div>
                         </div>
                         <a 
-                          href={currentSponsor.link}
+                          href={sponsorLinkFrom(currentSponsor.link, 'home')}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="read-more"
