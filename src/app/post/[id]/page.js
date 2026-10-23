@@ -33,47 +33,42 @@ const cleanContentForDescription = (content) => {
     .trim();
 };
 
-// Server-side function to fetch post details
+// Server-side function to fetch post details.
+// Returns null only when the backend says the post doesn't exist (→ real 404).
+// Any other failure throws, so ISR keeps serving the last good copy instead of
+// caching a "not found" page (with noindex) for a post that does exist.
 async function fetchPostDetails(id) {
-  try {
-    const response = await fetch(`https://lb2-twitter-api.opensourceprojects.dev/threads/${id}`, {
-      next: { revalidate: 3600 } // Revalidate every hour instead of no-store
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch post details');
-    }
-    
-    const data = await response.json();
-    
-    // Check if the response contains meaningful markdown_content
-    const hasMarkdownContent = data && Array.isArray(data) && data.some(post => 
-      post.markdown_content && 
-      post.markdown_content.trim() !== '' &&
-      post.markdown_content.length > 50 // Ensure it's substantial content
-    );
-    
-    if (hasMarkdownContent) {
-      console.log(`✅ Markdown content found for post ${id} - content will be cached`);
-      return data;
-    } else {
-      console.log(`❌ No substantial markdown content for post ${id} - serving fresh uncached data`);
-      return data;
-    }
-  } catch (error) {
-    console.error('Error fetching post details:', error);
+  const response = await fetch(`https://lb2-twitter-api.opensourceprojects.dev/threads/${encodeURIComponent(id)}`, {
+    next: { revalidate: 3600 }
+  });
+
+  if (response.status === 404) {
     return null;
   }
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch post ${id}: HTTP ${response.status}`);
+  }
+
+  const data = await response.json();
+  return Array.isArray(data) && data.length > 0 ? data : null;
 }
+
+// Short-code URLs (/post/<slug>) serve the same thread as /post/<conversation_id>,
+// so point every variant at the conversation_id URL the sitemap lists.
+const getCanonicalUrl = (postDetails, id) => {
+  const rootPost = postDetails.find(post => !post.parent_id) || postDetails[0];
+  return `${SITE_URL}/post/${rootPost?.id || id}`;
+};
 
 // Generate metadata for SEO and social sharing
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const postDetails = await fetchPostDetails(resolvedParams.id);
   
-  if (!postDetails || postDetails.length === 0) {
+  if (!postDetails) {
     return {
-      title: 'Project Not Found | Open-source Projects',
+      title: 'Project Not Found',
       description: 'The project you are looking for could not be found.',
       robots: {
         index: false,
@@ -113,7 +108,7 @@ export async function generateMetadata({ params }) {
     ...tags
   ].join(', ');
 
-  const currentUrl = `${SITE_URL}/post/${resolvedParams.id}`;
+  const currentUrl = getCanonicalUrl(postDetails, resolvedParams.id);
   
   // Ensure absolute URL for images
   const absoluteImageUrl = heroImage.startsWith('http') 
@@ -121,7 +116,8 @@ export async function generateMetadata({ params }) {
     : `${SITE_URL}${heroImage}`;
 
   return {
-    title: `${title} | Open-source Projects`,
+    // The root layout's title template appends "| Open-source Projects"
+    title,
     description,
     keywords,
     
@@ -238,7 +234,7 @@ export default async function PostPage({ params }) {
   const postDetails = await fetchPostDetails(resolvedParams.id);
   
   // Return a real 404 (not a soft 404 with HTTP 200) when the post doesn't exist
-  if (!postDetails || postDetails.length === 0) {
+  if (!postDetails) {
     notFound();
   }
 
@@ -246,7 +242,7 @@ export default async function PostPage({ params }) {
   const title = getProjectTitle(mainPost.content);
   const heroImage = getHeroImage(mainPost);
   const absoluteImageUrl = heroImage.startsWith('http') ? heroImage : `${SITE_URL}${heroImage}`;
-  const currentUrl = `${SITE_URL}/post/${resolvedParams.id}`;
+  const currentUrl = getCanonicalUrl(postDetails, resolvedParams.id);
   const modifiedDate = postDetails[postDetails.length - 1]?.date || mainPost.date;
   const tags = extractTags(mainPost.content);
 

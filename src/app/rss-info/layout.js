@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'RSS Feed Information | Open-source Projects',
+  title: 'RSS Feed Information',
   description: 'Subscribe to our RSS and Atom feeds to stay updated with the latest open-source project discoveries. Get instant notifications when new projects are featured.',
   keywords: [
     'RSS feed',

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Header from './components/Header';
@@ -9,14 +9,17 @@ import BookmarkButton from './components/BookmarkButton';
 import NewsletterForm from './components/NewsletterForm';
 import { sponsorLinkFrom } from './utils/sponsorLink';
 
-export function HomePageContent() {
-  const [posts, setPosts] = useState([]);
-  const [pagination, setPagination] = useState(null);
-  const [loading, setLoading] = useState(true);
+export function HomePageContent({ initialPosts = null, initialPagination = null }) {
+  const searchParams = useSearchParams();
+  const [posts, setPosts] = useState(initialPosts || []);
+  const [pagination, setPagination] = useState(initialPagination);
+  const [loading, setLoading] = useState(!initialPosts);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [appliedSearchQuery, setAppliedSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState('latest');
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('search') || '');
+  const [appliedSearchQuery, setAppliedSearchQuery] = useState(() => searchParams.get('search') || '');
+  const [sortOrder, setSortOrder] = useState(() => searchParams.get('sort') || 'latest');
+  // The server already rendered this page's posts; don't refetch them on mount.
+  const skipInitialFetch = useRef(!!initialPosts);
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
   const [activeSponsors, setActiveSponsors] = useState([]);
 
@@ -69,7 +72,6 @@ export function HomePageContent() {
     };
   }, []);
   
-  const searchParams = useSearchParams();
   const router = useRouter();
   const currentPage = parseInt(searchParams.get('page')) || 1;
 
@@ -147,6 +149,11 @@ export function HomePageContent() {
   }, [searchParams]);
 
   useEffect(() => {
+    if (skipInitialFetch.current) {
+      skipInitialFetch.current = false;
+      return;
+    }
+
     const fetchPosts = async () => {
       setLoading(true);
       try {
@@ -234,9 +241,6 @@ export function HomePageContent() {
     router.push('/', { scroll: false });
   };
 
-  const handlePageChange = (page) => {
-    updateURL({ page }, true); // true = scroll to top for pagination
-  };
 
   // Format large numbers into short form (k, m, b)
   const formatImpressions = (num) => {
@@ -374,8 +378,22 @@ export function HomePageContent() {
     return `Folio ${num}-${letter}`;
   };
 
-  const [folioRef] = useState(generateFolio);
+  // Random, so pick it after hydration; the server-rendered HTML can't match it.
+  const [folioRef, setFolioRef] = useState('');
+  useEffect(() => {
+    setFolioRef(generateFolio());
+  }, []);
 
+  const pageHref = (page) => {
+    const params = new URLSearchParams();
+    if (appliedSearchQuery.trim()) params.append('search', appliedSearchQuery.trim());
+    if (sortOrder && sortOrder !== 'latest') params.append('sort', sortOrder);
+    if (page > 1) params.append('page', page.toString());
+    return params.toString() ? `/?${params.toString()}` : '/';
+  };
+
+  // Pagination renders as links (not onClick buttons) so crawlers can follow
+  // them to older posts. Link scrolls to the top on navigation.
   const renderPaginationButtons = () => {
     if (!pagination) return null;
 
@@ -385,13 +403,13 @@ export function HomePageContent() {
     // Previous button
     if (has_previous) {
       buttons.push(
-        <button
+        <Link
           key="prev"
-          onClick={() => handlePageChange(current_page - 1)}
+          href={pageHref(current_page - 1)}
           className="pagination-btn pagination-nav"
         >
           ← Previous
-        </button>
+        </Link>
       );
     }
 
@@ -402,13 +420,13 @@ export function HomePageContent() {
     // First page and ellipsis
     if (startPage > 1) {
       buttons.push(
-        <button
+        <Link
           key={1}
-          onClick={() => handlePageChange(1)}
+          href={pageHref(1)}
           className="pagination-btn"
         >
           1
-        </button>
+        </Link>
       );
       if (startPage > 2) {
         buttons.push(
@@ -422,13 +440,13 @@ export function HomePageContent() {
     // Page numbers around current page
     for (let i = startPage; i <= endPage; i++) {
       buttons.push(
-        <button
+        <Link
           key={i}
-          onClick={() => handlePageChange(i)}
+          href={pageHref(i)}
           className={`pagination-btn ${i === current_page ? 'current' : ''}`}
         >
           {i}
-        </button>
+        </Link>
       );
     }
 
@@ -442,26 +460,26 @@ export function HomePageContent() {
         );
       }
       buttons.push(
-        <button
+        <Link
           key={total_pages}
-          onClick={() => handlePageChange(total_pages)}
+          href={pageHref(total_pages)}
           className="pagination-btn"
         >
           {total_pages}
-        </button>
+        </Link>
       );
     }
 
     // Next button
     if (has_next) {
       buttons.push(
-        <button
+        <Link
           key="next"
-          onClick={() => handlePageChange(current_page + 1)}
+          href={pageHref(current_page + 1)}
           className="pagination-btn pagination-nav"
         >
           Next →
-        </button>
+        </Link>
       );
     }
 
@@ -513,7 +531,7 @@ export function HomePageContent() {
           <div className="hero-content">
             <div className="issue-line">
               <span className="issue-badge">Issue latest</span>
-              <span>{new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} &middot; Edition A</span>
+              <span suppressHydrationWarning>{new Date().toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} &middot; Edition A</span>
             </div>
             <h1 className="hero-title">
               <span>Discover Amazing</span><br />
@@ -1428,6 +1446,6 @@ export function HomePageContent() {
   );
 }
 
-export function HomePageWrapper() {
-  return <HomePageContent />;
+export function HomePageWrapper(props) {
+  return <HomePageContent {...props} />;
 }

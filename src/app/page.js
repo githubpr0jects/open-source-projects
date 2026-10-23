@@ -1,9 +1,31 @@
 import { HomePageWrapper } from './page-client';
 
 const SITE_URL = 'https://www.opensourceprojects.dev';
+const API_URL = 'https://lb2-twitter-api.opensourceprojects.dev';
 
-export function generateMetadata({ searchParams }) {
-  const params = typeof searchParams?.then === 'function' ? null : searchParams;
+// Fetch the listing on the server so the HTML Googlebot receives already links to
+// every post on the page. Returns null on failure and the client fetches instead.
+async function fetchInitialThreads({ page, search, sort }) {
+  try {
+    const params = new URLSearchParams({ type: 'github' });
+    if (page > 1) params.append('page', String(page));
+    if (search) params.append('search', search);
+    if (sort && sort !== 'latest') params.append('sort', sort);
+
+    const response = await fetch(`${API_URL}/threads?${params.toString()}`, {
+      next: { revalidate: 300 },
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    return Array.isArray(data?.threads) ? data : null;
+  } catch (error) {
+    console.error('Home: failed to fetch threads:', error.message);
+    return null;
+  }
+}
+
+export async function generateMetadata({ searchParams }) {
+  const params = await searchParams;
   const page = parseInt(params?.page) || 1;
   const hasSearch = !!params?.search;
   const hasSort = params?.sort && params.sort !== 'latest';
@@ -58,9 +80,9 @@ export function generateMetadata({ searchParams }) {
       creator: '@opensourceprojects',
       site: '@opensourceprojects',
     },
-    alternates: {
-      canonical,
-    },
+    // Next.js drops the query string from canonicals on "/", so paginated pages
+    // render their own <link rel="canonical"> in HomePage instead.
+    ...(page === 1 && { alternates: { canonical } }),
     applicationName: 'Open-source Projects',
     generator: 'Next.js',
     referrer: 'origin-when-cross-origin',
@@ -76,6 +98,23 @@ export function generateMetadata({ searchParams }) {
   return metadata;
 }
 
-export default function HomePage() {
-  return <HomePageWrapper />;
+export default async function HomePage({ searchParams }) {
+  const params = await searchParams;
+  const page = parseInt(params?.page) || 1;
+  const data = await fetchInitialThreads({
+    page,
+    search: params?.search?.trim() || '',
+    sort: params?.sort || 'latest',
+  });
+
+  return (
+    <>
+      {/* React hoists this into <head> */}
+      {page > 1 && <link rel="canonical" href={`${SITE_URL}/?page=${page}`} />}
+      <HomePageWrapper
+        initialPosts={data?.threads ?? null}
+        initialPagination={data?.pagination ?? null}
+      />
+    </>
+  );
 }

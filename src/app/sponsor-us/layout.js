@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Sponsor Us | Open-source Projects',
+  title: 'Sponsor Us',
   description: 'Showcase your project to thousands of developers. Get premium visibility on our platform and boost your open-source project.',
   keywords: ['sponsor', 'showcase', 'open source', 'visibility', 'promotion', 'developers'],
   openGraph: {

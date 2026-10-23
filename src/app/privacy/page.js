@@ -2,7 +2,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 export const metadata = {
-  title: 'Privacy Policy | Open-source Projects',
+  title: 'Privacy Policy',
   description: 'Privacy policy for Open-source Projects - Learn how we protect your privacy and handle data.',
   robots: {
     index: true,

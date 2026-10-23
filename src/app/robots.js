@@ -6,10 +6,12 @@ export default function robots() {
       {
         userAgent: '*',
         allow: '/',
+        // Don't block /_next/: Googlebot needs the JS and CSS there to render pages.
         disallow: [
           '/api/',
-          '/_next/',
           '/bookmarks',
+          '/tracking/',
+          '/analytics/',
         ],
       },
       {

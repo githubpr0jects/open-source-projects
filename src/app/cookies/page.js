@@ -2,7 +2,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 export const metadata = {
-  title: 'Cookie Policy | Open-source Projects',
+  title: 'Cookie Policy',
   description: 'Cookie policy for Open-source Projects - Learn about the cookies we use and how to manage them.',
   robots: {
     index: true,

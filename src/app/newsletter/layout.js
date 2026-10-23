@@ -1,5 +1,5 @@
 export const metadata = {
-  title: 'Newsletter Signup | Open-source Projects',
+  title: 'Newsletter Signup',
   description: 'Join our newsletter to stay updated with the latest open-source projects, news, and insights. Get curated content delivered directly to your inbox.',
   keywords: [
     'newsletter',

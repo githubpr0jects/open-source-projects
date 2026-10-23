@@ -2,7 +2,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 export const metadata = {
-  title: 'About Us | Open-source Projects',
+  title: 'About Us',
   description: 'Learn about Open-source Projects - Discovering and showcasing the best open-source projects and hidden gems.',
   robots: {
     index: true,
