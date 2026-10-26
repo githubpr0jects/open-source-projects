@@ -1,5 +1,5 @@
 import PostPageClient from './PostPageClient';
-import { notFound, permanentRedirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { postPath, postSlug } from '../../utils/postUrl';
 
 const fallbackImage = '/images/open-source-logo-830x460.jpg';
@@ -238,12 +238,9 @@ export default async function PostPage({ params }) {
     notFound();
   }
 
-  // Send the other URL forms to the canonical one so Google sees a single URL
-  const canonicalSlug = postSlug(getRootPost(postDetails));
-  if (decodeURIComponent(resolvedParams.id) !== canonicalSlug) {
-    permanentRedirect(`/post/${encodeURIComponent(canonicalSlug)}`);
-  }
-
+  // The other URL forms serve the same page and point their canonical at the
+  // official URL. No redirect: a redirect replayed from the ISR cache loses its
+  // Location header and becomes a dead-end 308.
   const mainPost = postDetails[0];
   const title = getProjectTitle(mainPost.content);
   const heroImage = getHeroImage(mainPost);
