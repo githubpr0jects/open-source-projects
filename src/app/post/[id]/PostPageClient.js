@@ -196,6 +196,28 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
     }
   }, [params.id, initialPostDetails]);
 
+  // Count the impression from the browser: the page HTML comes from the ISR
+  // cache, so the server-side thread fetch only runs on regeneration.
+  const rootPostId = postDetails[0]?.id;
+  const countedViewRef = useRef(null);
+  useEffect(() => {
+    if (!rootPostId || countedViewRef.current === rootPostId) return;
+    countedViewRef.current = rootPostId;
+
+    fetch(`https://lb2-twitter-api.opensourceprojects.dev/threads/${encodeURIComponent(rootPostId)}/view`, {
+      method: 'POST',
+      keepalive: true,
+    })
+      .then(response => (response.ok ? response.json() : null))
+      .then(data => {
+        if (typeof data?.view_count !== 'number') return;
+        setPostDetails(prev => prev.map((post, index) =>
+          index === 0 ? { ...post, view_count: data.view_count } : post
+        ));
+      })
+      .catch(err => console.warn('Failed to record post impression:', err));
+  }, [rootPostId]);
+
   // Load Carbon ad - responsive placement (floating on desktop, in-article on mobile)
   useEffect(() => {
     // Skip if Carbon ads are disabled
