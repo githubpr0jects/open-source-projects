@@ -1100,7 +1100,7 @@ export default function PostPageClient({ postDetails: initialPostDetails, params
               {typeof mainPost.view_count !== 'undefined' && (
                 <span className="project-impressions">
                   <i className="fas fa-chart-line" aria-hidden="true"></i>
-                  <span className="impressions-label">Impressions</span>
+                  <span className="impressions-label">Views</span>
                   <span className="impressions-value">{formatImpressions(mainPost.view_count)}</span>
                 </span>
               )}

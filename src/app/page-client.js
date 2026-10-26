@@ -857,8 +857,8 @@ export function HomePageContent({ initialPosts = null, initialPagination = null 
                             }}
                           />
                         </div>
-                        <div className="postcard-impressions-stamp" title={`${post.view_count || 0} impressions`}>
-                          <span>Impressions</span>
+                        <div className="postcard-impressions-stamp" title={`${post.view_count || 0} views`}>
+                          <span>Views</span>
                           <strong>{formatFullNumber(post.view_count || 0)}</strong>
                         </div>
                       </div>
