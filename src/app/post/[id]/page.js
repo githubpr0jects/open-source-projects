@@ -1,5 +1,6 @@
 import PostPageClient from './PostPageClient';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
+import { postPath, postSlug } from '../../utils/postUrl';
 
 const fallbackImage = '/images/open-source-logo-830x460.jpg';
 const SITE_URL = 'https://www.opensourceprojects.dev';
@@ -54,12 +55,11 @@ async function fetchPostDetails(id) {
   return Array.isArray(data) && data.length > 0 ? data : null;
 }
 
-// Short-code URLs (/post/<slug>) serve the same thread as /post/<conversation_id>,
-// so point every variant at the conversation_id URL the sitemap lists.
-const getCanonicalUrl = (postDetails, id) => {
-  const rootPost = postDetails.find(post => !post.parent_id) || postDetails[0];
-  return `${SITE_URL}/post/${rootPost?.id || id}`;
-};
+const getRootPost = (postDetails) => postDetails.find(post => !post.parent_id) || postDetails[0];
+
+// Every post resolves at /post/<conversation_id> and /post/<short_code>; the
+// canonical one is chosen by postSlug (see utils/postUrl).
+const getCanonicalUrl = (postDetails) => `${SITE_URL}${postPath(getRootPost(postDetails))}`;
 
 // Generate metadata for SEO and social sharing
 export async function generateMetadata({ params }) {
@@ -108,7 +108,7 @@ export async function generateMetadata({ params }) {
     ...tags
   ].join(', ');
 
-  const currentUrl = getCanonicalUrl(postDetails, resolvedParams.id);
+  const currentUrl = getCanonicalUrl(postDetails);
   
   // Ensure absolute URL for images
   const absoluteImageUrl = heroImage.startsWith('http') 
@@ -221,7 +221,7 @@ export async function generateStaticParams() {
     const data = await response.json();
     const threads = data?.threads || [];
     return threads.map(post => ({
-      id: String(post.conversation_id),
+      id: postSlug(post),
     }));
   } catch (error) {
     console.error('Failed to generate static params:', error);
@@ -238,11 +238,17 @@ export default async function PostPage({ params }) {
     notFound();
   }
 
+  // Send the other URL forms to the canonical one so Google sees a single URL
+  const canonicalSlug = postSlug(getRootPost(postDetails));
+  if (decodeURIComponent(resolvedParams.id) !== canonicalSlug) {
+    permanentRedirect(`/post/${encodeURIComponent(canonicalSlug)}`);
+  }
+
   const mainPost = postDetails[0];
   const title = getProjectTitle(mainPost.content);
   const heroImage = getHeroImage(mainPost);
   const absoluteImageUrl = heroImage.startsWith('http') ? heroImage : `${SITE_URL}${heroImage}`;
-  const currentUrl = getCanonicalUrl(postDetails, resolvedParams.id);
+  const currentUrl = getCanonicalUrl(postDetails);
   const modifiedDate = postDetails[postDetails.length - 1]?.date || mainPost.date;
   const tags = extractTags(mainPost.content);
 

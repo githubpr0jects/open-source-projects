@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { postPath } from '../utils/postUrl';
 
 // Alternative RSS feed endpoint (feed.xml format)
 export async function GET() {
@@ -138,7 +139,7 @@ function generateAtomXML(projects) {
   const atomEntries = projects.map(project => {
     const title = escapeXML(getProjectTitle(project.content));
     const description = escapeXML(getDescription(project));
-    const link = `${siteUrl}/post/${project.conversation_id}`;
+    const link = `${siteUrl}${postPath(project)}`;
     const updated = new Date(project.date).toISOString();
     const id = `${siteUrl}/post/${project.conversation_id}`;
     const author = escapeXML(project.username);

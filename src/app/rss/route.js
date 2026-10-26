@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { postPath } from '../utils/postUrl';
 
 // RSS feed generator for open-source projects
 export async function GET() {
@@ -194,7 +195,7 @@ function generateRSSXML(projects) {
   const rssItems = projects.map(project => {
     const title = escapeXML(getProjectTitle(project.content));
     const description = escapeXML(getDescription(project));
-    const link = `${siteUrl}/post/${project.conversation_id}`;
+    const link = `${siteUrl}${postPath(project)}`;
     const pubDate = new Date(project.date).toUTCString();
     const guid = project.conversation_id;
     const tags = getTags(project.content);

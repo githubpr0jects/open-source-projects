@@ -1,3 +1,5 @@
+import { postPath } from './utils/postUrl';
+
 const SITE_URL = 'https://www.opensourceprojects.dev';
 const API_URL = 'https://lb2-twitter-api.opensourceprojects.dev';
 
@@ -65,7 +67,7 @@ export default async function sitemap() {
   };
 
   const toRoute = (thread) => ({
-    url: `${SITE_URL}/post/${thread.conversation_id}`,
+    url: `${SITE_URL}${postPath(thread)}`,
     lastModified: thread.date ? new Date(thread.date) : new Date(),
     changeFrequency: 'weekly',
     priority: 0.7,

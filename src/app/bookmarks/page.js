@@ -157,7 +157,7 @@ export default function BookmarksPage() {
 
                     <div className="card-content">
                       <h3 className="card-title">
-                        <Link href={`/post/${post.conversation_id}`}>
+                        <Link href={postPath(post)}>
                           {getProjectTitle(post.content)}
                         </Link>
                       </h3>
@@ -167,7 +167,7 @@ export default function BookmarksPage() {
                     </div>
 
                     <div className="card-footer">
-                      <Link href={`/post/${post.conversation_id}`} className="read-more">
+                      <Link href={postPath(post)} className="read-more">
                         <span>Read More</span>
                         <i className="fas fa-arrow-right"></i>
                       </Link>

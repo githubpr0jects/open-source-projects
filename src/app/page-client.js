@@ -8,6 +8,7 @@ import Footer from './components/Footer';
 import BookmarkButton from './components/BookmarkButton';
 import NewsletterForm from './components/NewsletterForm';
 import { sponsorLinkFrom } from './utils/sponsorLink';
+import { postPath } from './utils/postUrl';
 
 export function HomePageContent({ initialPosts = null, initialPagination = null }) {
   const searchParams = useSearchParams();
@@ -811,7 +812,7 @@ export function HomePageContent({ initialPosts = null, initialPagination = null 
 
                     <div className="card-content postcard-content">
                       <h3 className="card-title postcard-title">
-                        <Link href={`/post/${post.conversation_id}`}>
+                        <Link href={postPath(post)}>
                           {getProjectTitle(post.content)}
                         </Link>
                       </h3>

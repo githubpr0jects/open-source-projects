@@ -1,5 +1,23 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+import { postPath } from '../../utils/postUrl';
+
+// The page that's actually served lives at the post's canonical URL (often its
+// short code), so a conversation id alone doesn't name the right cache entry.
+async function canonicalPathFor(conversationId) {
+  try {
+    const response = await fetch(
+      `https://lb2-twitter-api.opensourceprojects.dev/threads/${encodeURIComponent(conversationId)}`,
+      { cache: 'no-store' }
+    );
+    if (!response.ok) return null;
+    const thread = await response.json();
+    const rootPost = Array.isArray(thread) ? thread.find(post => !post.parent_id) || thread[0] : null;
+    return rootPost ? postPath(rootPost) : null;
+  } catch {
+    return null;
+  }
+}
 
 // POST /api/revalidate
 // Body: { "path": "/post/<conversation_id>" } OR { "conversationId": "<id>" }
@@ -22,8 +40,13 @@ export async function POST(request) {
       return NextResponse.json({ success: false, detail: 'Unauthorized' }, { status: 401 });
     }
 
-    revalidatePath(path);
-    return NextResponse.json({ success: true, revalidated: path });
+    const paths = [path];
+    if (body.conversationId) {
+      const canonicalPath = await canonicalPathFor(body.conversationId);
+      if (canonicalPath && canonicalPath !== path) paths.push(canonicalPath);
+    }
+    paths.forEach(p => revalidatePath(p));
+    return NextResponse.json({ success: true, revalidated: paths.length === 1 ? path : paths });
   } catch (err) {
     console.error('Revalidate failed:', err);
     return NextResponse.json({ success: false, detail: String(err && err.message || err) }, { status: 500 });
